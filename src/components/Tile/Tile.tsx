@@ -1,5 +1,6 @@
-import { memo, ReactNode } from "react";
-import { bg, color, Combination, edge, Pair } from "../constants/tiles";
+import { memo } from "react";
+import { Combination, Pair } from "../../constants/tiles";
+import styles from "./Tile.module.css";
 
 type LineType = "ab" | "ac" | "ad" | "ae" | "af" | "ag" | "ah";
 
@@ -74,35 +75,24 @@ const Line = ({ pair }: LineProps) => {
   const { type, transform } = pairToLine[pair];
   return (
     <path
+      className={styles.line}
       d={lineTypeToPath[type]}
       transform={transform}
-      opacity="1"
-      fillOpacity="0"
-      stroke={color}
-      strokeWidth="1"
-      strokeOpacity="1"
     />
   );
 };
 
-type TileProps = { combination: Combination };
+type TileProps = { combination: Combination; transform?: string };
 
-const Tile = ({ combination }: TileProps) => {
+const Tile = ({ combination, transform }: TileProps) => {
   return (
-    <div>
-      <svg
-        viewBox="0 0 30 30"
-        xmlns="http://www.w3.org/2000/svg"
-        style={{ backgroundColor: bg, width: "100%", height: "100%" }}
-      >
-        <g>
-          {combination.map((pair) => (
-            <Line key={pair} pair={pair} />
-          ))}
-          <path d="M0 0L30 0L30 30L0 30 z" fill="none" stroke={edge} />
-        </g>
-      </svg>
-    </div>
+    <g transform={transform}>
+      <path d="M0 0L30 0L30 30L0 30 z" className={styles.tile} />
+      {combination.map((pair) => (
+        <Line key={pair} pair={pair} />
+      ))}
+      <path d="M0 0L30 0L30 30L0 30 z" className={styles.edge} />
+    </g>
   );
 };
 

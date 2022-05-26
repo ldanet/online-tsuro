@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import Board from "../components/board";
+import Board from "../components/Board/Board";
 
 const Home: NextPage = () => {
   return (

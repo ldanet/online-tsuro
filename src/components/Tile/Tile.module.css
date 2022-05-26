@@ -1,0 +1,15 @@
+.tile {
+  fill: var(--tile-color);
+}
+
+.line {
+  stroke-width: 1;
+  stroke: var(--line-color);
+  fill: none;
+}
+
+.edge {
+  stroke-width: .5;
+  stroke: var(--edge-color);
+  fill: none;
+}
