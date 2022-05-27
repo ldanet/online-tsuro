@@ -1,19 +1,24 @@
-import { Fragment, memo } from "react";
-import { Combination, tiles } from "../../constants/tiles";
+import { Fragment, memo, useCallback } from "react";
 import { Edge } from "../Edge/Edge";
+import { useEngine } from "../../engine/store";
+import { getNextTileCoordinate } from "../../engine/utils";
 import Tile from "../Tile/Tile";
 import styles from "./Board.module.css";
 
 const Board = () => {
-  const deck = Object.values(tiles);
-  const board: Combination[][] = new Array(6)
-    .fill(new Array(6).fill(0))
-    .map((arr) =>
-      arr.map(() => {
-        const tile = deck[Math.floor(Math.random() * deck.length)];
-        return tile[Math.floor(Math.random() * tile.length)];
-      })
-    );
+  const { board, selectedTile, selectedTileCoord } = useEngine(
+    useCallback(
+      ({ board, selectedTile, players, myPlayer }) => ({
+        board,
+        selectedTile,
+        selectedTileCoord:
+          players[myPlayer]?.coord &&
+          getNextTileCoordinate(players[myPlayer]?.coord!),
+      }),
+      []
+    )
+  );
+  console.log("selectedTileCoord: ", selectedTileCoord);
   return (
     <svg viewBox="0 0 190 190" className={styles.board}>
       {new Array(6).fill(true).map((_, i) => (
@@ -30,13 +35,26 @@ const Board = () => {
         <Fragment key={ri}>
           <Edge type="left" transform={`translate( 0, ${ri * 30 + 5})`} />
           <Edge type="right" transform={`translate(185, ${ri * 30 + 5})`} />
-          {row.map((col, ci) => (
-            <Tile
-              key={`${ri}-${ci}`}
-              combination={col}
-              transform={`translate(${ci * 30 + 5}, ${ri * 30 + 5})`}
-            />
-          ))}
+          {row.map((col, ci) => {
+            return col ? (
+              <Tile
+                key={`${ri}-${ci}`}
+                combination={col?.combination}
+                transform={`translate(${ci * 30 + 5}, ${ri * 30 + 5})`}
+              />
+            ) : (
+              selectedTile &&
+                ri == selectedTileCoord?.row &&
+                ci === selectedTileCoord?.col && (
+                  <Tile
+                    key={`${ri}-${ci}`}
+                    combination={selectedTile.combination}
+                    transform={`translate(${ci * 30 + 5}, ${ri * 30 + 5})`}
+                    opacity=".5"
+                  />
+                )
+            );
+          })}
         </Fragment>
       ))}
     </svg>

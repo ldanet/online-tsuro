@@ -1,3 +1,5 @@
 .board {
   background-color: var(--bg-color);
+  width: calc(var(--tile-size)* 6.4);
+  height: calc(var(--tile-size)* 6.4);
 }

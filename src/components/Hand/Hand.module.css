@@ -1,0 +1,8 @@
+.tileButton {
+  border: none;
+}
+
+.tileSvg {
+  height: var(--tile-size);
+  width: var(--tile-size);
+}

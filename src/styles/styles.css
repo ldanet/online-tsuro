@@ -9,6 +9,14 @@ body {
   --tile-color: #a72;
   --line-color: #fed;
   --edge-color: #860;
+
+  --tile-size: min(calc((90vh - 10rem)  / 6.4), calc((100vw - 2em) / 6.4));
+  min-height: 100vh;
+}
+
+body {
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 a {

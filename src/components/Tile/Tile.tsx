@@ -82,11 +82,13 @@ const Line = ({ pair }: LineProps) => {
   );
 };
 
-type TileProps = { combination: Combination; transform?: string };
+type TileProps = JSX.IntrinsicElements["g"] & {
+  combination: Combination;
+};
 
-const Tile = ({ combination, transform }: TileProps) => {
+const Tile = ({ combination, ...gProps }: TileProps) => {
   return (
-    <g transform={transform}>
+    <g {...gProps}>
       <path d="M0 0L30 0L30 30L0 30 z" className={styles.tile} />
       {combination.map((pair) => (
         <Line key={pair} pair={pair} />
