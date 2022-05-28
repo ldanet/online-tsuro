@@ -5,7 +5,7 @@ import { EngineState } from "./types";
 import { TileID, tiles } from "../constants/tiles";
 import { getNextTileCoordinate, shuffle } from "./utils";
 import { emptytBoard } from "./constants";
-import { createGame, playTile } from "./handlers";
+import { createGame, placePlayer, playTile, resetGame } from "./handlers";
 
 export const useEngine = create<
   EngineState,
@@ -29,6 +29,12 @@ export const useEngine = create<
       },
       playTile: (player, tile) => {
         set((state) => playTile(state, player, tile));
+      },
+      resetGame: () => {
+        set(resetGame);
+      },
+      placePlayer: (coord) => {
+        set((state) => placePlayer(state, coord));
       },
     }),
     { name: "tsuro-game" }

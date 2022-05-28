@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { Combination, Pair } from "../../constants/tiles";
+import { ColoredPair, PlayerColor } from "../../engine/types";
 import styles from "./Tile.module.css";
 
 type LineType = "ab" | "ac" | "ad" | "ae" | "af" | "ag" | "ah";
@@ -69,7 +70,8 @@ const lineTypeToPath: { [key in LineType]: string } = {
   ah: "M9 30C9 26 6 21 0 21",
 };
 
-type LineProps = { pair: keyof typeof pairToLine };
+type ColorLineProps = { pair: keyof typeof pairToLine; color?: PlayerColor };
+type LineProps = { pair: keyof typeof pairToLine; isColored?: boolean };
 
 const Line = ({ pair }: LineProps) => {
   const { type, transform } = pairToLine[pair];
@@ -81,19 +83,45 @@ const Line = ({ pair }: LineProps) => {
     />
   );
 };
+const ColoredLine = ({ pair, color }: ColorLineProps) => {
+  const { type, transform } = pairToLine[pair];
+  return (
+    <>
+      <path
+        className={styles.line_colored}
+        d={lineTypeToPath[type]}
+        transform={transform}
+      />
+      <path
+        className={styles[`line_${color}`]}
+        d={lineTypeToPath[type]}
+        transform={transform}
+      />
+    </>
+  );
+};
 
 type TileProps = JSX.IntrinsicElements["g"] & {
   combination: Combination;
+  noEdge?: boolean;
+  coloredPairs?: ColoredPair[];
 };
 
-const Tile = ({ combination, ...gProps }: TileProps) => {
+const Tile = ({ combination, noEdge, coloredPairs, ...gProps }: TileProps) => {
   return (
     <g {...gProps}>
       <path d="M0 0L30 0L30 30L0 30 z" className={styles.tile} />
       {combination.map((pair) => (
-        <Line key={pair} pair={pair} />
+        <Line
+          key={pair}
+          pair={pair}
+          isColored={coloredPairs?.some((p) => p.pair === pair)}
+        />
       ))}
-      <path d="M0 0L30 0L30 30L0 30 z" className={styles.edge} />
+      {coloredPairs?.map(({ pair, color }) => (
+        <ColoredLine key={pair} pair={pair} color={color} />
+      ))}
+      {!noEdge && <path d="M0 0L30 0L30 30L0 30 z" className={styles.edge} />}
     </g>
   );
 };

@@ -2,3 +2,9 @@
   stroke: var(--line-color);
   fill: none;
 }
+
+.clickable_notch{
+  cursor: pointer;
+  stroke: none;
+  fill: transparent;
+}

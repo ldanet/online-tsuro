@@ -1,16 +1,68 @@
 import { Fragment, memo, useCallback } from "react";
-import { Edge } from "../Edge/Edge";
+import { Edge, EdgeProps, EdgeType } from "../Edge/Edge";
 import { useEngine } from "../../engine/store";
 import { getNextTileCoordinate } from "../../engine/utils";
 import Tile from "../Tile/Tile";
 import styles from "./Board.module.css";
+import { Combination, notchCoordinates } from "../../constants/tiles";
+import { BoardTile, Notch } from "../../engine/types";
+
+type BoardTileProps = {
+  row: number;
+  col: number;
+  tile: BoardTile;
+};
+
+const BoardTile = ({ tile, row, col }: BoardTileProps) => {
+  return (
+    <Tile
+      combination={tile.combination}
+      coloredPairs={tile.coloredPairs}
+      transform={`translate(${col * 30 + 5}, ${row * 30 + 5})`}
+    />
+  );
+};
+
+type BoardEdgeProps = {
+  type: EdgeType;
+  row: number;
+  col: number;
+};
+
+const BoardEdge = ({ type, row, col }: BoardEdgeProps) => {
+  const isClickable = useEngine(
+    useCallback(({ gamePhase, myPlayer, playerTurnsOrder }) => {
+      return gamePhase === "round1" && myPlayer === playerTurnsOrder[0];
+    }, [])
+  );
+  const placePlayer = useEngine(
+    useCallback(({ placePlayer }) => placePlayer, [])
+  );
+  const handleClick = useCallback(
+    (notch: Notch) => {
+      placePlayer({ row, col, notch });
+    },
+    [row, col, placePlayer]
+  );
+  const clickableProps = isClickable
+    ? { isClickable, onClick: handleClick }
+    : {};
+  return (
+    <Edge
+      type={type}
+      transform={`translate(${col * 30 + 5}, ${row * 30 + 5})`}
+      {...clickableProps}
+    />
+  );
+};
 
 const Board = () => {
-  const { board, selectedTile, selectedTileCoord } = useEngine(
+  const { board, selectedTile, selectedTileCoord, players } = useEngine(
     useCallback(
       ({ board, selectedTile, players, myPlayer }) => ({
         board,
         selectedTile,
+        players: Object.values(players),
         selectedTileCoord:
           players[myPlayer]?.coord &&
           getNextTileCoordinate(players[myPlayer]?.coord!),
@@ -22,26 +74,18 @@ const Board = () => {
   return (
     <svg viewBox="0 0 190 190" className={styles.board}>
       {new Array(6).fill(true).map((_, i) => (
-        <Edge key={i} type="top" transform={`translate(${i * 30 + 5}, 0)`} />
+        <BoardEdge key={i} type="top" row={-1} col={i} />
       ))}
       {new Array(6).fill(true).map((_, i) => (
-        <Edge
-          key={i}
-          type="bottom"
-          transform={`translate(${i * 30 + 5}, 185)`}
-        />
+        <BoardEdge key={i} type="bottom" row={6} col={i} />
       ))}
       {board.map((row, ri) => (
         <Fragment key={ri}>
-          <Edge type="left" transform={`translate( 0, ${ri * 30 + 5})`} />
-          <Edge type="right" transform={`translate(185, ${ri * 30 + 5})`} />
+          <BoardEdge type="left" row={ri} col={-1} />
+          <BoardEdge type="right" row={ri} col={6} />
           {row.map((col, ci) => {
             return col ? (
-              <Tile
-                key={`${ri}-${ci}`}
-                combination={col?.combination}
-                transform={`translate(${ci * 30 + 5}, ${ri * 30 + 5})`}
-              />
+              <BoardTile key={`${ri}-${ci}`} tile={col} row={ri} col={ci} />
             ) : (
               selectedTile &&
                 ri == selectedTileCoord?.row &&
@@ -55,6 +99,17 @@ const Board = () => {
                 )
             );
           })}
+          {players.map(({ coord, name, status, color }) =>
+            coord && status === "alive" ? (
+              <circle
+                className={styles[`player_${color}`]}
+                key={name}
+                cx={coord.col * 30 + 5 + notchCoordinates[coord.notch].x}
+                cy={coord.row * 30 + 5 + notchCoordinates[coord.notch].y}
+                r="3"
+              />
+            ) : null
+          )}
         </Fragment>
       ))}
     </svg>

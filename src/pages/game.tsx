@@ -12,10 +12,17 @@ import { EngineState } from "../engine/types";
 const getHasGame = ({ playerTurnsOrder }: EngineState) =>
   playerTurnsOrder.length;
 
+const getResetGame = ({ resetGame }: EngineState) => resetGame;
+
+const getPhase = ({ gamePhase }: EngineState) => gamePhase;
+
 const Home: NextPage = () => {
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const hasGame = useEngine(getHasGame);
+  const resetGame = useEngine(getResetGame);
+  const phase = useEngine(getPhase);
+
   useEffect(() => {
     if (!hasGame) {
       router.replace("/");
@@ -38,7 +45,13 @@ const Home: NextPage = () => {
           <>
             <GameStatus />
             <Board />
-            <Hand />
+            {phase === "joining" && (
+              <button onClick={resetGame}>Start game</button>
+            )}
+            {phase === "main" && <Hand />}
+            {phase === "finished" && (
+              <button onClick={resetGame}>New game</button>
+            )}
           </>
         )}
       </main>

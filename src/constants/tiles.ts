@@ -293,3 +293,14 @@ export const tiles = {
 
 export type TileID = keyof typeof tiles;
 export type TileType = typeof tiles[TileID];
+
+export const notchCoordinates = {
+  "0": { x: 9, y: 30 },
+  "1": { x: 21, y: 30 },
+  "2": { x: 30, y: 21 },
+  "3": { x: 30, y: 9 },
+  "4": { x: 21, y: 0 },
+  "5": { x: 9, y: 0 },
+  "6": { x: 0, y: 9 },
+  "7": { x: 0, y: 21 },
+} as const;

@@ -48,3 +48,8 @@ export const shuffle = <T extends any>(a: T[]): T[] => {
 
   return array;
 };
+
+export const getNextTurnOrder = (order: string[]) => {
+  const [curr, ...rest] = order;
+  return [...rest, curr];
+};

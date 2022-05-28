@@ -10,8 +10,17 @@ body {
   --line-color: #fed;
   --edge-color: #860;
 
-  --tile-size: min(calc((90vh - 10rem)  / 6.4), calc((100vw - 2em) / 6.4));
+  --tile-size: min(calc((90vh - 15rem)  / 6.4), calc((100vw - 2em) / 6.4));
   min-height: 100vh;
+
+  --color-red: red;
+  --color-blue: blue;
+  --color-green: green;
+  --color-yellow: yellow;
+  --color-purple: purple;
+  --color-orange: orange;
+  --color-black: black;
+  --color-white: white;
 }
 
 body {

@@ -8,6 +8,57 @@
   fill: none;
 }
 
+.line_colored {
+  stroke-width: 3;
+  stroke: var(--line-color);
+  fill: none;
+}
+
+.line_red {
+  stroke-width: 2;
+  stroke: var(--color-red);
+  fill: none;
+}
+
+.line_blue {
+  stroke-width: 2;
+  stroke: var(--color-blue);
+  fill: none;
+}
+
+.line_green {
+  stroke-width: 2;
+  stroke: var(--color-green);
+  fill: none;
+}
+
+.line_yellow {
+  stroke-width: 2;
+  stroke: var(--color-yellow);
+  fill: none;
+}
+
+.line_orange {
+  stroke-width: 2;
+  stroke: var(--color-orange);
+  fill: none;
+}
+.line_purple {
+  stroke-width: 2;
+  stroke: var(--color-purple);
+  fill: none;
+}
+.line_black {
+  stroke-width: 2;
+  stroke: var(--color-black);
+  fill: none;
+}
+.line_white {
+  stroke-width: 2;
+  stroke: var(--color-white);
+  fill: none;
+}
+
 .edge {
   stroke-width: .5;
   stroke: var(--edge-color);

@@ -2,8 +2,8 @@ import { memo } from "react";
 import { useEngine } from "../../engine/store";
 import { EngineState } from "../../engine/types";
 
-const getPlayers = ({ players, playerTurnsOrder }: EngineState) => {
-  return playerTurnsOrder.map((name) => players[name]);
+const getPlayers = ({ players }: EngineState) => {
+  return Object.values(players);
 };
 
 const GameStatus = () => {
@@ -12,7 +12,7 @@ const GameStatus = () => {
     <>
       {players.map(({ name, status }) => (
         <div key={name}>
-          {name} {status === "dead" && <>❌</>}
+          {status === "dead" && <>❌</>} {name}
         </div>
       ))}
     </>

@@ -7,15 +7,16 @@ import styles from "./Hand.module.css";
 
 const getHand = ({ players, myPlayer }: EngineState) => {
   const hand = players[myPlayer]?.hand;
-  return hand?.map((id) => tiles[id]);
+  return hand?.map((id) => (id === "dragon" ? id : tiles[id]));
 };
+
+const getIsMyTurn = ({ myPlayer, playerTurnsOrder }: EngineState) =>
+  myPlayer === playerTurnsOrder[0];
 
 const Hand = () => {
   const hand = useEngine(getHand);
-  const me = useEngine(useCallback(({ myPlayer }) => myPlayer, []));
-  const isMyTurn = useEngine(
-    useCallback(({ myPlayer, playerTurn }) => myPlayer === playerTurn, [])
-  );
+  const myName = useEngine(useCallback(({ myPlayer }) => myPlayer, []));
+  const isMyTurn = useEngine(getIsMyTurn);
   const selectedTile = useEngine(
     useCallback((state) => state.selectedTile, [])
   );
@@ -26,58 +27,64 @@ const Hand = () => {
 
   const onTileClick = useCallback(
     (index: number, { id, combinations }: TileType) => {
+      let combinationIndex = (rotations[index] ?? 0) % combinations.length;
+
+      if (selectedTile?.id === id) {
+        const newRotations = [...rotations];
+        combinationIndex = newRotations[index] =
+          (combinationIndex + 1) % combinations.length;
+        setRotations(newRotations);
+      }
       selectTile &&
         selectTile({
           id: id,
-          combination:
-            combinations[(rotations[index] ?? 0) % combinations.length],
+          combination: combinations[combinationIndex],
         });
-      if (selectedTile?.id === id) {
-        const newRotations = [...rotations];
-        newRotations[index] =
-          ((rotations[index] ?? 0) + 1) % combinations.length;
-        setRotations(newRotations);
-      }
     },
     [selectTile, rotations, selectedTile]
   );
 
   const onPlayClick = useCallback(() => {
-    playTile && selectedTile && playTile(me, selectedTile);
-  }, [me, playTile, selectedTile]);
+    playTile && selectedTile && playTile(myName, selectedTile);
+  }, [myName, playTile, selectedTile]);
 
   return (
-    <div>
-      {hand?.map((tile, i) => (
-        <button
-          key={tile.id}
-          className={styles.tileButton}
-          type="button"
-          onClick={onTileClick.bind(null, i, tile)}
-        >
-          <svg
-            className={styles.tileSvg}
-            viewBox="-0.5 -0.5 30.5 30.5"
-            height={31}
-            width={31}
-          >
-            <Tile
-              combination={
-                tile.combinations[
-                  (rotations[i] ?? 0) % tile.combinations.length
-                ]
-              }
-            />
-          </svg>
-        </button>
-      ))}
+    <div className={styles.hand}>
       <button
         type="button"
         onClick={onPlayClick}
         disabled={!(selectedTile && isMyTurn)}
       >
-        Play
+        Play selected tile
       </button>
+      <div className={styles.handTiles}>
+        {hand?.map((tile, i) =>
+          tile === "dragon" || !tile ? null : (
+            <button
+              key={tile.id}
+              className={[
+                styles.tileButton,
+                selectedTile?.id === tile.id
+                  ? styles["tileButton--selected"]
+                  : "",
+              ].join(" ")}
+              type="button"
+              onClick={onTileClick.bind(null, i, tile)}
+            >
+              <svg className={styles.tileSvg} viewBox="0 0 30 30">
+                <Tile
+                  combination={
+                    tile.combinations[
+                      (rotations[i] ?? 0) % tile.combinations.length
+                    ]
+                  }
+                  noEdge
+                />
+              </svg>
+            </button>
+          )
+        )}
+      </div>
     </div>
   );
 };

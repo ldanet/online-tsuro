@@ -1,5 +1,25 @@
+.hand {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.handTiles {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
 .tileButton {
-  border: none;
+  border: 3px solid transparent;
+  background: none;
+  padding: 0;
+  line-height: 0;
+}
+
+.tileButton--selected {
+  border-color: var(--edge-color);
 }
 
 .tileSvg {

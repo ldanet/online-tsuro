@@ -1,4 +1,4 @@
-import { Combination, TileID, TileType } from "../constants/tiles";
+import { Combination, Pair, TileID } from "../constants/tiles";
 
 export type PlayerColor =
   | "red"
@@ -6,9 +6,11 @@ export type PlayerColor =
   | "green"
   | "yellow"
   | "orange"
-  | "purple";
+  | "purple"
+  | "black"
+  | "white";
 
-export type PlayerStatus = "live" | "dead";
+export type PlayerStatus = "alive" | "dead";
 
 export type Notch = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7";
 
@@ -19,32 +21,41 @@ export type Player = {
   color?: PlayerColor;
   status: PlayerStatus;
   coord?: Coordinate;
-  hand?: TileID[];
+  hand?: (TileID | "dragon")[];
 };
 
-export type BoardTile = { id: TileID; combination: Combination };
+export type Players = { [name: string]: Player };
+
+export type ColoredPair = { pair: Pair; color: PlayerColor };
+
+export type BoardTile = {
+  id: TileID;
+  combination: Combination;
+  coloredPairs?: ColoredPair[];
+};
 
 export type Board = (BoardTile | null)[][];
 
 export type GamePhase = "joining" | "round1" | "main" | "finished";
 
 export type EngineState = {
-  deck: TileID[];
-  players: { [name: string]: Player };
+  deck: (TileID | "dragon")[];
+  players: Players;
   gamePhase: GamePhase;
   board: Board;
   host: string;
   myPlayer: string;
+  playerTurnsOrder: string[];
   createGame: (name: string) => void;
-  playerTurn?: string;
+  placePlayer: (coord: Coordinate) => void;
   selectedTile?: BoardTile;
   selectTile?: (tile: { id: TileID; combination: Combination }) => void;
   playTile: (
     player: string,
     tile: { id: TileID; combination: Combination }
   ) => void;
+  resetGame: () => void;
   // peer: Peer;
-  playerTurnsOrder: string[];
 };
 
 export type EngineHandler<Args extends unknown[] = []> = (
