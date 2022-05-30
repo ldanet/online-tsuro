@@ -36,6 +36,7 @@ export const createGame: EngineHandler<[string]> = (
     },
     playerTurnsOrder: [],
     gamePhase: "joining",
+    winners: [],
   };
 };
 
@@ -68,6 +69,7 @@ export const startGame: EngineHandler = (state) => {
         status: "playing",
         hasDragon: false,
         hand: [],
+        coord: undefined,
       };
     } else {
       playersWithoutColor.push(player.name);
@@ -97,11 +99,13 @@ export const startGame: EngineHandler = (state) => {
     deck,
     playerTurnsOrder: playerOrder,
   });
+
   return {
     board: emptytBoard,
     ...dealtState,
     playerTurnsOrder: playerOrder,
     gamePhase: "round1",
+    winners: [],
   };
 };
 
@@ -131,6 +135,7 @@ export const resetGame: EngineHandler = (state) => {
     gamePhase: "joining",
     playerTurnsOrder: [],
     selectedTile: undefined,
+    winners: [],
   };
 };
 
@@ -270,6 +275,24 @@ export const movePlayers: EngineHandler = (state) => {
     newPlayers = players ?? newPlayers;
     newDeck = deck ?? newDeck;
   }
+  let winners: string[] = [];
+  if (isGameOver) {
+    // There are still players alive, they win
+    if (newOrder.length) {
+      winners = newOrder;
+    } else {
+      // Last players to die win
+      winners = playerTurnsOrder;
+    }
+    winners.forEach((name) => {
+      newPlayers = {
+        ...newPlayers,
+        [name]: {
+          ...newPlayers[name],
+        },
+      };
+    });
+  }
 
   return {
     players: newPlayers,
@@ -277,6 +300,7 @@ export const movePlayers: EngineHandler = (state) => {
     playerTurnsOrder: newOrder,
     deck: newDeck,
     gamePhase: isGameOver ? "finished" : gamePhase,
+    winners,
   };
 };
 

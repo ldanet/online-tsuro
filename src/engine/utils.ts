@@ -165,6 +165,11 @@ export function isGameUpdateMessage(
     Array.isArray(state.playerTurnsOrder) &&
     state.playerTurnsOrder.every((val) => val && typeof val === "string") &&
     //
+    // Winners
+    hasProperty(state, "winners") &&
+    Array.isArray(state.winners) &&
+    state.winners.every((val) => val && typeof val === "string") &&
+    //
     // Deck
     hasProperty(state, "deck") &&
     Array.isArray(state.deck) &&

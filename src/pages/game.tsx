@@ -10,15 +10,13 @@ import { useEffect, useState } from "react";
 import { EngineState } from "../engine/types";
 import { useNetwork } from "../engine/network";
 
-const getHasGame = ({ myPlayer, isConnected, isLoading }: EngineState) =>
-  !!myPlayer && (isConnected || isLoading);
-const getPhase = ({ gamePhase }: EngineState) => gamePhase;
+const getHasGame = ({ isConnected, isLoading }: EngineState) =>
+  isConnected || isLoading;
 
 const Home: NextPage = () => {
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const hasGame = useEngine(getHasGame);
-  const phase = useEngine(getPhase);
 
   useNetwork();
 
@@ -42,11 +40,12 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>Tsuro</h1>
+        {/* Prevent game from pre-rendering on server as rehydration will fail because of session storage state */}
         {isMounted && (
           <>
             <GameStatus />
             <Board />
-            {phase === "main" && <Hand />}
+            <Hand />
           </>
         )}
       </main>

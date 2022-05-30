@@ -20,6 +20,7 @@ const broadcastGameUpdate = () => {
     gamePhase,
     playerTurnsOrder,
     availableColors,
+    winners,
     clientConns,
   } = useEngine.getState();
   const gameUpdateMessage: GameUpdateMessage = {
@@ -31,6 +32,7 @@ const broadcastGameUpdate = () => {
       board,
       gamePhase,
       availableColors,
+      winners,
     },
   };
   console.log("gameUpdateMessage: ", gameUpdateMessage);
@@ -177,6 +179,7 @@ const join = (hostId: string) => {
               gamePhase: state.gamePhase,
               playerTurnsOrder: state.playerTurnsOrder,
               availableColors: state.availableColors,
+              winners: state.winners,
             };
             useEngine.setState(update);
           }
@@ -215,7 +218,7 @@ const join = (hostId: string) => {
 
         conn.on("close", () => {
           alert("You have been disconnected.");
-          useEngine.setState({ myPlayer: undefined, isConnected: false });
+          useEngine.setState({ isConnected: false });
         });
       });
     });
@@ -237,10 +240,10 @@ export const useNetwork = () => {
   const setIsLoading = useEngine(getSetIsLoading);
 
   useEffect(() => {
-    setIsLoading(true);
     if ((!peer || peer.destroyed) && !importingPeer.current) {
+      setIsLoading(true);
+      importingPeer.current = true;
       const fn = async () => {
-        importingPeer.current = true;
         const PeerJs = (await import("peerjs")).default;
         importingPeer.current = false;
         peer = new PeerJs({ debug: 3 });
@@ -254,7 +257,12 @@ export const useNetwork = () => {
         }
 
         peer.on("error", (error) => {
+          if ((error as any).type === "peer-unavailable") {
+            alert("This game ID does not exist.");
+          }
           console.error(error);
+          setIsConnected(false);
+          setIsLoading(false);
         });
 
         peer.on("disconnected", () => {
@@ -267,13 +275,14 @@ export const useNetwork = () => {
 
   useEffect(() => {
     return () => {
-      // destroy peer when leaving the page
-      peer?.destroy();
-      // unsubscribe host
-      unsubGameUpdate && unsubGameUpdate();
+      if (!importingPeer.current && peer) {
+        // destroy peer when leaving the page
+        peer.destroy();
+        // unsubscribe host
+        unsubGameUpdate && unsubGameUpdate();
 
-      setIsConnected(false);
-      setIsLoading(false);
+        setIsConnected(false);
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

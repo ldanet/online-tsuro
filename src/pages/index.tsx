@@ -9,8 +9,16 @@ const Home: NextPage = () => {
   const router = useRouter();
   const nameInput = useRef<HTMLInputElement>(null);
   const gameIdInput = useRef<HTMLInputElement>(null);
-  const [createGame, joinGame] = useEngine(
-    useCallback(({ createGame, joinGame }) => [createGame, joinGame], [])
+  const [createGame, joinGame, myPlayer, hostId] = useEngine(
+    useCallback(
+      ({ createGame, joinGame, myPlayer, hostId }) => [
+        createGame,
+        joinGame,
+        myPlayer,
+        hostId,
+      ],
+      []
+    )
   );
 
   const handleClickHost = useCallback(() => {
@@ -51,7 +59,12 @@ const Home: NextPage = () => {
         <h2>Create or join a game</h2>
         <form>
           <label htmlFor="player-name">Your name</label>:{" "}
-          <input id="player-name" type="text" ref={nameInput} />
+          <input
+            id="player-name"
+            type="text"
+            ref={nameInput}
+            defaultValue={myPlayer ?? ""}
+          />
           <fieldset>
             <legend>Create new game</legend>
             <button onClick={handleClickHost} type="button">
@@ -61,7 +74,12 @@ const Home: NextPage = () => {
           <fieldset>
             <legend>Join existing game</legend>
             <label htmlFor="game-id">Game ID</label>:{" "}
-            <input id="game-id" type="text" ref={gameIdInput} />
+            <input
+              id="game-id"
+              type="text"
+              ref={gameIdInput}
+              defaultValue={hostId ?? ""}
+            />
             <button type="button" onClick={handleClickJoin}>
               Join
             </button>

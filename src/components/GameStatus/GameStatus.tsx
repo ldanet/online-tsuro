@@ -16,6 +16,7 @@ const geStartGame = ({ startGame }: EngineState) => startGame;
 
 const getPhase = ({ gamePhase }: EngineState) => gamePhase;
 const getIsHost = ({ isHost }: EngineState) => isHost;
+const getWinners = ({ winners }: EngineState) => winners;
 const getTurnOrder = ({ playerTurnsOrder }: EngineState) => playerTurnsOrder;
 
 const GameStatus = () => {
@@ -26,6 +27,7 @@ const GameStatus = () => {
   const resetGame = useEngine(getResetGame);
   const startGame = useEngine(geStartGame);
   const isHost = useEngine(getIsHost);
+  const winners = useEngine(getWinners);
   const turnOrder = useEngine(getTurnOrder);
   return (
     <>
@@ -48,7 +50,8 @@ const GameStatus = () => {
                 )}
               />
             )}
-            {status === "dead" && <>❌</>} {name}
+            {status === "dead" && <>❌</>} {name}{" "}
+            {winners.includes(name) && <>🏆</>}
           </div>
         ))}
       </div>

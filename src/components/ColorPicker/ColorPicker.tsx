@@ -13,12 +13,14 @@ const getHaspickedColors = ({ myPlayer, players }: EngineState) =>
   !!players[myPlayer]?.color;
 const getMyPlayer = ({ myPlayer }: EngineState) => myPlayer;
 const getPickColor = ({ pickColor }: EngineState) => pickColor;
+const getIsLoading = ({ isLoading }: EngineState) => isLoading;
 
 const ColorPicker = () => {
   const availableColors = useEngine(getAvailableColors);
   const hasPickedColor = useEngine(getHaspickedColors);
   const myPlayer = useEngine(getMyPlayer);
   const pickColor = useEngine(getPickColor);
+  const isLoading = useEngine(getIsLoading);
 
   const handleClick = useCallback(
     (color: PlayerColor) => {
@@ -27,7 +29,7 @@ const ColorPicker = () => {
     [pickColor, myPlayer]
   );
 
-  if (hasPickedColor) return null;
+  if (isLoading || hasPickedColor) return null;
   return (
     <>
       <defs>

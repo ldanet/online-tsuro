@@ -1,6 +1,9 @@
 .hand {
   margin-top: 1rem;
-  text-align: center;
+  display: flex;
+  flex-direction:column;
+  justify-content: center;
+  align-items: center;
 }
 
 .handTiles {
@@ -21,4 +24,9 @@
 .tileSvg {
   height: calc(var(--tile-size)* 1.33);
   width: var(--tile-size)* 1.33;
+}
+
+.hint {
+  margin:0;
+  font-size: 0.8rem;
 }

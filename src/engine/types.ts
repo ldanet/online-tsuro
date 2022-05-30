@@ -46,6 +46,7 @@ export type SharedGameState = {
   board: Board;
   playerTurnsOrder: string[];
   availableColors: PlayerColor[];
+  winners: string[];
 };
 
 export type LocalState = {
