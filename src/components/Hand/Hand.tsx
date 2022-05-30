@@ -7,7 +7,7 @@ import styles from "./Hand.module.css";
 
 const getHand = ({ players, myPlayer }: EngineState) => {
   const hand = players[myPlayer]?.hand;
-  return hand?.map((id) => (id === "dragon" ? id : tiles[id]));
+  return hand?.map((id) => tiles[id]);
 };
 
 const getIsMyTurn = ({ myPlayer, playerTurnsOrder }: EngineState) =>
@@ -59,7 +59,7 @@ const Hand = () => {
       </button>
       <div className={styles.handTiles}>
         {hand?.map((tile, i) =>
-          tile === "dragon" || !tile ? null : (
+          tile ? (
             <button
               key={tile.id}
               className={[
@@ -70,19 +70,22 @@ const Hand = () => {
               ].join(" ")}
               type="button"
               onClick={onTileClick.bind(null, i, tile)}
+              title="Click to select, click again to rotate"
             >
-              <svg className={styles.tileSvg} viewBox="0 0 30 30">
-                <Tile
-                  combination={
-                    tile.combinations[
-                      (rotations[i] ?? 0) % tile.combinations.length
-                    ]
-                  }
-                  noEdge
-                />
+              <svg className={styles.tileSvg} viewBox="0 0 40 40">
+                <g filter="url(#tile-shadow)" transform="translate(5 5)">
+                  <Tile
+                    combination={
+                      tile.combinations[
+                        (rotations[i] ?? 0) % tile.combinations.length
+                      ]
+                    }
+                    withEdge={selectedTile?.id === tile.id}
+                  />
+                </g>
               </svg>
             </button>
-          )
+          ) : null
         )}
       </div>
     </div>

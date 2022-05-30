@@ -1,0 +1,44 @@
+.player {
+  stroke-width: .75;
+  /* filter: url(#player-shadow); */
+}
+
+.player_red {
+  fill: var(--color-red);
+  stroke: var(--color-red-dark);
+}
+
+.player_blue {
+  fill: var(--color-blue);
+  stroke: var(--color-blue-dark);
+}
+
+.player_green {
+  fill: var(--color-green);
+  stroke: var(--color-green-dark);
+}
+
+.player_yellow {
+  fill: var(--color-yellow);
+  stroke: var(--color-yellow-dark);
+}
+
+.player_orange {
+  fill: var(--color-orange);
+  stroke: var(--color-orange-dark);
+}
+
+.player_purple {
+  fill: var(--color-purple);
+  stroke: var(--color-purple-dark);
+}
+
+.player_black {
+  fill: var(--color-black);
+  stroke: var(--color-black-dark);
+}
+
+.player_white {
+  fill: var(--color-white);
+  stroke: var(--color-white-dark);
+}

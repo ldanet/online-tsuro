@@ -1,11 +1,13 @@
+import { DataConnection } from "peerjs";
 import { TileID, tiles } from "../constants/tiles";
-import { emptytBoard } from "./constants";
+import { colors, emptytBoard } from "./constants";
 import {
   EngineHandler,
   EngineState,
   BoardTile,
   Players,
   Coordinate,
+  PlayerColor,
 } from "./types";
 import {
   getNextNotch,
@@ -14,32 +16,136 @@ import {
   shuffle,
 } from "./utils";
 
-export const createGame = (name: string): Partial<EngineState> => {
-  // const host = get().peer;
-  const deck = shuffle(Object.keys(tiles) as TileID[]);
-  const hand = [deck.shift()!, deck.shift()!, deck.shift()!];
+export const createGame: EngineHandler<[string]> = (
+  _,
+  name
+): Partial<EngineState> => {
   return {
-    deck,
+    deck: [],
     board: emptytBoard,
-    host: name,
+    isHost: true,
+    hostId: undefined,
     myPlayer: name,
+    availableColors: colors,
     players: {
       [name]: {
         name,
-        status: "alive",
-        hand,
-        color: "red",
+        status: "watching",
+        hand: [],
       },
     },
-    playerTurnsOrder: [name],
+    playerTurnsOrder: [],
     gamePhase: "joining",
   };
 };
 
-export const placePlayer: EngineHandler<[Coordinate]> = (state, coord) => {
+export const addPlayer: EngineHandler<[string, DataConnection]> = (
+  state,
+  name,
+  conn
+) => {
+  return {
+    players: {
+      ...state.players,
+      [name]: { name, status: "watching", hand: [] },
+    },
+    clientConns: { ...state.clientConns, [name]: conn },
+  };
+};
+
+export const startGame: EngineHandler = (state) => {
+  const { players } = state;
+  const deck = shuffle(Object.keys(tiles) as TileID[]);
+  const newPlayers = { ...players };
+  const playerOrder: string[] = [];
+  const playersWithoutColor: string[] = [];
+
+  Object.values(newPlayers).forEach((player) => {
+    if (player.color) {
+      playerOrder.push(player.name);
+      newPlayers[player.name] = {
+        ...player,
+        status: "playing",
+        hasDragon: false,
+        hand: [],
+      };
+    } else {
+      playersWithoutColor.push(player.name);
+    }
+  });
+
+  if (playerOrder.length < 8 && playersWithoutColor.length) {
+    const isPlural = playersWithoutColor.length > 1;
+    const lastPlayer = playersWithoutColor.shift();
+    if (
+      !confirm(
+        `${[playersWithoutColor.join(", "), lastPlayer]
+          .filter(Boolean)
+          .join(" and ")} ${
+          isPlural ? "have" : "has"
+        } not picked a colour and won't be part of the game.\nDo you want to start the game anyway?`
+      )
+    ) {
+      // cancel game
+      return {};
+    }
+  }
+
+  const dealtState = dealTiles({
+    ...state,
+    players: newPlayers,
+    deck,
+    playerTurnsOrder: playerOrder,
+  });
+  return {
+    board: emptytBoard,
+    ...dealtState,
+    playerTurnsOrder: playerOrder,
+    gamePhase: "round1",
+  };
+};
+
+export const resetGame: EngineHandler = (state) => {
+  // If no player is waiting to pick a colour we can start straight away
+  if (Object.values(state.players).every((p) => p.status !== "watching")) {
+    return startGame(state);
+  }
+
+  const deck = shuffle(Object.keys(tiles) as TileID[]);
+  const players = Object.keys(state.players).reduce((acc, name) => {
+    return {
+      ...acc,
+      [name]: {
+        ...state.players[name],
+        status: "watching" as const,
+        hand: [],
+        coord: undefined,
+        hasDragon: false,
+      },
+    };
+  }, {} as Players);
+  return {
+    deck,
+    players,
+    board: emptytBoard,
+    gamePhase: "joining",
+    playerTurnsOrder: [],
+    selectedTile: undefined,
+  };
+};
+
+export const placePlayer: EngineHandler<[string, Coordinate]> = (
+  state,
+  player,
+  coord
+) => {
   const { players, playerTurnsOrder, gamePhase } = state;
   if (gamePhase !== "round1") return {};
+
   const currentPlayer = players[playerTurnsOrder[0]];
+  // Do nothing if it's not this players' turn
+  if (player !== currentPlayer.name) return {};
+
   const newPlayers = {
     ...state.players,
     [currentPlayer.name]: { ...currentPlayer, coord },
@@ -54,6 +160,39 @@ export const placePlayer: EngineHandler<[Coordinate]> = (state, coord) => {
   };
 };
 
+const dealTiles: EngineHandler<[number?]> = (state) => {
+  const { deck, players, playerTurnsOrder } = state;
+  let newPlayers = { ...players };
+  let newDeck = [...deck];
+
+  let playerIndex = playerTurnsOrder.findIndex(
+    (name) => newPlayers[name].hasDragon
+  );
+  if (playerIndex === -1) playerIndex = 0;
+
+  // as long as player still have room in their hand and there are tiles to be dealt
+  while (
+    newDeck.length &&
+    playerTurnsOrder.some((name) => newPlayers[name]?.hand.length < 3)
+  ) {
+    const player = newPlayers[playerTurnsOrder[playerIndex]];
+
+    if (player.hand.length! < 3 && player.status === "playing") {
+      const newTile = newDeck.shift() as TileID;
+      newPlayers = {
+        ...newPlayers,
+        [player.name]: {
+          ...player,
+          hand: [...player.hand, newTile],
+          hasDragon: false,
+        },
+      };
+    }
+    playerIndex = (playerIndex + 1) % playerTurnsOrder.length;
+  }
+  return { deck: newDeck, players: newPlayers };
+};
+
 export const movePlayers: EngineHandler = (state) => {
   const { board, players, playerTurnsOrder, deck, gamePhase } = state;
   let newPlayers = { ...players };
@@ -62,7 +201,7 @@ export const movePlayers: EngineHandler = (state) => {
   let newDeck = [...deck];
   playerTurnsOrder.forEach((name) => {
     const player = { ...newPlayers[name] };
-    if (player.status === "alive" && player.coord) {
+    if (player.status === "playing" && player.coord) {
       let keepOn = true;
 
       while (keepOn) {
@@ -74,27 +213,15 @@ export const movePlayers: EngineHandler = (state) => {
         if (playerCollision || col < 0 || col >= 6 || row < 0 || row >= 6) {
           player.coord = { row, col, notch };
           player.status = "dead";
-          if (player.hand) {
-            newDeck = [
-              ...newDeck.filter((t) => t !== "dragon"),
-              ...player.hand.filter((t) => t !== "dragon"),
-              "dragon",
-            ];
-            player.hand = undefined;
-          }
+          newDeck = [...newDeck, ...player.hand];
+          player.hand = [];
           newPlayers = { ...newPlayers, [player.name]: player };
           newOrder = newOrder.filter((p) => p !== player.name);
           if (playerCollision) {
             const collider = { ...newPlayers[playerCollision] };
             collider.status = "dead";
-            if (collider.hand) {
-              newDeck = [
-                ...newDeck.filter((t) => t !== "dragon"),
-                ...collider.hand.filter((t) => t !== "dragon"),
-                "dragon",
-              ];
-              player.hand = undefined;
-            }
+            newDeck = [...newDeck, ...collider.hand];
+            player.hand = [];
             newPlayers = { ...newPlayers, [collider.name]: collider };
             newOrder = newOrder.filter((p) => p !== collider.name);
           }
@@ -121,17 +248,29 @@ export const movePlayers: EngineHandler = (state) => {
           };
 
           newBoard[row][col] = newTile;
-          console.log("newBoard: ", newBoard);
         }
       }
     }
   });
   const isGameOver =
     newOrder.length < Math.min(Object.keys(players).length, 2) ||
-    (newDeck.filter((t) => t && t !== "dragon").length <= 0 &&
+    (newDeck.filter(Boolean).length <= 0 &&
       Object.values(newPlayers).every(
-        (p) => !p.hand || p.hand.filter((t) => t && t !== "dragon").length <= 0
+        (p) => !p.hand || p.hand.filter(Boolean).length <= 0
       ));
+
+  // distribute tiles if the deck has been replenished
+  if (!isGameOver && newDeck.length) {
+    const { players, deck } = dealTiles({
+      ...state,
+      playerTurnsOrder: newOrder,
+      deck: newDeck,
+      players: newPlayers,
+    });
+    newPlayers = players ?? newPlayers;
+    newDeck = deck ?? newDeck;
+  }
+
   return {
     players: newPlayers,
     board: newBoard,
@@ -144,9 +283,9 @@ export const movePlayers: EngineHandler = (state) => {
 export const playTile: EngineHandler<[string, BoardTile]> = (
   state,
   player,
-  tile
+  { id: tileId, combination }
 ) => {
-  const { players, board, playerTurnsOrder, deck } = state;
+  const { players, board, playerTurnsOrder, deck, myPlayer } = state;
 
   // do nothing if it's not this player's turn
   if (player !== playerTurnsOrder[0]) return {};
@@ -157,19 +296,26 @@ export const playTile: EngineHandler<[string, BoardTile]> = (
   if (coord) {
     const { row, col } = getNextTileCoordinate(coord);
     newBoard[row] = [...board[row]];
-    newBoard[row][col] = tile;
+    newBoard[row][col] = { id: tileId, combination };
   }
 
   // new hand
+  const newHand = players[player].hand?.filter((id) => id !== tileId) ?? [];
+  const isEmptyDeck = deck.length === 0;
+  const isDragonAvailable = Object.values(players).every((p) => !p.hasDragon);
   const newDeck = [...deck];
-  const newTile = newDeck.shift() as TileID;
-  const newHand = [
-    ...(players[player].hand?.filter((id) => id !== tile.id) ?? []),
-    newTile,
-  ];
+
+  if (!isEmptyDeck) {
+    const newTile = newDeck.shift() as TileID;
+    newHand.push(newTile);
+  }
   const newPlayers = {
     ...players,
-    [player]: { ...players[player], hand: newHand },
+    [player]: {
+      ...players[player],
+      hand: newHand,
+      hasDragon: isDragonAvailable && isEmptyDeck,
+    },
   };
 
   // move players
@@ -186,30 +332,43 @@ export const playTile: EngineHandler<[string, BoardTile]> = (
   return {
     ...movedState,
     playerTurnsOrder: getNextTurnOrder(playerTurnsOrder),
-    selectedTile: undefined,
+    selectedTile: myPlayer === player ? undefined : state.selectedTile,
   };
 };
 
-export const resetGame: EngineHandler = (state) => {
-  const deck = [...shuffle(Object.keys(tiles) as TileID[]), "dragon" as const];
-  const players = Object.keys(state.players).reduce((acc, name) => {
-    return {
-      ...acc,
-      [name]: {
-        ...state.players[name],
-        status: "alive" as const,
-        hand: [deck.shift()!, deck.shift()!, deck.shift()!],
-        coord: undefined,
-      },
-    };
-  }, {} as Players);
+export const pickColor: EngineHandler<[string, PlayerColor]> = (
+  state,
+  name,
+  color
+) => {
+  const { players, availableColors } = state;
+  const player = { ...players[name] };
+  player.color = color;
   return {
-    deck,
-    players,
+    players: {
+      ...players,
+      [name]: player,
+    },
+    availableColors: availableColors.filter((c) => color !== c),
+  };
+};
+
+export const joinGame: EngineHandler<[string, string]> = (_, name, hostId) => {
+  return {
+    deck: [],
+    hostId,
+    isHost: false,
     board: emptytBoard,
-    gamePhase: "round1",
-    playerTurn: Object.keys(state.players)[0],
-    playerTurnsOrder: Object.keys(state.players),
-    selectedTile: undefined,
+    myPlayer: name,
+    players: {
+      [name]: {
+        name,
+        status: "watching",
+        hand: [],
+      },
+    },
+    playerTurnsOrder: [],
+    gamePhase: "joining",
+    availableColors: [],
   };
 };

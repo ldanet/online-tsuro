@@ -1,11 +1,13 @@
 import { Fragment, memo, useCallback } from "react";
-import { Edge, EdgeProps, EdgeType } from "../Edge/Edge";
+import { Edge, EdgeType } from "../Edge/Edge";
 import { useEngine } from "../../engine/store";
 import { getNextTileCoordinate } from "../../engine/utils";
 import Tile from "../Tile/Tile";
 import styles from "./Board.module.css";
-import { Combination, notchCoordinates } from "../../constants/tiles";
 import { BoardTile, Notch } from "../../engine/types";
+import Players from "../Players/Players";
+import { getTranslate } from "../../utils/math";
+import ColorPicker from "../ColorPicker/ColorPicker";
 
 type BoardTileProps = {
   row: number;
@@ -18,7 +20,7 @@ const BoardTile = ({ tile, row, col }: BoardTileProps) => {
     <Tile
       combination={tile.combination}
       coloredPairs={tile.coloredPairs}
-      transform={`translate(${col * 30 + 5}, ${row * 30 + 5})`}
+      transform={getTranslate(row, col)}
     />
   );
 };
@@ -30,9 +32,12 @@ type BoardEdgeProps = {
 };
 
 const BoardEdge = ({ type, row, col }: BoardEdgeProps) => {
-  const isClickable = useEngine(
+  const [isClickable, myPlayer] = useEngine(
     useCallback(({ gamePhase, myPlayer, playerTurnsOrder }) => {
-      return gamePhase === "round1" && myPlayer === playerTurnsOrder[0];
+      return [
+        gamePhase === "round1" && myPlayer === playerTurnsOrder[0],
+        myPlayer,
+      ];
     }, [])
   );
   const placePlayer = useEngine(
@@ -40,29 +45,25 @@ const BoardEdge = ({ type, row, col }: BoardEdgeProps) => {
   );
   const handleClick = useCallback(
     (notch: Notch) => {
-      placePlayer({ row, col, notch });
+      placePlayer(myPlayer, { row, col, notch });
     },
-    [row, col, placePlayer]
+    [row, col, myPlayer, placePlayer]
   );
   const clickableProps = isClickable
     ? { isClickable, onClick: handleClick }
     : {};
   return (
-    <Edge
-      type={type}
-      transform={`translate(${col * 30 + 5}, ${row * 30 + 5})`}
-      {...clickableProps}
-    />
+    <Edge type={type} transform={getTranslate(row, col)} {...clickableProps} />
   );
 };
 
 const Board = () => {
-  const { board, selectedTile, selectedTileCoord, players } = useEngine(
+  const { board, gamePhase, selectedTile, selectedTileCoord } = useEngine(
     useCallback(
-      ({ board, selectedTile, players, myPlayer }) => ({
+      ({ board, selectedTile, players, myPlayer, gamePhase }) => ({
         board,
+        gamePhase,
         selectedTile,
-        players: Object.values(players),
         selectedTileCoord:
           players[myPlayer]?.coord &&
           getNextTileCoordinate(players[myPlayer]?.coord!),
@@ -70,9 +71,18 @@ const Board = () => {
       []
     )
   );
-  console.log("selectedTileCoord: ", selectedTileCoord);
   return (
     <svg viewBox="0 0 190 190" className={styles.board}>
+      <defs>
+        <filter id="tile-shadow" colorInterpolationFilters="sRGB">
+          <feDropShadow
+            dx="0.2"
+            dy="0.2"
+            stdDeviation=".3"
+            floodOpacity="0.5"
+          />
+        </filter>
+      </defs>
       {new Array(6).fill(true).map((_, i) => (
         <BoardEdge key={i} type="top" row={-1} col={i} />
       ))}
@@ -83,35 +93,26 @@ const Board = () => {
         <Fragment key={ri}>
           <BoardEdge type="left" row={ri} col={-1} />
           <BoardEdge type="right" row={ri} col={6} />
-          {row.map((col, ci) => {
-            return col ? (
-              <BoardTile key={`${ri}-${ci}`} tile={col} row={ri} col={ci} />
-            ) : (
-              selectedTile &&
-                ri == selectedTileCoord?.row &&
-                ci === selectedTileCoord?.col && (
-                  <Tile
-                    key={`${ri}-${ci}`}
-                    combination={selectedTile.combination}
-                    transform={`translate(${ci * 30 + 5}, ${ri * 30 + 5})`}
-                    opacity=".5"
-                  />
+          <g filter="url(#tile-shadow)">
+            {row.map((col, ci) => {
+              return (
+                col && (
+                  <BoardTile key={`${ri}-${ci}`} tile={col} row={ri} col={ci} />
                 )
-            );
-          })}
-          {players.map(({ coord, name, status, color }) =>
-            coord && status === "alive" ? (
-              <circle
-                className={styles[`player_${color}`]}
-                key={name}
-                cx={coord.col * 30 + 5 + notchCoordinates[coord.notch].x}
-                cy={coord.row * 30 + 5 + notchCoordinates[coord.notch].y}
-                r="3"
-              />
-            ) : null
-          )}
+              );
+            })}
+          </g>
         </Fragment>
       ))}
+      {selectedTile && selectedTileCoord && (
+        <Tile
+          combination={selectedTile.combination}
+          transform={getTranslate(selectedTileCoord.row, selectedTileCoord.col)}
+          opacity={0.5}
+        />
+      )}
+      {gamePhase === "joining" && <ColorPicker />}
+      <Players />
     </svg>
   );
 };

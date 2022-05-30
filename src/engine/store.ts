@@ -1,42 +1,103 @@
-import Peer from "peerjs";
 import create from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, subscribeWithSelector } from "zustand/middleware";
 import { EngineState } from "./types";
-import { TileID, tiles } from "../constants/tiles";
-import { getNextTileCoordinate, shuffle } from "./utils";
 import { emptytBoard } from "./constants";
-import { createGame, placePlayer, playTile, resetGame } from "./handlers";
+import {
+  addPlayer,
+  createGame,
+  joinGame,
+  pickColor,
+  placePlayer,
+  playTile,
+  resetGame,
+  startGame,
+} from "./handlers";
 
 export const useEngine = create<
   EngineState,
-  [["zustand/persist", Partial<EngineState>]]
+  [
+    ["zustand/persist", Partial<EngineState>],
+    ["zustand/subscribeWithSelector", Partial<EngineState>]
+  ]
 >(
   persist(
-    (set, get) => ({
+    subscribeWithSelector((set, get) => ({
       deck: [],
       players: {},
-      playerTurnsOrder: [],
-      gamePhase: "joining",
       board: emptytBoard,
-      host: "",
+      gamePhase: "joining",
+      playerTurnsOrder: [],
+      availableColors: [],
+
       myPlayer: "",
-      // peer: new Peer(),
+
+      isLoading: false,
+      isConnected: false,
+      peer: null,
+      isHost: false,
+      hostConn: null,
+      clientConns: {},
+
+      // Actions
+      setPeer: (peer) => {
+        set({ peer });
+      },
+      setIsLoading: (isLoading) => {
+        set({ isLoading });
+      },
+      setIsConnected: (isConnected) => {
+        set({ isConnected });
+      },
       createGame: (name) => {
-        set(createGame(name));
+        set((state) => createGame(state, name));
+      },
+      resetGame: () => {
+        set(resetGame);
+      },
+      startGame: () => {
+        set(startGame);
+      },
+      joinGame: (name, hostId) => {
+        set((state) => joinGame(state, name, hostId));
+      },
+      addPlayer: (name, conn) => {
+        set((state) => addPlayer(state, name, conn));
       },
       selectTile: (tile) => {
         set({ selectedTile: tile });
       },
       playTile: (player, tile) => {
+        const { isHost, hostConn } = get();
+        if (!isHost && hostConn) {
+          hostConn.send({ type: "playTile", tile });
+        }
         set((state) => playTile(state, player, tile));
       },
-      resetGame: () => {
-        set(resetGame);
+
+      placePlayer: (player, coord) => {
+        const { isHost, hostConn } = get();
+        if (!isHost && hostConn) {
+          hostConn.send({ type: "placePlayer", coord });
+        }
+        set((state) => placePlayer(state, player, coord));
       },
-      placePlayer: (coord) => {
-        set((state) => placePlayer(state, coord));
+      pickColor: (player, color) => {
+        const { isHost, hostConn } = get();
+        if (!isHost && hostConn) {
+          hostConn.send({ type: "pickColor", color });
+        }
+        set((state) => pickColor(state, player, color));
       },
-    }),
-    { name: "tsuro-game" }
+    })),
+    {
+      name: "tsuro-game",
+      getStorage: () => sessionStorage,
+      partialize: (state) =>
+        Object.fromEntries(
+          Object.entries(state).filter(
+            ([key]) => !["peer", "hostConn", "clientConns"].includes(key)
+          )
+        ),
+    }
   )
 );

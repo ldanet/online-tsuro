@@ -2,11 +2,24 @@
   fill: var(--tile-color);
 }
 
+.line_bg {
+  stroke-width: 1.5;
+  stroke: var(--tile-color);
+  fill: none;
+}
+
 .line {
   stroke-width: 1;
   stroke: var(--line-color);
   fill: none;
 }
+
+.edge {
+  stroke-width: 1.5;
+  stroke: var(--edge-color);
+  fill: none;
+}
+
 
 .line_colored {
   stroke-width: 3;
@@ -56,11 +69,5 @@
 .line_white {
   stroke-width: 2;
   stroke: var(--color-white);
-  fill: none;
-}
-
-.edge {
-  stroke-width: .5;
-  stroke: var(--edge-color);
   fill: none;
 }

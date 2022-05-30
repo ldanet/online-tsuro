@@ -2,20 +2,42 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { useEngine } from "../engine/store";
-import { ChangeEvent, useCallback, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const name = useRef("");
-  const createGame = useEngine(useCallback(({ createGame }) => createGame, []));
-  const handleNameChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    name.current = e.target.value;
-  }, []);
+  const nameInput = useRef<HTMLInputElement>(null);
+  const gameIdInput = useRef<HTMLInputElement>(null);
+  const [createGame, joinGame] = useEngine(
+    useCallback(({ createGame, joinGame }) => [createGame, joinGame], [])
+  );
+
   const handleClickHost = useCallback(() => {
+    if (!nameInput.current?.value) {
+      alert("Please enter your name to playing.");
+      nameInput.current?.focus();
+      return;
+    }
+    createGame(nameInput.current.value);
     router.push("/game");
-    createGame(name.current);
   }, [router, createGame]);
+
+  const handleClickJoin = useCallback(() => {
+    if (!nameInput.current?.value) {
+      alert("Please enter your name to start playing.");
+      nameInput.current?.focus();
+      return;
+    }
+    if (!gameIdInput.current?.value) {
+      alert("Please enter the ID for the game you wish to join.");
+      gameIdInput.current?.focus();
+      return;
+    }
+    joinGame(nameInput.current.value, gameIdInput.current.value);
+    router.push("/game");
+  }, [router, joinGame]);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -26,9 +48,10 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>Tsuro</h1>
+        <h2>Create or join a game</h2>
         <form>
           <label htmlFor="player-name">Your name</label>:{" "}
-          <input id="player-name" type="text" onChange={handleNameChange} />
+          <input id="player-name" type="text" ref={nameInput} />
           <fieldset>
             <legend>Create new game</legend>
             <button onClick={handleClickHost} type="button">
@@ -38,10 +61,19 @@ const Home: NextPage = () => {
           <fieldset>
             <legend>Join existing game</legend>
             <label htmlFor="game-id">Game ID</label>:{" "}
-            <input id="game-id" type="text" />
-            <button type="button">Join</button>
+            <input id="game-id" type="text" ref={gameIdInput} />
+            <button type="button" onClick={handleClickJoin}>
+              Join
+            </button>
           </fieldset>
         </form>
+        {/* <h2>How is your data used?</h2>
+        <p>
+          Your name will only be used for display on the screen of player&apos;s
+          who have joined the same game as you. It will be stored temporarily in
+          their browser along with the moves you make in game for the game to
+          work. This data will not be sent to or stored on any server.
+        </p> */}
       </main>
     </div>
   );

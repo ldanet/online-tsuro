@@ -7,22 +7,18 @@
   display: flex;
   align-items: center;
   text-align: center;
-  gap: 2rem;
-  margin-top: 1rem;
+  gap: 1rem;
 }
 
 .tileButton {
-  border: 3px solid transparent;
+  border: none;
   background: none;
   padding: 0;
   line-height: 0;
 }
 
-.tileButton--selected {
-  border-color: var(--edge-color);
-}
 
 .tileSvg {
-  height: var(--tile-size);
-  width: var(--tile-size);
+  height: calc(var(--tile-size)* 1.33);
+  width: var(--tile-size)* 1.33;
 }

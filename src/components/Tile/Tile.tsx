@@ -76,11 +76,18 @@ type LineProps = { pair: keyof typeof pairToLine; isColored?: boolean };
 const Line = ({ pair }: LineProps) => {
   const { type, transform } = pairToLine[pair];
   return (
-    <path
-      className={styles.line}
-      d={lineTypeToPath[type]}
-      transform={transform}
-    />
+    <>
+      <path
+        className={styles.line_bg}
+        d={lineTypeToPath[type]}
+        transform={transform}
+      />
+      <path
+        className={styles.line}
+        d={lineTypeToPath[type]}
+        transform={transform}
+      />
+    </>
   );
 };
 const ColoredLine = ({ pair, color }: ColorLineProps) => {
@@ -103,14 +110,19 @@ const ColoredLine = ({ pair, color }: ColorLineProps) => {
 
 type TileProps = JSX.IntrinsicElements["g"] & {
   combination: Combination;
-  noEdge?: boolean;
+  withEdge?: boolean;
   coloredPairs?: ColoredPair[];
 };
 
-const Tile = ({ combination, noEdge, coloredPairs, ...gProps }: TileProps) => {
+const Tile = ({
+  combination,
+  withEdge,
+  coloredPairs,
+  ...gProps
+}: TileProps) => {
   return (
     <g {...gProps}>
-      <path d="M0 0L30 0L30 30L0 30 z" className={styles.tile} />
+      <rect x="0" y="0" width="30" height="30" rx="2" className={styles.tile} />
       {combination.map((pair) => (
         <Line
           key={pair}
@@ -121,7 +133,16 @@ const Tile = ({ combination, noEdge, coloredPairs, ...gProps }: TileProps) => {
       {coloredPairs?.map(({ pair, color }) => (
         <ColoredLine key={pair} pair={pair} color={color} />
       ))}
-      {!noEdge && <path d="M0 0L30 0L30 30L0 30 z" className={styles.edge} />}
+      {withEdge && (
+        <rect
+          x="0"
+          y="0"
+          width="30"
+          height="30"
+          rx="2"
+          className={styles.edge}
+        />
+      )}
     </g>
   );
 };

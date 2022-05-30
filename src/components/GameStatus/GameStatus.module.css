@@ -1,0 +1,101 @@
+.players {
+  display: flex;
+  margin: 1rem;
+  gap: 1rem;
+}
+
+.player_pill {
+  padding: 0.5rem;
+  display: flex;
+  gap: .4rem;
+  border: 1px solid;
+  border-radius: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.player_pill__turn {
+  border-width: 3px ;
+}
+
+.player_token {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: .6rem;
+  border: .2rem solid;
+  filter: drop-shadow(.05rem .05rem .05rem rgba(0, 0, 0, 0.2));
+}
+
+
+.player_pill__red {
+  border-color: var(--color-red-dark);
+}
+
+.player_pill__blue {
+  border-color: var(--color-blue-dark);
+}
+
+.player_pill__green {
+  border-color: var(--color-green-dark);
+}
+
+.player_pill__yellow {
+  border-color: var(--color-yellow-dark);
+}
+
+.player_pill__orange {
+  border-color: var(--color-orange-dark);
+}
+
+.player_pill__purple {
+  border-color: var(--color-purple-dark);
+}
+
+.player_pill__black {
+  border-color: var(--color-black-dark);
+}
+
+.player_pill__white {
+  border-color: var(--color-white-dark);
+}
+
+
+.player_token__red {
+  background-color: var(--color-red);
+  border-color: var(--color-red-dark);
+}
+
+.player_token__blue {
+  background-color: var(--color-blue);
+  border-color: var(--color-blue-dark);
+}
+
+.player_token__green {
+  background-color: var(--color-green);
+  border-color: var(--color-green-dark);
+}
+
+.player_token__yellow {
+  background-color: var(--color-yellow);
+  border-color: var(--color-yellow-dark);
+}
+
+.player_token__orange {
+  background-color: var(--color-orange);
+  border-color: var(--color-orange-dark);
+}
+
+.player_token__purple {
+  background-color: var(--color-purple);
+  border-color: var(--color-purple-dark);
+}
+
+.player_token__black {
+  background-color: var(--color-black);
+  border-color: var(--color-black-dark);
+}
+
+.player_token__white {
+  background-color: var(--color-white);
+  border-color: var(--color-white-dark);
+}

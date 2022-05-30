@@ -3,32 +3,3 @@
   width: calc(var(--tile-size)* 6.4);
   height: calc(var(--tile-size)* 6.4);
 }
-
-.player_red {
-  fill: var(--color-red);
-}
-
-.player_blue {
-  fill: var(--color-blue);
-}
-
-.player_green {
-  fill: var(--color-green);
-}
-
-.player_yellow {
-  fill: var(--color-yellow);
-}
-
-.player_orange {
-  fill: var(--color-orange);
-}
-.player_purple {
-  fill: var(--color-purple);
-}
-.player_black {
-  fill: var(--color-black);
-}
-.player_white {
-  fill: var(--color-white);
-}

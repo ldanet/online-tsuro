@@ -1,4 +1,4 @@
-const pairs = [
+export const pairs = [
   "01",
   "02",
   "03",
@@ -292,6 +292,9 @@ export const tiles = {
 } as const;
 
 export type TileID = keyof typeof tiles;
+
+export const tileIds = Object.keys(tiles) as TileID[];
+
 export type TileType = typeof tiles[TileID];
 
 export const notchCoordinates = {

@@ -8,29 +8,30 @@ import { useRouter } from "next/router";
 import { useEngine } from "../engine/store";
 import { useEffect, useState } from "react";
 import { EngineState } from "../engine/types";
+import { useNetwork } from "../engine/network";
 
-const getHasGame = ({ playerTurnsOrder }: EngineState) =>
-  playerTurnsOrder.length;
-
-const getResetGame = ({ resetGame }: EngineState) => resetGame;
-
+const getHasGame = ({ myPlayer, isConnected, isLoading }: EngineState) =>
+  !!myPlayer && (isConnected || isLoading);
 const getPhase = ({ gamePhase }: EngineState) => gamePhase;
 
 const Home: NextPage = () => {
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const hasGame = useEngine(getHasGame);
-  const resetGame = useEngine(getResetGame);
   const phase = useEngine(getPhase);
 
+  useNetwork();
+
   useEffect(() => {
-    if (!hasGame) {
+    if (!hasGame && isMounted) {
       router.replace("/");
     }
-  }, [hasGame, router]);
+  }, [hasGame, router, isMounted]);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -45,13 +46,7 @@ const Home: NextPage = () => {
           <>
             <GameStatus />
             <Board />
-            {phase === "joining" && (
-              <button onClick={resetGame}>Start game</button>
-            )}
             {phase === "main" && <Hand />}
-            {phase === "finished" && (
-              <button onClick={resetGame}>New game</button>
-            )}
           </>
         )}
       </main>

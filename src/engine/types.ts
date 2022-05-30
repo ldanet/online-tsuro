@@ -10,7 +10,7 @@ export type PlayerColor =
   | "black"
   | "white";
 
-export type PlayerStatus = "alive" | "dead";
+export type PlayerStatus = "playing" | "dead" | "watching";
 
 export type Notch = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7";
 
@@ -21,7 +21,8 @@ export type Player = {
   color?: PlayerColor;
   status: PlayerStatus;
   coord?: Coordinate;
-  hand?: (TileID | "dragon")[];
+  hand: TileID[];
+  hasDragon?: boolean;
 };
 
 export type Players = { [name: string]: Player };
@@ -38,27 +39,60 @@ export type Board = (BoardTile | null)[][];
 
 export type GamePhase = "joining" | "round1" | "main" | "finished";
 
-export type EngineState = {
-  deck: (TileID | "dragon")[];
+export type SharedGameState = {
+  deck: TileID[];
   players: Players;
   gamePhase: GamePhase;
   board: Board;
-  host: string;
-  myPlayer: string;
   playerTurnsOrder: string[];
-  createGame: (name: string) => void;
-  placePlayer: (coord: Coordinate) => void;
-  selectedTile?: BoardTile;
-  selectTile?: (tile: { id: TileID; combination: Combination }) => void;
-  playTile: (
-    player: string,
-    tile: { id: TileID; combination: Combination }
-  ) => void;
-  resetGame: () => void;
-  // peer: Peer;
+  availableColors: PlayerColor[];
 };
+
+export type LocalState = {
+  // Game
+  myPlayer: string;
+  selectedTile?: BoardTile;
+
+  // Network
+  isLoading: boolean;
+  isConnected: boolean;
+  hostId?: string;
+  isHost: boolean;
+  peer: TPeer | null;
+  hostConn: TDataConnection | null;
+  clientConns: { [name: string]: TDataConnection };
+};
+
+export type Actions = {
+  // Client only
+  joinGame: (name: string, hostId: string) => void;
+
+  // Host only
+  createGame: (name: string) => void;
+  resetGame: () => void;
+  startGame: () => void;
+  addPlayer: (name: string, conn: TDataConnection) => void;
+
+  // Network
+  setPeer: (peer: TPeer) => void;
+  setIsLoading: (isLoading: boolean) => void;
+  setIsConnected: (isConnected: boolean) => void;
+
+  // Game
+  selectTile: (tile: BoardTile) => void;
+  placePlayer: (player: string, coord: Coordinate) => void;
+  playTile: (player: string, tile: BoardTile) => void;
+  pickColor: (player: string, color: PlayerColor) => void;
+};
+
+export type EngineState = SharedGameState & LocalState & Actions;
 
 export type EngineHandler<Args extends unknown[] = []> = (
   state: EngineState,
   ...args: Args
 ) => Partial<EngineState>;
+
+export type GameUpdateMessage = {
+  type: "gameUpdate";
+  state: SharedGameState;
+};
