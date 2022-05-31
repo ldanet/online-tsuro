@@ -9,12 +9,7 @@ import {
   getSetPeer,
 } from "./selectors";
 import { useEngine } from "./store";
-import {
-  EngineState,
-  GameUpdateMessage,
-  PlayerColor,
-  SharedGameState,
-} from "./types";
+import { GameUpdateMessage, PlayerColor, SharedGameState } from "./types";
 import { isBoardTile, isCoordinate, isGameUpdateMessage } from "./utils";
 
 let peer: TPeer | null = null;
@@ -42,7 +37,6 @@ const broadcastGameUpdate = () => {
       winners,
     },
   };
-  console.log("gameUpdateMessage: ", gameUpdateMessage);
   Object.values(clientConns).forEach((conn) => {
     conn.send(gameUpdateMessage);
   });
@@ -75,7 +69,6 @@ const host = () => {
     // Keep player name
     let name: string;
     conn.on("data", (message) => {
-      console.log("message: ", message);
       if (hasProperty(message, "type")) {
         switch (message.type) {
           case "handShake": {
@@ -85,13 +78,6 @@ const host = () => {
               typeof message.name === "string"
             ) {
               // In case player with same name already exists
-              message.name;
-              console.log("message.name: ", message.name);
-              console.log(
-                "useEngine.getState().players: ",
-                Object.keys(useEngine.getState().players),
-                Object.keys(useEngine.getState().players).includes(message.name)
-              );
               if (
                 Object.keys(useEngine.getState().players).includes(message.name)
               ) {

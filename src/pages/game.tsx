@@ -2,13 +2,13 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import Board from "../components/Board/Board";
-import Hand from "../components/Hand/Hand";
 import GameStatus from "../components/GameStatus/GameStatus";
 import { useRouter } from "next/router";
 import { useEngine } from "../engine/store";
 import { useEffect, useState } from "react";
 import { EngineState } from "../engine/types";
 import { useNetwork } from "../engine/network";
+import PlayerActions from "../components/PlayerActions/PlayerActions";
 
 const getHasGame = ({ isConnected, isLoading }: EngineState) =>
   isConnected || isLoading;
@@ -45,7 +45,7 @@ const Home: NextPage = () => {
           <>
             <GameStatus />
             <Board />
-            <Hand />
+            <PlayerActions />
           </>
         )}
       </main>

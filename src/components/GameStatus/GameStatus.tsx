@@ -49,16 +49,6 @@ const GameStatus = () => {
           </div>
         ))}
       </div>
-      {isHost && (
-        <>
-          {phase === "joining" && (
-            <button onClick={startGame}>Start game</button>
-          )}
-          {phase === "finished" && (
-            <button onClick={resetGame}>New game</button>
-          )}
-        </>
-      )}
     </>
   );
 };

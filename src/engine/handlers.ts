@@ -1,5 +1,6 @@
 import { DataConnection } from "peerjs";
 import { TileID, tiles } from "../constants/tiles";
+import { formatListHumanReadable } from "../utils/strings";
 import { colors, emptytBoard } from "./constants";
 import {
   EngineHandler,
@@ -78,12 +79,9 @@ export const startGame: EngineHandler = (state) => {
 
   if (playerOrder.length < 8 && playersWithoutColor.length) {
     const isPlural = playersWithoutColor.length > 1;
-    const lastPlayer = playersWithoutColor.shift();
     if (
       !confirm(
-        `${[playersWithoutColor.join(", "), lastPlayer]
-          .filter(Boolean)
-          .join(" and ")} ${
+        `${formatListHumanReadable(playersWithoutColor)} ${
           isPlural ? "have" : "has"
         } not picked a colour and won't be part of the game.\nDo you want to start the game anyway?`
       )
