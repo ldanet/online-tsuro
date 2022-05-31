@@ -198,6 +198,30 @@ const dealTiles: EngineHandler<[number?]> = (state) => {
   return { deck: newDeck, players: newPlayers };
 };
 
+const giveDragonToNextPlayer = (
+  playerName: string,
+  players: Players,
+  turnOrder: string[]
+) => {
+  const player = players[playerName];
+  const playerTurn = turnOrder.findIndex((p) => p === playerName);
+  const order = [
+    ...turnOrder.slice(playerTurn),
+    ...turnOrder.slice(0, playerTurn),
+  ];
+  if (player.hasDragon) {
+    const nextPlayer = order.find((p) => players[p].hand.length < 3);
+    if (nextPlayer) {
+      return {
+        ...players,
+        [nextPlayer]: { ...players[nextPlayer], hasDragon: true },
+        [playerName]: { ...players[playerName], hasDragon: false },
+      };
+    }
+  }
+  return players;
+};
+
 export const movePlayers: EngineHandler = (state) => {
   const { board, players, playerTurnsOrder, deck, gamePhase } = state;
   let newPlayers = { ...players };
@@ -216,18 +240,27 @@ export const movePlayers: EngineHandler = (state) => {
           return c && c.col === col && c.row === row && c.notch === notch;
         });
         if (playerCollision || col < 0 || col >= 6 || row < 0 || row >= 6) {
+          // Kill current player
           player.coord = { row, col, notch };
           player.status = "dead";
           newDeck = [...newDeck, ...player.hand];
           player.hand = [];
           newPlayers = { ...newPlayers, [player.name]: player };
+          newPlayers = giveDragonToNextPlayer(player.name, players, newOrder);
           newOrder = newOrder.filter((p) => p !== player.name);
+
           if (playerCollision) {
+            // Kill the player they collidede with
             const collider = { ...newPlayers[playerCollision] };
             collider.status = "dead";
             newDeck = [...newDeck, ...collider.hand];
             player.hand = [];
             newPlayers = { ...newPlayers, [collider.name]: collider };
+            newPlayers = giveDragonToNextPlayer(
+              collider.name,
+              players,
+              newOrder
+            );
             newOrder = newOrder.filter((p) => p !== collider.name);
           }
           keepOn = false;
