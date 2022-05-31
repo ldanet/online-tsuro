@@ -95,8 +95,6 @@ export function isBoardTile(tile: unknown): tile is BoardTile {
   );
 }
 
-// export type Coordinate = { row: number; col: number; notch: Notch };
-
 export function isCoordinate(coord: unknown): coord is Coordinate {
   return (
     hasProperty(coord, "row") &&
@@ -107,11 +105,6 @@ export function isCoordinate(coord: unknown): coord is Coordinate {
     notches.includes(coord.notch as Notch)
   );
 }
-
-// export type Player = {
-//   hand: TileID[];
-//   hasDragon?: boolean;
-// };
 
 export function isPlayer(player: unknown): player is Player {
   if (

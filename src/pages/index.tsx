@@ -4,22 +4,21 @@ import styles from "../styles/Home.module.css";
 import { useEngine } from "../engine/store";
 import { useCallback, useRef } from "react";
 import { useRouter } from "next/router";
+import {
+  getCreateGame,
+  getHostId,
+  getJoinGame,
+  getMyPlayer,
+} from "../engine/selectors";
 
 const Home: NextPage = () => {
   const router = useRouter();
   const nameInput = useRef<HTMLInputElement>(null);
   const gameIdInput = useRef<HTMLInputElement>(null);
-  const [createGame, joinGame, myPlayer, hostId] = useEngine(
-    useCallback(
-      ({ createGame, joinGame, myPlayer, hostId }) => [
-        createGame,
-        joinGame,
-        myPlayer,
-        hostId,
-      ],
-      []
-    )
-  );
+  const createGame = useEngine(getCreateGame);
+  const joinGame = useEngine(getJoinGame);
+  const myPlayer = useEngine(getMyPlayer);
+  const hostId = useEngine(getHostId);
 
   const handleClickHost = useCallback(() => {
     if (!nameInput.current?.value) {

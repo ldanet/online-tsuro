@@ -5,17 +5,14 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 
+  min-height: 100vh;
+
   --bg-color: hsl(212, 75%, 83%);
   --tile-color: hsl(212, 75%, 72%);
   --line-color: hsl(230, 50%, 28%);
   --edge-color: hsl(230, 50%, 34%);
-  /* --bg-color: #97c3e4;
-  --tile-color: #4685c5;
-  --line-color: #164069;
-  --edge-color: #274764; */
 
   --tile-size: min(calc((90vh - 15rem)  / 6.4), calc((100vw - 2em) / 6.4));
-  min-height: 100vh;
 
   --color-red: #F43F5E;
   --color-red-dark: #BE123C;

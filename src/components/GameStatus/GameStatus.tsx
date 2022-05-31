@@ -1,23 +1,17 @@
 import { memo } from "react";
+import {
+  getStartGame,
+  getHostId,
+  getIsHost,
+  getPhase,
+  getPlayers,
+  getResetGame,
+  getTurnOrder,
+  getWinners,
+} from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
-import { EngineState } from "../../engine/types";
 import { cn } from "../../utils/styles";
 import styles from "./GameStatus.module.css";
-
-const getPlayers = ({ players }: EngineState) => {
-  return Object.values(players);
-};
-const getHostId = ({ hostId }: EngineState) => {
-  return hostId;
-};
-
-const getResetGame = ({ resetGame }: EngineState) => resetGame;
-const geStartGame = ({ startGame }: EngineState) => startGame;
-
-const getPhase = ({ gamePhase }: EngineState) => gamePhase;
-const getIsHost = ({ isHost }: EngineState) => isHost;
-const getWinners = ({ winners }: EngineState) => winners;
-const getTurnOrder = ({ playerTurnsOrder }: EngineState) => playerTurnsOrder;
 
 const GameStatus = () => {
   const players = useEngine(getPlayers);
@@ -25,7 +19,7 @@ const GameStatus = () => {
   const phase = useEngine(getPhase);
 
   const resetGame = useEngine(getResetGame);
-  const startGame = useEngine(geStartGame);
+  const startGame = useEngine(getStartGame);
   const isHost = useEngine(getIsHost);
   const winners = useEngine(getWinners);
   const turnOrder = useEngine(getTurnOrder);

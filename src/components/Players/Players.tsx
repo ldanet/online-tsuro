@@ -1,12 +1,11 @@
 import { memo } from "react";
 import { notchCoordinates } from "../../constants/tiles";
+import { getPlayers } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
 import { EngineState } from "../../engine/types";
 import { getTranslateValue } from "../../utils/math";
 import { cn } from "../../utils/styles";
 import styles from "./Players.module.css";
-
-const getPlayers = ({ players }: EngineState) => Object.values(players);
 
 const Players = () => {
   const players = useEngine(getPlayers);

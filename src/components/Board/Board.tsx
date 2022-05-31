@@ -8,6 +8,7 @@ import { BoardTile, Notch } from "../../engine/types";
 import Players from "../Players/Players";
 import { getTranslate } from "../../utils/math";
 import ColorPicker from "../ColorPicker/ColorPicker";
+import { getBoard, getPhase, getSelectedTile } from "../../engine/selectors";
 
 type BoardTileProps = {
   row: number;
@@ -58,16 +59,14 @@ const BoardEdge = ({ type, row, col }: BoardEdgeProps) => {
 };
 
 const Board = () => {
-  const { board, gamePhase, selectedTile, selectedTileCoord } = useEngine(
+  const board = useEngine(getBoard);
+  const gamePhase = useEngine(getPhase);
+  const selectedTile = useEngine(getSelectedTile);
+  const selectedTileCoord = useEngine(
     useCallback(
-      ({ board, selectedTile, players, myPlayer, gamePhase }) => ({
-        board,
-        gamePhase,
-        selectedTile,
-        selectedTileCoord:
-          players[myPlayer]?.coord &&
-          getNextTileCoordinate(players[myPlayer]?.coord!),
-      }),
+      ({ players, myPlayer }) =>
+        players[myPlayer]?.coord &&
+        getNextTileCoordinate(players[myPlayer]?.coord!),
       []
     )
   );

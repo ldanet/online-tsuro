@@ -1,6 +1,13 @@
 import { useEffect, useRef } from "react";
 import { hasProperty } from "../utils/types";
 import { colors } from "./constants";
+import {
+  getHostId,
+  getIsHost,
+  getSetIsConnected,
+  getSetIsLoading,
+  getSetPeer,
+} from "./selectors";
 import { useEngine } from "./store";
 import {
   EngineState,
@@ -224,12 +231,6 @@ const join = (hostId: string) => {
     });
   }
 };
-
-const getSetPeer = ({ setPeer }: EngineState) => setPeer;
-const getIsHost = ({ isHost }: EngineState) => isHost;
-const getHostId = ({ hostId }: EngineState) => hostId;
-const getSetIsConnected = ({ setIsConnected }: EngineState) => setIsConnected;
-const getSetIsLoading = ({ setIsLoading }: EngineState) => setIsLoading;
 
 export const useNetwork = () => {
   const importingPeer = useRef(false);

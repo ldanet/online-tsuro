@@ -1,41 +1,38 @@
 import { memo, useCallback, useState } from "react";
 import { TileType, tiles } from "../../constants/tiles";
+import {
+  getAvailableColors,
+  getIsLoading,
+  getIsMyTurn,
+  getMyPlayerData,
+  getPhase,
+  getPlayTile,
+  getSelectedTile,
+  getSelectTile,
+} from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
 import { EngineState } from "../../engine/types";
 import Tile from "../Tile/Tile";
 import styles from "./Hand.module.css";
 
-const getHand = ({ players, myPlayer }: EngineState) => {
+export const getHand = ({ players, myPlayer }: EngineState) => {
   const hand = players[myPlayer]?.hand;
   return hand?.map((id) => tiles[id]);
 };
-
-const getIsLoading = ({ isLoading }: EngineState) => isLoading;
-
-const getIsMyTurn = ({ myPlayer, playerTurnsOrder }: EngineState) =>
-  myPlayer === playerTurnsOrder[0];
-
-const getPhase = ({ gamePhase }: EngineState) => gamePhase;
 
 const Hand = () => {
   const hand = useEngine(getHand);
   const myName = useEngine(useCallback(({ myPlayer }) => myPlayer, []));
   const isMyTurn = useEngine(getIsMyTurn);
-  const selectedTile = useEngine(
-    useCallback((state) => state.selectedTile, [])
-  );
+  const selectedTile = useEngine(getSelectedTile);
   const isLoading = useEngine(getIsLoading);
 
   const phase = useEngine(getPhase);
 
-  const selectTile = useEngine(useCallback((state) => state.selectTile, []));
-  const playTile = useEngine(useCallback((state) => state.playTile, []));
-  const [me, availableColors] = useEngine(
-    useCallback(
-      (state) => [state.players[state.myPlayer], state.availableColors],
-      []
-    )
-  );
+  const selectTile = useEngine(getSelectTile);
+  const playTile = useEngine(getPlayTile);
+  const availableColors = useEngine(getAvailableColors);
+  const me = useEngine(getMyPlayerData);
 
   const [rotations, setRotations] = useState<number[]>([]);
 

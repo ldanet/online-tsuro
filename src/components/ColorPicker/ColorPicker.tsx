@@ -1,19 +1,17 @@
 import { memo, useCallback } from "react";
-import { notchCoordinates } from "../../constants/tiles";
 import { colors } from "../../engine/constants";
+import {
+  getAvailableColors,
+  getHaspickedColors,
+  getIsLoading,
+  getMyPlayer,
+  getPickColor,
+} from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
-import { EngineState, PlayerColor } from "../../engine/types";
+import { PlayerColor } from "../../engine/types";
 import { getTranslateValue } from "../../utils/math";
 import { cn } from "../../utils/styles";
 import styles from "./ColorPicker.module.css";
-
-const getAvailableColors = ({ availableColors }: EngineState) =>
-  availableColors;
-const getHaspickedColors = ({ myPlayer, players }: EngineState) =>
-  !!players[myPlayer]?.color;
-const getMyPlayer = ({ myPlayer }: EngineState) => myPlayer;
-const getPickColor = ({ pickColor }: EngineState) => pickColor;
-const getIsLoading = ({ isLoading }: EngineState) => isLoading;
 
 const ColorPicker = () => {
   const availableColors = useEngine(getAvailableColors);
