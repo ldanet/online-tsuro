@@ -52,7 +52,7 @@ const PlayerActions = () => {
     return isMyTurn ? (
       <p>It&apos;s your turn! Pick a notch on the edge of the board</p>
     ) : (
-      <p>Wait for your turn to pick a notch on the edge of the board</p>
+      <p>Wait for your turn</p>
     );
   }
   if (gamePhase === "finished") {
@@ -77,9 +77,11 @@ const PlayerActions = () => {
     return (
       <>
         {message}
-        <button type="button" onClick={resetGame}>
-          New game
-        </button>
+        {isHost && (
+          <button type="button" onClick={resetGame}>
+            New game
+          </button>
+        )}
       </>
     );
   }

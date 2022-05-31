@@ -16,23 +16,20 @@ import styles from "./GameStatus.module.css";
 const GameStatus = () => {
   const players = useEngine(getPlayers);
   const hostId = useEngine(getHostId);
-  const phase = useEngine(getPhase);
-
-  const resetGame = useEngine(getResetGame);
-  const startGame = useEngine(getStartGame);
-  const isHost = useEngine(getIsHost);
   const winners = useEngine(getWinners);
   const turnOrder = useEngine(getTurnOrder);
+  const isHost = useEngine(getIsHost);
   return (
     <>
       {hostId && <span>Game ID: {hostId}</span>}
       <div className={styles.players}>
-        {players.map(({ name, status, color }) => (
+        {players.map(({ name, status, color, disconnected }) => (
           <div
             className={cn(
               styles.player_pill,
               color && styles[`player_pill__${color}`],
-              turnOrder[0] === name && styles.player_pill__turn
+              turnOrder[0] === name && styles.player_pill__turn,
+              disconnected && styles.player_pill__disconnected
             )}
             key={name}
           >
@@ -44,7 +41,7 @@ const GameStatus = () => {
                 )}
               />
             )}
-            {status === "dead" && <>❌</>} {name}{" "}
+            {name} {status === "dead" && <>☠️</>}
             {winners.includes(name) && <>🏆</>}
           </div>
         ))}

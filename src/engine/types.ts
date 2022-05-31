@@ -23,6 +23,7 @@ export type Player = {
   coord?: Coordinate;
   hand: TileID[];
   hasDragon?: boolean;
+  disconnected?: boolean;
 };
 
 export type Players = { [name: string]: Player };

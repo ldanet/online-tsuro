@@ -113,7 +113,10 @@ export function isPlayer(player: unknown): player is Player {
   ) {
     return false;
   }
-  if (hasProperty(player, "coord") && !isCoordinate(player.coord)) {
+  if (
+    hasProperty(player, "coord") &&
+    !(player.coord === null || isCoordinate(player.coord))
+  ) {
     return false;
   }
   if (

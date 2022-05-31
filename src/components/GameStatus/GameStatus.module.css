@@ -18,6 +18,10 @@
   border-width: 3px ;
 }
 
+.player_pill__disconnected {
+  opacity: 0.5;
+}
+
 .player_token {
   width: 1.2rem;
   height: 1.2rem;

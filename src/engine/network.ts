@@ -93,6 +93,10 @@ const host = () => {
                   useEngine.getState().clientConns[name]?.close();
                   useEngine.setState((state) => ({
                     clientConns: { ...state.clientConns, [name]: conn },
+                    players: {
+                      ...state.players,
+                      [name]: { ...state.players[name], disconnected: false },
+                    },
                   }));
                 } else {
                   conn.send({ type: "nameTaken" });
@@ -137,6 +141,15 @@ const host = () => {
           }
         }
       }
+    });
+
+    conn.on("close", () => {
+      useEngine.setState((state) => ({
+        players: {
+          ...state.players,
+          [name]: { ...state.players[name], disconnected: true },
+        },
+      }));
     });
   });
 };

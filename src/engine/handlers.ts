@@ -244,7 +244,11 @@ export const movePlayers: EngineHandler = (state) => {
           newDeck = [...newDeck, ...player.hand];
           player.hand = [];
           newPlayers = { ...newPlayers, [player.name]: player };
-          newPlayers = giveDragonToNextPlayer(player.name, players, newOrder);
+          newPlayers = giveDragonToNextPlayer(
+            player.name,
+            newPlayers,
+            newOrder
+          );
           newOrder = newOrder.filter((p) => p !== player.name);
 
           if (playerCollision) {
@@ -256,7 +260,7 @@ export const movePlayers: EngineHandler = (state) => {
             newPlayers = { ...newPlayers, [collider.name]: collider };
             newPlayers = giveDragonToNextPlayer(
               collider.name,
-              players,
+              newPlayers,
               newOrder
             );
             newOrder = newOrder.filter((p) => p !== collider.name);
