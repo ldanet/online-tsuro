@@ -98,6 +98,7 @@ const host = () => {
                       [name]: { ...state.players[name], disconnected: false },
                     },
                   }));
+                  conn.send({ type: "welcome" });
                 } else {
                   conn.send({ type: "nameTaken" });
                   return;
@@ -105,6 +106,8 @@ const host = () => {
               } else {
                 name = message.name;
                 useEngine.getState().addPlayer(message.name, conn);
+
+                conn.send({ type: "welcome" });
               }
             }
             break;
@@ -162,16 +165,9 @@ const join = (hostId: string) => {
 
       useEngine.setState({ hostConn: conn });
       conn.on("open", () => {
-        useEngine.setState({ isConnected: true, isLoading: false });
-
         conn.send({ type: "handShake", name: myPlayer });
 
         conn.on("data", (message) => {
-          console.log(
-            "Received message: ",
-            message,
-            isGameUpdateMessage(message)
-          );
           // shouldn't happen, doesn't make sense
           if (useEngine.getState().isHost) return;
 
@@ -190,6 +186,9 @@ const join = (hostId: string) => {
             useEngine.setState(update);
           }
           if (hasProperty(message, "type")) {
+            if (message.type === "welcome") {
+              useEngine.setState({ isConnected: true, isLoading: false });
+            }
             if (
               message.type === "error" &&
               hasProperty(message, "message") &&
