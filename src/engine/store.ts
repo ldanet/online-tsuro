@@ -9,6 +9,7 @@ import {
   pickColor,
   placePlayer,
   playTile,
+  removePlayer,
   resetGame,
   startGame,
 } from "./handlers";
@@ -68,26 +69,16 @@ export const useEngine = create<
         set({ selectedTile: tile });
       },
       playTile: (player, tile) => {
-        const { isHost, hostConn } = get();
-        if (!isHost && hostConn) {
-          hostConn.send({ type: "playTile", tile });
-        }
         set((state) => playTile(state, player, tile));
       },
-
       placePlayer: (player, coord) => {
-        const { isHost, hostConn } = get();
-        if (!isHost && hostConn) {
-          hostConn.send({ type: "placePlayer", coord });
-        }
         set((state) => placePlayer(state, player, coord));
       },
       pickColor: (player, color) => {
-        const { isHost, hostConn } = get();
-        if (!isHost && hostConn) {
-          hostConn.send({ type: "pickColor", color });
-        }
         set((state) => pickColor(state, player, color));
+      },
+      removePlayer: (player) => {
+        set((state) => removePlayer(state, player));
       },
     })),
     {

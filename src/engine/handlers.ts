@@ -91,16 +91,11 @@ export const startGame: EngineHandler = (state) => {
     }
   }
 
-  const dealtState = dealTiles({
-    ...state,
-    players: newPlayers,
-    deck,
-    playerTurnsOrder: playerOrder,
-  });
+  const dealtState = dealTiles(deck, newPlayers, playerOrder);
 
   return {
-    board: emptytBoard,
     ...dealtState,
+    board: emptytBoard,
     playerTurnsOrder: playerOrder,
     gamePhase: "round1",
     winners: [],
@@ -142,7 +137,12 @@ export const placePlayer: EngineHandler<[string, Coordinate]> = (
   player,
   coord
 ) => {
-  const { players, playerTurnsOrder, gamePhase } = state;
+  const { players, playerTurnsOrder, gamePhase, isHost, hostConn } = state;
+
+  if (!isHost && hostConn) {
+    hostConn.send({ type: "placePlayer", coord });
+  }
+
   if (gamePhase !== "round1") return {};
 
   const currentPlayer = players[playerTurnsOrder[0]];
@@ -163,22 +163,19 @@ export const placePlayer: EngineHandler<[string, Coordinate]> = (
   };
 };
 
-const dealTiles: EngineHandler<[number?]> = (state) => {
-  const { deck, players, playerTurnsOrder } = state;
+const dealTiles = (deck: TileID[], players: Players, turnOrder: string[]) => {
   let newPlayers = { ...players };
   let newDeck = [...deck];
 
-  let playerIndex = playerTurnsOrder.findIndex(
-    (name) => newPlayers[name].hasDragon
-  );
+  let playerIndex = turnOrder.findIndex((name) => newPlayers[name].hasDragon);
   if (playerIndex === -1) playerIndex = 0;
 
   // as long as player still have room in their hand and there are tiles to be dealt
   while (
     newDeck.length &&
-    playerTurnsOrder.some((name) => newPlayers[name]?.hand.length < 3)
+    turnOrder.some((name) => newPlayers[name]?.hand.length < 3)
   ) {
-    const player = newPlayers[playerTurnsOrder[playerIndex]];
+    const player = newPlayers[turnOrder[playerIndex]];
 
     if (player.hand.length! < 3 && player.status === "playing") {
       const newTile = newDeck.shift() as TileID;
@@ -191,7 +188,7 @@ const dealTiles: EngineHandler<[number?]> = (state) => {
         },
       };
     }
-    playerIndex = (playerIndex + 1) % playerTurnsOrder.length;
+    playerIndex = (playerIndex + 1) % turnOrder.length;
   }
   return { deck: newDeck, players: newPlayers };
 };
@@ -301,12 +298,7 @@ export const movePlayers: EngineHandler = (state) => {
 
   // distribute tiles if the deck has been replenished
   if (!isGameOver && newDeck.length) {
-    const { players, deck } = dealTiles({
-      ...state,
-      playerTurnsOrder: newOrder,
-      deck: newDeck,
-      players: newPlayers,
-    });
+    const { players, deck } = dealTiles(newDeck, newPlayers, newOrder);
     newPlayers = players ?? newPlayers;
     newDeck = deck ?? newDeck;
   }
@@ -342,9 +334,15 @@ export const movePlayers: EngineHandler = (state) => {
 export const playTile: EngineHandler<[string, BoardTile]> = (
   state,
   player,
-  { id: tileId, combination }
+  tile
 ) => {
-  const { players, board, playerTurnsOrder, deck, myPlayer } = state;
+  const { id: tileId, combination } = tile;
+  const { players, board, playerTurnsOrder, deck, myPlayer, isHost, hostConn } =
+    state;
+
+  if (!isHost && hostConn) {
+    hostConn.send({ type: "playTile", tile });
+  }
 
   // do nothing if it's not this player's turn
   if (player !== playerTurnsOrder[0]) return {};
@@ -400,7 +398,12 @@ export const pickColor: EngineHandler<[string, PlayerColor]> = (
   name,
   color
 ) => {
-  const { players, availableColors } = state;
+  const { players, availableColors, isHost, hostConn } = state;
+
+  if (!isHost && hostConn) {
+    hostConn.send({ type: "pickColor", color });
+  }
+
   const player = { ...players[name] };
   player.color = color;
   return {
@@ -429,5 +432,31 @@ export const joinGame: EngineHandler<[string, string]> = (_, name, hostId) => {
     playerTurnsOrder: [],
     gamePhase: "joining",
     availableColors: [],
+  };
+};
+
+export const removePlayer: EngineHandler<[string]> = (state, playerName) => {
+  const { players, deck, playerTurnsOrder, clientConns } = state;
+
+  const newPlayers = {
+    ...giveDragonToNextPlayer(playerName, players, playerTurnsOrder),
+  };
+  delete newPlayers[playerName];
+
+  const newOrder = playerTurnsOrder.filter((p) => p !== playerName);
+
+  const player = players[playerName];
+  const newDeck = [...deck, ...player.hand];
+
+  const dealtState = dealTiles(newDeck, newPlayers, newOrder);
+
+  const newClientConns = { ...clientConns };
+  delete newClientConns[playerName];
+  clientConns[playerName]?.close();
+
+  return {
+    ...dealtState,
+    playerTurnsOrder: newOrder,
+    clientConns: newClientConns,
   };
 };

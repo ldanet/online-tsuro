@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import {
   getStartGame,
   getHostId,
@@ -8,6 +8,8 @@ import {
   getResetGame,
   getTurnOrder,
   getWinners,
+  getRemovePlayer,
+  getMyPlayer,
 } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
 import { cn } from "../../utils/styles";
@@ -19,32 +21,60 @@ const GameStatus = () => {
   const winners = useEngine(getWinners);
   const turnOrder = useEngine(getTurnOrder);
   const isHost = useEngine(getIsHost);
+  const removePlayer = useEngine(getRemovePlayer);
+  const gamePhase = useEngine(getPhase);
+  const myPlayer = useEngine(getMyPlayer);
+
+  const handleRemovePlayer = useCallback(
+    (name: string) => {
+      if (confirm(`Remove ${name} from the game and disconnect them?`))
+        removePlayer(name);
+    },
+    [removePlayer]
+  );
+
   return (
     <>
       {hostId && <span>Game ID: {hostId}</span>}
       <div className={styles.players}>
-        {players.map(({ name, status, color, disconnected }) => (
-          <div
-            className={cn(
-              styles.player_pill,
-              color && styles[`player_pill__${color}`],
-              turnOrder[0] === name && styles.player_pill__turn,
-              disconnected && styles.player_pill__disconnected
-            )}
-            key={name}
-          >
-            {color && (
-              <div
-                className={cn(
-                  styles.player_token,
-                  styles[`player_token__${color}`]
-                )}
-              />
-            )}
-            {name} {status === "dead" && <>☠️</>}
-            {winners.includes(name) && <>🏆</>}
-          </div>
-        ))}
+        {players.map(({ name, status, color, disconnected }) => {
+          const tokenProps =
+            gamePhase !== "joining" && status === "watching"
+              ? { children: <span>👀 </span> }
+              : {
+                  className: cn(
+                    styles.player_token,
+                    color && styles[`player_token__${color}`],
+                    color && styles[`player_token__color`]
+                  ),
+                };
+
+          return (
+            <div
+              className={cn(
+                styles.player_pill,
+                color && styles[`player_pill__${color}`],
+                turnOrder[0] === name && styles.player_pill__turn,
+                disconnected && styles.player_pill__disconnected
+              )}
+              key={name}
+            >
+              {isHost && name !== myPlayer ? (
+                <button
+                  {...tokenProps}
+                  className={cn(styles.remove_button, tokenProps.className)}
+                  onClick={handleRemovePlayer.bind(null, name)}
+                  title="Remove player"
+                  aria-label="Remove player"
+                />
+              ) : (
+                <div {...tokenProps} />
+              )}
+              {name} {status === "dead" && <>☠️</>}
+              {winners.includes(name) && <>🏆</>}
+            </div>
+          );
+        })}
       </div>
     </>
   );

@@ -30,6 +30,17 @@
   filter: drop-shadow(.05rem .05rem .05rem rgba(0, 0, 0, 0.2));
 }
 
+.remove_button {
+  cursor: pointer;
+  position: relative;
+}
+
+.remove_button:hover::after {
+  content: "❌";
+  position: absolute;
+  top:0;
+  left:0;
+}
 
 .player_pill__red {
   border-color: var(--color-red-dark);

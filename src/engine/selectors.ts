@@ -30,6 +30,7 @@ export const getStartGame = ({ startGame }: EngineState) => startGame;
 export const getPickColor = ({ pickColor }: EngineState) => pickColor;
 export const getSelectTile = ({ selectTile }: EngineState) => selectTile;
 export const getPlayTile = ({ playTile }: EngineState) => playTile;
+export const getRemovePlayer = ({ removePlayer }: EngineState) => removePlayer;
 
 // Network state
 export const getHostId = ({ hostId }: EngineState) => {

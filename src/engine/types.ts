@@ -74,6 +74,7 @@ export type Actions = {
   resetGame: () => void;
   startGame: () => void;
   addPlayer: (name: string, conn: TDataConnection) => void;
+  removePlayer: (name: string) => void;
 
   // Network
   setPeer: (peer: TPeer) => void;
