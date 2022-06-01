@@ -35,7 +35,6 @@ const GameStatus = () => {
 
   return (
     <>
-      {hostId && <span>Game ID: {hostId}</span>}
       <div className={styles.players}>
         {players.map(({ name, status, color, disconnected }) => {
           const tokenProps =

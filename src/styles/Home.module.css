@@ -13,3 +13,23 @@
   font-size: 1.6rem;
   margin: 0 0 .5rem 0;
 }
+
+.game_header {
+  display:flex;
+  margin-bottom: 1rem;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 2rem;
+  justify-content: stretch;
+  align-items: stretch;
+  width: 100%;
+}
+
+.game_header > h1 {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 1;
+}

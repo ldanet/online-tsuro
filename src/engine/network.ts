@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { hasProperty } from "../utils/types";
 import { colors } from "./constants";
@@ -240,6 +241,8 @@ export const useNetwork = () => {
   const setIsLoading = useEngine(getSetIsLoading);
   const setHostId = useEngine(getSetHostId);
 
+  const router = useRouter();
+
   useEffect(() => {
     if ((!peer || peer.destroyed) && !importingPeer.current) {
       setIsLoading(true);
@@ -255,6 +258,8 @@ export const useNetwork = () => {
           host();
         } else if (hostId) {
           join(hostId);
+        } else {
+          router.replace("/");
         }
 
         peer.on("error", (error) => {
@@ -273,7 +278,15 @@ export const useNetwork = () => {
       };
       fn();
     }
-  }, [setPeer, isHost, hostId, setIsConnected, setIsLoading, setHostId]);
+  }, [
+    setPeer,
+    isHost,
+    hostId,
+    setIsConnected,
+    setIsLoading,
+    setHostId,
+    router,
+  ]);
 
   useEffect(() => {
     return () => {

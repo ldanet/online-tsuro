@@ -1,0 +1,13 @@
+.share_container {
+
+  border-left: 1px solid grey;
+  padding: 0.5rem;
+  font-size: .8rem;
+  flex-basis:3;
+  flex-grow:1;
+}
+
+.share_container p {
+  max-width: 25rem;
+  margin: 0;
+}

@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { EngineState } from "../engine/types";
 import { useNetwork } from "../engine/network";
 import PlayerActions from "../components/PlayerActions/PlayerActions";
+import ShareUrl from "../components/ShareUrl/ShareUrl";
 
 const getHasGame = ({ isConnected, isLoading }: EngineState) =>
   isConnected || isLoading;
@@ -42,7 +43,10 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Tsuro</h1>
+        <div className={styles.game_header}>
+          <h1 className={styles.title}>Tsuro</h1>
+          {isMounted && <ShareUrl />}
+        </div>
         {/* Prevent game from pre-rendering on server as rehydration will fail because of session storage state */}
         {isMounted && (
           <>
