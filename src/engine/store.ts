@@ -50,6 +50,9 @@ export const useEngine = create<
       setIsConnected: (isConnected) => {
         set({ isConnected });
       },
+      setHostId: (hostId) => {
+        set({ hostId });
+      },
       createGame: (name) => {
         set((state) => createGame(state, name));
       },
@@ -65,7 +68,7 @@ export const useEngine = create<
       addPlayer: (name, conn) => {
         set((state) => addPlayer(state, name, conn));
       },
-      selectTile: (tile) => {
+      setSelectedTile: (tile) => {
         set({ selectedTile: tile });
       },
       playTile: (player, tile) => {

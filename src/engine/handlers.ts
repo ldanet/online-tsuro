@@ -436,7 +436,8 @@ export const joinGame: EngineHandler<[string, string]> = (_, name, hostId) => {
 };
 
 export const removePlayer: EngineHandler<[string]> = (state, playerName) => {
-  const { players, deck, playerTurnsOrder, clientConns } = state;
+  const { players, deck, playerTurnsOrder, clientConns, availableColors } =
+    state;
 
   const newPlayers = {
     ...giveDragonToNextPlayer(playerName, players, playerTurnsOrder),
@@ -458,5 +459,9 @@ export const removePlayer: EngineHandler<[string]> = (state, playerName) => {
     ...dealtState,
     playerTurnsOrder: newOrder,
     clientConns: newClientConns,
+    availableColors: [
+      ...availableColors,
+      ...(player.color ? [player.color] : []),
+    ],
   };
 };

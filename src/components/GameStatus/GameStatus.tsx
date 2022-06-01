@@ -40,7 +40,7 @@ const GameStatus = () => {
         {players.map(({ name, status, color, disconnected }) => {
           const tokenProps =
             gamePhase !== "joining" && status === "watching"
-              ? { children: <span>👀 </span> }
+              ? { children: <span>👀 </span>, className: styles.watching_token }
               : {
                   className: cn(
                     styles.player_token,
@@ -70,8 +70,8 @@ const GameStatus = () => {
               ) : (
                 <div {...tokenProps} />
               )}
-              {name} {status === "dead" && <>☠️</>}
-              {winners.includes(name) && <>🏆</>}
+              {name} {winners.includes(name) && <>🏆</>}{" "}
+              {status === "dead" && <>☠️</>}
             </div>
           );
         })}

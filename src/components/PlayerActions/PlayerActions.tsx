@@ -10,6 +10,7 @@ import {
   getPhase,
   getResetGame,
   getStartGame,
+  getTurnOrder,
   getWinners,
 } from "../../engine/selectors";
 import Hand from "../Hand/Hand";
@@ -26,6 +27,7 @@ const PlayerActions = () => {
   const isMyTurn = useEngine(getIsMyTurn);
   const winners = useEngine(getWinners);
   const myPlayer = useEngine(getMyPlayer);
+  const turns = useEngine(getTurnOrder);
 
   if (isLoading) return <p>Connecting...</p>;
 
@@ -52,7 +54,7 @@ const PlayerActions = () => {
     return isMyTurn ? (
       <p>It&apos;s your turn! Pick a notch on the edge of the board</p>
     ) : (
-      <p>Wait for your turn</p>
+      <p>{turns[0]}&apos;s turn</p>
     );
   }
   if (gamePhase === "finished") {

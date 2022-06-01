@@ -80,9 +80,10 @@ export type Actions = {
   setPeer: (peer: TPeer) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsConnected: (isConnected: boolean) => void;
+  setHostId: (hostId: string | undefined) => void;
 
   // Game
-  selectTile: (tile: BoardTile) => void;
+  setSelectedTile: (tile: BoardTile) => void;
   placePlayer: (player: string, coord: Coordinate) => void;
   playTile: (player: string, tile: BoardTile) => void;
   pickColor: (player: string, color: PlayerColor) => void;

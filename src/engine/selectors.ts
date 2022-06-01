@@ -28,7 +28,8 @@ export const getJoinGame = ({ joinGame }: EngineState) => joinGame;
 export const getResetGame = ({ resetGame }: EngineState) => resetGame;
 export const getStartGame = ({ startGame }: EngineState) => startGame;
 export const getPickColor = ({ pickColor }: EngineState) => pickColor;
-export const getSelectTile = ({ selectTile }: EngineState) => selectTile;
+export const getSetSelectedTile = ({ setSelectedTile }: EngineState) =>
+  setSelectedTile;
 export const getPlayTile = ({ playTile }: EngineState) => playTile;
 export const getRemovePlayer = ({ removePlayer }: EngineState) => removePlayer;
 
@@ -44,3 +45,4 @@ export const getSetPeer = ({ setPeer }: EngineState) => setPeer;
 export const getSetIsConnected = ({ setIsConnected }: EngineState) =>
   setIsConnected;
 export const getSetIsLoading = ({ setIsLoading }: EngineState) => setIsLoading;
+export const getSetHostId = ({ setHostId }: EngineState) => setHostId;

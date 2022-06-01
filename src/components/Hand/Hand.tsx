@@ -5,7 +5,8 @@ import {
   getIsMyTurn,
   getPlayTile,
   getSelectedTile,
-  getSelectTile,
+  getSetSelectedTile,
+  getTurnOrder,
 } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
 import { EngineState } from "../../engine/types";
@@ -23,8 +24,9 @@ const Hand = () => {
   const isMyTurn = useEngine(getIsMyTurn);
   const selectedTile = useEngine(getSelectedTile);
   const isLoading = useEngine(getIsLoading);
+  const turns = useEngine(getTurnOrder);
 
-  const selectTile = useEngine(getSelectTile);
+  const setSelectedTile = useEngine(getSetSelectedTile);
   const playTile = useEngine(getPlayTile);
 
   const [rotations, setRotations] = useState<number[]>([]);
@@ -39,13 +41,13 @@ const Hand = () => {
           (combinationIndex + 1) % combinations.length;
         setRotations(newRotations);
       }
-      selectTile &&
-        selectTile({
+      setSelectedTile &&
+        setSelectedTile({
           id: id,
           combination: combinations[combinationIndex],
         });
     },
-    [selectTile, rotations, selectedTile]
+    [setSelectedTile, rotations, selectedTile]
   );
 
   const onPlayClick = useCallback(() => {
@@ -73,7 +75,7 @@ const Hand = () => {
           </p>
         )
       ) : (
-        <p className={styles.hint}>Wait for you turn</p>
+        <p className={styles.hint}>{turns[0]}&apos;s turn</p>
       )}
       <div className={styles.handTiles}>
         {hand?.map((tile, i) =>

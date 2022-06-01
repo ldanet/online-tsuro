@@ -4,6 +4,7 @@ import { colors } from "./constants";
 import {
   getHostId,
   getIsHost,
+  getSetHostId,
   getSetIsConnected,
   getSetIsLoading,
   getSetPeer,
@@ -237,6 +238,7 @@ export const useNetwork = () => {
   const hostId = useEngine(getHostId);
   const setIsConnected = useEngine(getSetIsConnected);
   const setIsLoading = useEngine(getSetIsLoading);
+  const setHostId = useEngine(getSetHostId);
 
   useEffect(() => {
     if ((!peer || peer.destroyed) && !importingPeer.current) {
@@ -262,6 +264,7 @@ export const useNetwork = () => {
           console.error(error);
           setIsConnected(false);
           setIsLoading(false);
+          setHostId(undefined);
         });
 
         peer.on("disconnected", () => {
@@ -270,7 +273,7 @@ export const useNetwork = () => {
       };
       fn();
     }
-  }, [setPeer, isHost, hostId, setIsConnected, setIsLoading]);
+  }, [setPeer, isHost, hostId, setIsConnected, setIsLoading, setHostId]);
 
   useEffect(() => {
     return () => {
@@ -281,6 +284,9 @@ export const useNetwork = () => {
         unsubGameUpdate && unsubGameUpdate();
 
         setIsConnected(false);
+      }
+      if (isHost) {
+        setHostId(undefined);
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
