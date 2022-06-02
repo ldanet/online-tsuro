@@ -3,28 +3,12 @@ import { Edge, EdgeType } from "../Edge/Edge";
 import { useEngine } from "../../engine/store";
 import Tile from "../Tile/Tile";
 import styles from "./Board.module.css";
-import { BoardTile, Notch } from "../../engine/types";
 import Players from "../Players/Players";
 import { getTranslate } from "../../utils/math";
 import ColorPicker from "../ColorPicker/ColorPicker";
 import { getBoard, getPhase } from "../../engine/selectors";
+import { Notch } from "../../constants/tiles";
 import SelectedTile from "../SelectedTile/SelectedTile";
-
-type BoardTileProps = {
-  row: number;
-  col: number;
-  tile: BoardTile;
-};
-
-const BoardTile = ({ tile, row, col }: BoardTileProps) => {
-  return (
-    <Tile
-      combination={tile.combination}
-      coloredPairs={tile.coloredPairs}
-      transform={getTranslate(row, col)}
-    />
-  );
-};
 
 type BoardEdgeProps = {
   type: EdgeType;
@@ -88,7 +72,11 @@ const Board = () => {
             {row.map((col, ci) => {
               return (
                 col && (
-                  <BoardTile key={`${ri}-${ci}`} tile={col} row={ri} col={ci} />
+                  <Tile
+                    key={`${ri}-${ci}`}
+                    combination={col.combination}
+                    transform={getTranslate(ri, ci)}
+                  />
                 )
               );
             })}

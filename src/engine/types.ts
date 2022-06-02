@@ -1,4 +1,4 @@
-import { Combination, Pair, TileID } from "../constants/tiles";
+import { ColoredPair, Combination, Notch, TileID } from "../constants/tiles";
 
 export type PlayerColor =
   | "red"
@@ -11,8 +11,6 @@ export type PlayerColor =
   | "white";
 
 export type PlayerStatus = "playing" | "dead" | "watching";
-
-export type Notch = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7";
 
 export type Coordinate = { row: number; col: number; notch: Notch };
 
@@ -28,12 +26,16 @@ export type Player = {
 
 export type Players = { [name: string]: Player };
 
-export type ColoredPair = { pair: Pair; color: PlayerColor };
+export type ColoredPath = {
+  row: number;
+  col: number;
+  pair: ColoredPair;
+  color: PlayerColor;
+};
 
 export type BoardTile = {
   id: TileID;
   combination: Combination;
-  coloredPairs?: ColoredPair[];
 };
 
 export type Board = (BoardTile | null)[][];
@@ -47,6 +49,7 @@ export type SharedGameState = {
   board: Board;
   playerTurnsOrder: string[];
   availableColors: PlayerColor[];
+  coloredPaths: ColoredPath[];
   winners: string[];
 };
 

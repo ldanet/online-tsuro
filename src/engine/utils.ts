@@ -1,23 +1,26 @@
 import {
   BoardTile,
+  ColoredPath,
   Coordinate,
   GamePhase,
   GameUpdateMessage,
-  Notch,
   Player,
   PlayerColor,
   PlayerStatus,
 } from "./types";
 import {
+  ColoredPair,
+  coloredPairs,
   Combination,
   Pair,
   pairs,
   TileID,
   tileIds,
-  tiles,
+  Notch,
+  notches,
 } from "../constants/tiles";
 import { hasProperty } from "../utils/types";
-import { colors, gamePhases, notches, playerStatuses } from "./constants";
+import { colors, gamePhases, playerStatuses } from "./constants";
 
 export const getNextTileCoordinate = ({
   row,
@@ -71,21 +74,6 @@ export const getNextTurnOrder = (order: string[]) => {
 };
 
 export function isBoardTile(tile: unknown): tile is BoardTile {
-  console.log("tile: ", tile);
-  if (hasProperty(tile, "coloredPairs")) {
-    if (
-      !Array.isArray(tile.coloredPairs) ||
-      !tile.coloredPairs.every(
-        (coloredPair) =>
-          hasProperty(coloredPair, "pair") &&
-          pairs.includes(coloredPair.pair as Pair) &&
-          hasProperty(coloredPair, "color") &&
-          colors.includes(coloredPair.color as PlayerColor)
-      )
-    ) {
-      return false;
-    }
-  }
   return (
     hasProperty(tile, "id") &&
     tileIds.includes(tile.id as TileID) &&
@@ -103,6 +91,19 @@ export function isCoordinate(coord: unknown): coord is Coordinate {
     typeof coord.col === "number" &&
     hasProperty(coord, "notch") &&
     notches.includes(coord.notch as Notch)
+  );
+}
+
+export function isColoredPath(path: unknown): path is ColoredPath {
+  return (
+    hasProperty(path, "row") &&
+    typeof path.row === "number" &&
+    hasProperty(path, "col") &&
+    typeof path.col === "number" &&
+    hasProperty(path, "pair") &&
+    coloredPairs.includes(path.pair as ColoredPair) &&
+    hasProperty(path, "color") &&
+    colors.includes(path.color as PlayerColor)
   );
 }
 
@@ -176,6 +177,11 @@ export function isGameUpdateMessage(
     Array.isArray(state.availableColors) &&
     state.availableColors.every((val) => colors.includes(val)) &&
     //
+    // Colored Paths
+    hasProperty(state, "coloredPaths") &&
+    Array.isArray(state.coloredPaths) &&
+    state.coloredPaths.every((val) => isColoredPath(val)) &&
+    //
     // Board
     hasProperty(state, "board") &&
     Array.isArray(state.board) &&
@@ -184,11 +190,7 @@ export function isGameUpdateMessage(
       (row) =>
         Array.isArray(row) &&
         row.length === 6 &&
-        row.every((tile) => {
-          tile !== null &&
-            console.log("isBoardTile(tile): ", isBoardTile(tile));
-          return tile === null || isBoardTile(tile);
-        })
+        row.every((tile) => tile === null || isBoardTile(tile))
     ) &&
     //
     // Players

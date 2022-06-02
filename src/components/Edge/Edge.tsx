@@ -1,4 +1,4 @@
-import { Notch } from "../../engine/types";
+import { Notch } from "../../constants/tiles";
 import styles from "./Edge.module.css";
 
 export type EdgeType = "top" | "bottom" | "left" | "right";

@@ -1,4 +1,4 @@
-import { Board, GamePhase, Notch, PlayerColor, PlayerStatus } from "./types";
+import { Board, GamePhase, PlayerColor, PlayerStatus } from "./types";
 
 export const emptytBoard: Board = [
   [null, null, null, null, null, null],
@@ -28,5 +28,3 @@ export const gamePhases: GamePhase[] = [
   "main",
   "finished",
 ];
-
-export const notches: Notch[] = ["0", "1", "2", "3", "4", "5", "6", "7"];

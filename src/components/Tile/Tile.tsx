@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Combination, Pair } from "../../constants/tiles";
-import { ColoredPair, PlayerColor } from "../../engine/types";
+import { PlayerColor } from "../../engine/types";
 import styles from "./Tile.module.css";
 
 type LineType = "ab" | "ac" | "ad" | "ae" | "af" | "ag" | "ah";
@@ -90,48 +90,18 @@ const Line = ({ pair }: LineProps) => {
     </>
   );
 };
-const ColoredLine = ({ pair, color }: ColorLineProps) => {
-  const { type, transform } = pairToLine[pair];
-  return (
-    <>
-      <path
-        className={styles.line_colored}
-        d={lineTypeToPath[type]}
-        transform={transform}
-      />
-      <path
-        className={styles[`line_${color}`]}
-        d={lineTypeToPath[type]}
-        transform={transform}
-      />
-    </>
-  );
-};
 
 type TileProps = JSX.IntrinsicElements["g"] & {
   combination: Combination;
   withEdge?: boolean;
-  coloredPairs?: ColoredPair[];
 };
 
-const Tile = ({
-  combination,
-  withEdge,
-  coloredPairs,
-  ...gProps
-}: TileProps) => {
+const Tile = ({ combination, withEdge, ...gProps }: TileProps) => {
   return (
     <g {...gProps}>
       <rect x="0" y="0" width="30" height="30" rx="2" className={styles.tile} />
       {combination.map((pair) => (
-        <Line
-          key={pair}
-          pair={pair}
-          isColored={coloredPairs?.some((p) => p.pair === pair)}
-        />
-      ))}
-      {coloredPairs?.map(({ pair, color }) => (
-        <ColoredLine key={pair} pair={pair} color={color} />
+        <Line key={pair} pair={pair} />
       ))}
       {withEdge && (
         <rect
