@@ -1,4 +1,5 @@
-import { Fragment, memo, useCallback } from "react";
+import { motion, useAnimation } from "framer-motion";
+import { Fragment, memo, useCallback, useEffect, useState } from "react";
 import { Edge, EdgeType } from "../Edge/Edge";
 import { useEngine } from "../../engine/store";
 import { getNextTileCoordinate } from "../../engine/utils";
@@ -70,6 +71,19 @@ const Board = () => {
       []
     )
   );
+
+  const [localSelectedTile, setLocalSelectedTile] = useState(selectedTile);
+  const controls = useAnimation();
+  useEffect(() => {
+    if (selectedTile?.id === localSelectedTile?.id) {
+      controls.start({
+        rotate: ["-90deg", "-45deg", "0deg"],
+        scale: [1, 1.3, 1],
+        transition: { duration: 0.9, times: [0, 0.5, 1], ease: "easeOut" },
+      });
+    }
+    setLocalSelectedTile(selectedTile);
+  }, [selectedTile]);
   return (
     <svg viewBox="0 0 190 190" className={styles.board}>
       <defs>
@@ -104,11 +118,16 @@ const Board = () => {
         </Fragment>
       ))}
       {selectedTile && selectedTileCoord && (
-        <Tile
-          combination={selectedTile.combination}
-          transform={getTranslate(selectedTileCoord.row, selectedTileCoord.col)}
-          opacity={0.5}
-        />
+        <motion.g animate={controls}>
+          <Tile
+            combination={selectedTile.combination}
+            transform={getTranslate(
+              selectedTileCoord.row,
+              selectedTileCoord.col
+            )}
+            opacity={0.5}
+          />
+        </motion.g>
       )}
       {gamePhase === "joining" && <ColorPicker />}
       <Players />
