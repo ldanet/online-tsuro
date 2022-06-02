@@ -6,10 +6,10 @@
 }
 
 .handTiles {
+  align-self: flex-start;
   display: flex;
-  align-items: center;
-  text-align: center;
-  gap: 1rem;
+  width: calc(var(--tile-size)*5*1.33);
+  padding-left: calc(var(--tile-size)*1.33);
 }
 
 .tileButton {
@@ -17,12 +17,12 @@
   background: none;
   padding: 0;
   line-height: 0;
+  margin:0;
 }
 
 
 .tileSvg {
   height: calc(var(--tile-size)* 1.33);
-  width: var(--tile-size)* 1.33;
 }
 
 .hint {
