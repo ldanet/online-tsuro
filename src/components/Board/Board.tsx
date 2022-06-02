@@ -1,15 +1,14 @@
-import { motion, useAnimation } from "framer-motion";
-import { Fragment, memo, useCallback, useEffect, useState } from "react";
+import { Fragment, memo, useCallback } from "react";
 import { Edge, EdgeType } from "../Edge/Edge";
 import { useEngine } from "../../engine/store";
-import { getNextTileCoordinate } from "../../engine/utils";
 import Tile from "../Tile/Tile";
 import styles from "./Board.module.css";
 import { BoardTile, Notch } from "../../engine/types";
 import Players from "../Players/Players";
 import { getTranslate } from "../../utils/math";
 import ColorPicker from "../ColorPicker/ColorPicker";
-import { getBoard, getPhase, getSelectedTile } from "../../engine/selectors";
+import { getBoard, getPhase } from "../../engine/selectors";
+import SelectedTile from "../SelectedTile/SelectedTile";
 
 type BoardTileProps = {
   row: number;
@@ -62,28 +61,7 @@ const BoardEdge = ({ type, row, col }: BoardEdgeProps) => {
 const Board = () => {
   const board = useEngine(getBoard);
   const gamePhase = useEngine(getPhase);
-  const selectedTile = useEngine(getSelectedTile);
-  const selectedTileCoord = useEngine(
-    useCallback(
-      ({ players, myPlayer }) =>
-        players[myPlayer]?.coord &&
-        getNextTileCoordinate(players[myPlayer]?.coord!),
-      []
-    )
-  );
 
-  const [localSelectedTile, setLocalSelectedTile] = useState(selectedTile);
-  const controls = useAnimation();
-  useEffect(() => {
-    if (selectedTile?.id === localSelectedTile?.id) {
-      controls.start({
-        rotate: ["-90deg", "-45deg", "0deg"],
-        scale: [1, 1.3, 1],
-        transition: { duration: 0.9, times: [0, 0.5, 1], ease: "easeOut" },
-      });
-    }
-    setLocalSelectedTile(selectedTile);
-  }, [selectedTile]);
   return (
     <svg viewBox="0 0 190 190" className={styles.board}>
       <defs>
@@ -117,18 +95,7 @@ const Board = () => {
           </g>
         </Fragment>
       ))}
-      {selectedTile && selectedTileCoord && (
-        <motion.g animate={controls}>
-          <Tile
-            combination={selectedTile.combination}
-            transform={getTranslate(
-              selectedTileCoord.row,
-              selectedTileCoord.col
-            )}
-            opacity={0.5}
-          />
-        </motion.g>
-      )}
+      <SelectedTile />
       {gamePhase === "joining" && <ColorPicker />}
       <Players />
     </svg>
