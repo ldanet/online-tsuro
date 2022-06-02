@@ -1,5 +1,5 @@
 import { DataConnection } from "peerjs";
-import { TileID, tiles } from "../constants/tiles";
+import { ColoredPair, TileID, tiles } from "../constants/tiles";
 import { formatListHumanReadable } from "../utils/strings";
 import { colors, emptytBoard } from "./constants";
 import {
@@ -99,6 +99,7 @@ export const startGame: EngineHandler = (state) => {
     playerTurnsOrder: playerOrder,
     gamePhase: "round1",
     winners: [],
+    coloredPaths: [],
   };
 };
 
@@ -129,6 +130,7 @@ export const resetGame: EngineHandler = (state) => {
     playerTurnsOrder: [],
     selectedTile: undefined,
     winners: [],
+    coloredPaths: [],
   };
 };
 
@@ -218,11 +220,13 @@ const giveDragonToNextPlayer = (
 };
 
 export const movePlayers: EngineHandler = (state) => {
-  const { board, players, playerTurnsOrder, deck, gamePhase } = state;
+  const { board, players, playerTurnsOrder, deck, gamePhase, coloredPaths } =
+    state;
   let newPlayers = { ...players };
   let newBoard = [...board];
   let newOrder = [...playerTurnsOrder];
   let newDeck = [...deck];
+  let newColoredPaths = [...coloredPaths];
   playerTurnsOrder.forEach((name) => {
     const player = { ...newPlayers[name] };
     if (player.status === "playing" && player.coord) {
@@ -278,13 +282,18 @@ export const movePlayers: EngineHandler = (state) => {
         if (player.color && pair) {
           const newTile: BoardTile = {
             ...nextTile,
-            coloredPairs: [
-              ...(nextTile.coloredPairs ?? []),
-              { pair, color: player.color },
-            ],
           };
 
           newBoard[row][col] = newTile;
+          newColoredPaths.push({
+            pair:
+              pair[0] === newNotch
+                ? pair
+                : (`${pair[1]}${pair[0]}` as ColoredPair),
+            row,
+            col,
+            color: player.color,
+          });
         }
       }
     }
@@ -326,6 +335,7 @@ export const movePlayers: EngineHandler = (state) => {
     board: newBoard,
     playerTurnsOrder: newOrder,
     deck: newDeck,
+    coloredPaths: newColoredPaths,
     gamePhase: isGameOver ? "finished" : gamePhase,
     winners,
   };
@@ -432,6 +442,7 @@ export const joinGame: EngineHandler<[string, string]> = (_, name, hostId) => {
     playerTurnsOrder: [],
     gamePhase: "joining",
     availableColors: [],
+    coloredPaths: [],
   };
 };
 

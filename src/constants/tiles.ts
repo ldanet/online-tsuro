@@ -1,3 +1,6 @@
+export const notches = ["0", "1", "2", "3", "4", "5", "6", "7"] as const;
+export type Notch = typeof notches[number];
+
 export const pairs = [
   "01",
   "02",
@@ -31,6 +34,67 @@ export const pairs = [
 
 export type Pair = typeof pairs[number];
 
+export const coloredPairs = [
+  "01",
+  "10",
+  "02",
+  "20",
+  "03",
+  "30",
+  "04",
+  "40",
+  "05",
+  "50",
+  "06",
+  "60",
+  "07",
+  "70",
+  "12",
+  "21",
+  "13",
+  "31",
+  "14",
+  "41",
+  "15",
+  "51",
+  "16",
+  "61",
+  "17",
+  "71",
+  "23",
+  "32",
+  "24",
+  "42",
+  "25",
+  "52",
+  "26",
+  "62",
+  "27",
+  "72",
+  "34",
+  "43",
+  "35",
+  "53",
+  "36",
+  "63",
+  "37",
+  "73",
+  "45",
+  "54",
+  "46",
+  "64",
+  "47",
+  "74",
+  "56",
+  "65",
+  "57",
+  "75",
+  "67",
+  "76",
+] as const;
+
+export type ColoredPair = typeof coloredPairs[number];
+
 export type Combination = Readonly<[Pair, Pair, Pair, Pair]>;
 
 export const tiles = {
@@ -58,8 +122,8 @@ export const tiles = {
     combinations: [
       ["01", "24", "36", "57"],
       ["02", "14", "35", "67"],
-      ["05", "17", "23", "46"],
       ["06", "13", "27", "45"],
+      ["05", "17", "23", "46"],
     ],
   },
   "5": {
@@ -84,8 +148,8 @@ export const tiles = {
     id: "7",
     combinations: [
       ["01", "25", "37", "46"],
-      ["02", "16", "37", "45"],
       ["03", "15", "24", "67"],
+      ["02", "16", "37", "45"],
       ["06", "15", "23", "47"],
     ],
   },
@@ -94,16 +158,16 @@ export const tiles = {
     combinations: [
       ["01", "26", "34", "57"],
       ["04", "12", "35", "67"],
-      ["04", "17", "23", "56"],
       ["07", "13", "26", "45"],
+      ["04", "17", "23", "56"],
     ],
   },
   "9": {
     id: "9",
     combinations: [
       ["01", "26", "35", "47"],
-      ["03", "17", "26", "45"],
       ["04", "13", "25", "67"],
+      ["03", "17", "26", "45"],
       ["04", "16", "23", "57"],
     ],
   },
@@ -127,8 +191,8 @@ export const tiles = {
     id: "12",
     combinations: [
       ["01", "27", "35", "46"],
-      ["02", "17", "36", "45"],
       ["05", "13", "24", "67"],
+      ["02", "17", "36", "45"],
       ["06", "14", "23", "57"],
     ],
   },
@@ -150,8 +214,8 @@ export const tiles = {
     id: "15",
     combinations: [
       ["02", "13", "47", "56"],
-      ["03", "12", "46", "57"],
       ["06", "17", "25", "34"],
+      ["03", "12", "46", "57"],
       ["07", "16", "24", "35"],
     ],
   },
@@ -159,17 +223,17 @@ export const tiles = {
     id: "16",
     combinations: [
       ["02", "14", "36", "57"],
+      ["06", "14", "27", "35"],
       ["05", "13", "27", "46"],
       ["05", "17", "24", "36"],
-      ["06", "14", "27", "35"],
     ],
   },
   "17": {
     id: "17",
     combinations: [
       ["02", "14", "37", "56"],
-      ["05", "12", "37", "46"],
       ["06", "15", "27", "34"],
+      ["05", "12", "37", "46"],
       ["07", "15", "24", "36"],
     ],
   },
@@ -177,9 +241,9 @@ export const tiles = {
     id: "18",
     combinations: [
       ["02", "15", "36", "47"],
+      ["06", "14", "25", "37"],
       ["03", "15", "27", "46"],
       ["05", "16", "24", "37"],
-      ["06", "14", "25", "37"],
     ],
   },
   "19": {
@@ -193,9 +257,9 @@ export const tiles = {
     id: "20",
     combinations: [
       ["02", "16", "34", "57"],
-      ["03", "17", "24", "56"],
       ["06", "12", "35", "47"],
       ["07", "13", "25", "46"],
+      ["03", "17", "24", "56"],
     ],
   },
   "21": {
@@ -235,16 +299,16 @@ export const tiles = {
     combinations: [
       ["03", "14", "26", "57"],
       ["04", "16", "27", "35"],
-      ["04", "17", "25", "36"],
       ["05", "13", "26", "47"],
+      ["04", "17", "25", "36"],
     ],
   },
   "26": {
     id: "26",
     combinations: [
       ["03", "14", "27", "56"],
-      ["05", "12", "36", "47"],
       ["05", "16", "27", "34"],
+      ["05", "12", "36", "47"],
       ["07", "14", "25", "36"],
     ],
   },
@@ -260,9 +324,9 @@ export const tiles = {
     id: "29",
     combinations: [
       ["04", "12", "36", "57"],
+      ["07", "14", "26", "35"],
       ["04", "13", "27", "56"],
       ["05", "17", "26", "34"],
-      ["07", "14", "26", "35"],
     ],
   },
   "30": {
@@ -297,7 +361,7 @@ export const tileIds = Object.keys(tiles) as TileID[];
 
 export type TileType = typeof tiles[TileID];
 
-export const notchCoordinates = {
+export const notchCoordinates: { [n in Notch]: { x: number; y: number } } = {
   "0": { x: 9, y: 30 },
   "1": { x: 21, y: 30 },
   "2": { x: 30, y: 21 },
@@ -306,4 +370,200 @@ export const notchCoordinates = {
   "5": { x: 9, y: 0 },
   "6": { x: 0, y: 9 },
   "7": { x: 0, y: 21 },
-} as const;
+};
+
+type LineType = "U" | "J" | "C" | "S" | "I" | "L" | "c";
+
+const lineTypeToPath: { [key in LineType]: string } = {
+  U: "M9 30C9 22 21 22 21 30", // U
+  J: "M9 30C9 22 22 21 30 21", // short end of curve
+  C: "M9 30C9 22 22 9 30 9", // C
+  S: "M9 30C9 22 21 8 21 0", // S
+  I: "M9 30L9 0", // I
+  L: "M9 30C9 22 8 9 0 9", // Long end of curve
+  c: "M9 30C9 26 6 21 0 21", // c
+};
+
+const notchesToLineType: { [n1 in Notch]: { [n2 in Notch]: LineType } } = {
+  "0": {
+    "0": "U",
+    "1": "U",
+    "2": "J",
+    "3": "C",
+    "4": "S",
+    "5": "I",
+    "6": "L",
+    "7": "c",
+  },
+  "1": {
+    "0": "U",
+    "1": "U",
+    "2": "c",
+    "3": "L",
+    "4": "I",
+    "5": "S",
+    "6": "C",
+    "7": "J",
+  },
+  "2": {
+    "0": "L",
+    "1": "c",
+    "2": "U",
+    "3": "U",
+    "4": "J",
+    "5": "C",
+    "6": "S",
+    "7": "I",
+  },
+  "3": {
+    "0": "C",
+    "1": "J",
+    "2": "U",
+    "3": "U",
+    "4": "c",
+    "5": "L",
+    "6": "I",
+    "7": "S",
+  },
+  "4": {
+    "0": "S",
+    "1": "I",
+    "2": "L",
+    "3": "c",
+    "4": "U",
+    "5": "U",
+    "6": "J",
+    "7": "C",
+  },
+  "5": {
+    "0": "I",
+    "1": "S",
+    "2": "C",
+    "3": "J",
+    "4": "U",
+    "5": "U",
+    "6": "c",
+    "7": "L",
+  },
+  "6": {
+    "0": "J",
+    "1": "C",
+    "2": "S",
+    "3": "I",
+    "4": "L",
+    "5": "c",
+    "6": "U",
+    "7": "U",
+  },
+  "7": {
+    "0": "c",
+    "1": "L",
+    "2": "I",
+    "3": "S",
+    "4": "C",
+    "5": "J",
+    "6": "U",
+    "7": "U",
+  },
+};
+
+const notchToTransform = {
+  "0": { flip: false, rotation: 0 },
+  "1": { flip: true, rotation: 0 },
+  "2": { flip: false, rotation: 90 },
+  "3": { flip: true, rotation: 90 },
+  "4": { flip: false, rotation: 180 },
+  "5": { flip: true, rotation: 180 },
+  "6": { flip: false, rotation: -90 },
+  "7": { flip: true, rotation: -90 },
+};
+
+const typeToCoords: {
+  [k in LineType]: { op: string; coords: [number, number][] };
+} = {
+  U: {
+    op: "C",
+    coords: [
+      [9, 22],
+      [21, 22],
+      [21, 30],
+    ],
+  },
+  J: {
+    op: "C",
+    coords: [
+      [9, 22],
+      [22, 21],
+      [30, 21],
+    ],
+  },
+  C: {
+    op: "C",
+    coords: [
+      [9, 22],
+      [22, 9],
+      [30, 9],
+    ],
+  },
+  S: {
+    op: "C",
+    coords: [
+      [9, 22],
+      [21, 8],
+      [21, 0],
+    ],
+  },
+  I: { op: "L", coords: [[9, 0]] },
+  L: {
+    op: "C",
+    coords: [
+      [9, 22],
+      [8, 9],
+      [0, 9],
+    ],
+  },
+  c: {
+    op: "C",
+    coords: [
+      [9, 26],
+      [6, 21],
+      [0, 21],
+    ],
+  },
+};
+
+const doRotate = (
+  [xIn, yIn]: [number, number],
+  angle: number
+): [number, number] => {
+  if (angle === 0) return [xIn, yIn];
+  const [x, y] = [xIn - 15, yIn - 15];
+  switch (angle) {
+    case 90:
+      return [y + 15, -x + 15];
+    case -90:
+      return [-y + 15, x + 15];
+    case 180:
+      return [-x + 15, -y + 15];
+    default:
+      return [xIn, yIn];
+  }
+};
+
+const doFlip = ([x, y]: [number, number]): [number, number] => [30 - x, y];
+
+export const getPath = (pair: ColoredPair) => {
+  const [n1, n2] = pair as unknown as Notch[];
+  const c1 = notchCoordinates[n1];
+  const lineType = notchesToLineType[n1][n2];
+  const { coords, op } = typeToCoords[lineType];
+  const { flip, rotation } = notchToTransform[n1];
+  return coords.reduce((p, coords) => {
+    let c = coords;
+    if (flip) {
+      c = doFlip(c);
+    }
+    c = doRotate(c, rotation);
+    return `${p}${c[0]} ${c[1]} `;
+  }, `M${c1.x} ${c1.y}${op}`);
+};

@@ -24,6 +24,7 @@ const broadcastGameUpdate = () => {
     gamePhase,
     playerTurnsOrder,
     availableColors,
+    coloredPaths,
     winners,
     clientConns,
   } = useEngine.getState();
@@ -36,6 +37,7 @@ const broadcastGameUpdate = () => {
       board,
       gamePhase,
       availableColors,
+      coloredPaths,
       winners,
     },
   };
@@ -183,6 +185,7 @@ const join = (hostId: string) => {
               gamePhase: state.gamePhase,
               playerTurnsOrder: state.playerTurnsOrder,
               availableColors: state.availableColors,
+              coloredPaths: state.coloredPaths,
               winners: state.winners,
             };
             useEngine.setState(update);

@@ -1,14 +1,32 @@
 import { memo } from "react";
-import { notchCoordinates } from "../../constants/tiles";
-import { getPlayers } from "../../engine/selectors";
+import { getPath, notchCoordinates } from "../../constants/tiles";
+import { getColoredPaths, getPlayers } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
-import { EngineState } from "../../engine/types";
-import { getTranslateValue } from "../../utils/math";
+import { ColoredPath } from "../../engine/types";
+import { getTranslate, getTranslateValue } from "../../utils/math";
 import { cn } from "../../utils/styles";
 import styles from "./Players.module.css";
 
+const ColoredLine = ({ pair, color, row, col }: ColoredPath) => {
+  return (
+    <>
+      <path
+        className={styles.line_colored}
+        d={getPath(pair)}
+        transform={getTranslate(row, col)}
+      />
+      <path
+        className={styles[`line_${color}`]}
+        d={getPath(pair)}
+        transform={getTranslate(row, col)}
+      />
+    </>
+  );
+};
+
 const Players = () => {
   const players = useEngine(getPlayers);
+  const coloredPaths = useEngine(getColoredPaths);
   return (
     <>
       <defs>
@@ -21,6 +39,14 @@ const Players = () => {
           />
         </filter>
       </defs>
+      <g>
+        {coloredPaths.map((p) => (
+          <ColoredLine
+            key={`path-${p.color}-${p.pair}-${p.col}-${p.row}`}
+            {...p}
+          />
+        ))}
+      </g>
       <g filter="url(#player-shadow)">
         {/* Workaround for the group to be the size of the board so the shadow doesn't get clipped */}
         <rect x={0} y={0} height={190} width={190} fill="none" stroke="none" />

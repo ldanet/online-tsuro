@@ -25,7 +25,7 @@ const Home: NextPage = () => {
 
   const validateName = useCallback(() => {
     if (!nameInput.current?.value) {
-      setNameError("Please enter your name to start playing.");
+      setNameError("Please enter your a nickname to start playing.");
       nameInput.current?.focus();
       return false;
     } else if (nameInput.current.value.length > 12) {
@@ -42,15 +42,16 @@ const Home: NextPage = () => {
   }, [router, createGame, validateName]);
 
   const handleClickJoin = useCallback(() => {
-    const hasNameError = !validateName();
+    let hasGameIdError = false;
     if (!gameIdInput.current?.value) {
       setGameIdError("Please enter the ID for the game you wish to join.");
       gameIdInput.current?.focus();
-      return;
+      hasGameIdError = true;
     }
-    console.log("hasNameError: ", hasNameError);
-    if (!hasNameError) {
-      joinGame(nameInput.current!.value, gameIdInput.current.value);
+    const hasNameError = !validateName();
+
+    if (!hasNameError && !hasGameIdError) {
+      joinGame(nameInput.current!.value, gameIdInput.current!.value);
       router.push("/game");
     }
   }, [router, joinGame, validateName]);
@@ -88,14 +89,11 @@ const Home: NextPage = () => {
             placeholder="Enter your nickname"
             onChange={clearNameError}
           />
-          {nameError && <p id="name-error">{nameError}</p>}
-          <fieldset>
-            <legend>Host a new game</legend>
-
-            <button onClick={handleClickHost} type="button">
-              New game room
-            </button>
-          </fieldset>
+          {nameError && (
+            <p className={styles.validation_error} id="name-error">
+              {nameError}
+            </p>
+          )}
           <fieldset>
             <legend>Join existing game</legend>
             <label htmlFor="game-id">Game ID</label>:{" "}
@@ -110,7 +108,18 @@ const Home: NextPage = () => {
             <button type="button" onClick={handleClickJoin}>
               Join
             </button>
-            {gameIdError && <p id="game-id-error">{gameIdError}</p>}
+            {gameIdError && (
+              <p className={styles.validation_error} id="game-id-error">
+                {gameIdError}
+              </p>
+            )}
+          </fieldset>
+          <fieldset>
+            <legend>Host a new game</legend>
+
+            <button onClick={handleClickHost} type="button">
+              New game room
+            </button>
           </fieldset>
         </form>
         {/* <h2>How is your data used?</h2>

@@ -29,6 +29,7 @@ export const useEngine = create<
       gamePhase: "joining",
       playerTurnsOrder: [],
       availableColors: [],
+      coloredPaths: [],
       winners: [],
 
       myPlayer: "",

@@ -11,6 +11,7 @@ export const getTurnOrder = ({ playerTurnsOrder }: EngineState) =>
   playerTurnsOrder;
 export const getAvailableColors = ({ availableColors }: EngineState) =>
   availableColors;
+export const getColoredPaths = ({ coloredPaths }: EngineState) => coloredPaths;
 
 // My player
 export const getMyPlayer = ({ myPlayer }: EngineState) => myPlayer;

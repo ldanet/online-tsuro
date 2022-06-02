@@ -33,3 +33,9 @@
   flex-shrink: 0;
   flex-basis: 1;
 }
+
+.validation_error {
+  font-size: .8rem;
+  color: var(--color-red-dark);
+  margin: 0;
+}
