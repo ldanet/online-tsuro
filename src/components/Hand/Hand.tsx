@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { memo, useCallback, useState } from "react";
 import { TileType, tiles } from "../../constants/tiles";
 import {
@@ -43,7 +44,7 @@ const Hand = () => {
       }
       setSelectedTile &&
         setSelectedTile({
-          id: id,
+          id,
           combination: combinations[combinationIndex],
         });
     },
@@ -60,6 +61,47 @@ const Hand = () => {
 
   return (
     <div className={styles.hand}>
+      <div className={styles.handTiles}>
+        <AnimatePresence initial={false}>
+          {hand?.map((tile, i) =>
+            tile ? (
+              <motion.button
+                key={tile.id}
+                layout
+                className={styles.tileButton}
+                type="button"
+                onClick={onTileClick.bind(null, i, tile)}
+                title="Click to select, click again to rotate"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{
+                  opacity: 1,
+                  x: 0,
+                  transition: { duration: 1 },
+                }}
+                exit={{
+                  y: -50,
+                  opacity: 0,
+                  transition: { duration: 0.5, type: "spring" },
+                }}
+              >
+                <svg className={styles.tileSvg} viewBox="0 0 40 40">
+                  <g filter="url(#tile-shadow)" transform="translate(5 5)">
+                    <Tile
+                      combination={
+                        tile.combinations[
+                          (rotations[i] ?? 0) % tile.combinations.length
+                        ]
+                      }
+                      withEdge={selectedTile?.id === tile.id}
+                    />
+                  </g>
+                </svg>
+              </motion.button>
+            ) : null
+          )}
+        </AnimatePresence>
+      </div>
+
       {isMyTurn ? (
         selectedTile ? (
           <button
@@ -77,37 +119,6 @@ const Hand = () => {
       ) : (
         <p className={styles.hint}>{turns[0]}&apos;s turn</p>
       )}
-      <div className={styles.handTiles}>
-        {hand?.map((tile, i) =>
-          tile ? (
-            <button
-              key={tile.id}
-              className={[
-                styles.tileButton,
-                selectedTile?.id === tile.id
-                  ? styles["tileButton--selected"]
-                  : "",
-              ].join(" ")}
-              type="button"
-              onClick={onTileClick.bind(null, i, tile)}
-              title="Click to select, click again to rotate"
-            >
-              <svg className={styles.tileSvg} viewBox="0 0 40 40">
-                <g filter="url(#tile-shadow)" transform="translate(5 5)">
-                  <Tile
-                    combination={
-                      tile.combinations[
-                        (rotations[i] ?? 0) % tile.combinations.length
-                      ]
-                    }
-                    withEdge={selectedTile?.id === tile.id}
-                  />
-                </g>
-              </svg>
-            </button>
-          ) : null
-        )}
-      </div>
       <p className={styles.hint}>
         Click on a tile to select it and click again to rotate
       </p>
