@@ -6,6 +6,7 @@ import {
   GameUpdateMessage,
   Player,
   PlayerColor,
+  Players,
   PlayerStatus,
 } from "./types";
 import {
@@ -66,6 +67,80 @@ export const shuffle = <T extends any>(a: T[]): T[] => {
   }
 
   return array;
+};
+
+export const dealTiles = (
+  deck: TileID[],
+  players: Players,
+  turnOrder: string[]
+) => {
+  let newPlayers = { ...players };
+  let newDeck = [...deck];
+
+  let playerIndex = turnOrder.findIndex((name) => newPlayers[name].hasDragon);
+  if (playerIndex === -1) playerIndex = 0;
+
+  // as long as player still have room in their hand and there are tiles to be dealt
+  while (
+    turnOrder.some(
+      (name) =>
+        newPlayers[name]?.status === "playing" &&
+        newPlayers[name]?.hand.length < 3
+    )
+  ) {
+    const player = newPlayers[turnOrder[playerIndex]];
+
+    if (player.hand.length! < 3 && player.status === "playing") {
+      // Assign dragon
+      if (newDeck.length == 0) {
+        newPlayers = {
+          ...newPlayers,
+          [player.name]: { ...player, hasDragon: true },
+        };
+        break;
+      }
+      const newTile = newDeck.shift() as TileID;
+      newPlayers = {
+        ...newPlayers,
+        [player.name]: {
+          ...player,
+          hand: [...player.hand, newTile],
+          hasDragon: false,
+        },
+      };
+    }
+
+    playerIndex = (playerIndex + 1) % turnOrder.length;
+  }
+  return { deck: newDeck, players: newPlayers };
+};
+
+export const giveDragonToNextPlayer = (
+  playerName: string,
+  players: Players,
+  turnOrder: string[]
+) => {
+  const player = players[playerName];
+
+  if (player.hasDragon) {
+    const playerTurn = turnOrder.findIndex((p) => p === playerName) + 1;
+    const order = [
+      ...turnOrder.slice(playerTurn),
+      ...turnOrder.slice(0, playerTurn),
+    ];
+
+    const nextPlayer = order.find(
+      (p) => players[p].hand.length < 3 && players[p].status === "playing"
+    );
+    if (nextPlayer) {
+      return {
+        ...players,
+        [nextPlayer]: { ...players[nextPlayer], hasDragon: true },
+        [playerName]: { ...players[playerName], hasDragon: false },
+      };
+    }
+  }
+  return players;
 };
 
 export const getNextTurnOrder = (order: string[]) => {
