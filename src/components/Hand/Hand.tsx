@@ -4,6 +4,8 @@ import { TileType, tiles } from "../../constants/tiles";
 import {
   getIsLoading,
   getIsMyTurn,
+  getMyPlayer,
+  getMyPlayerData,
   getPlayTile,
   getSelectedTile,
   getSetSelectedTile,
@@ -21,7 +23,8 @@ export const getHand = ({ players, myPlayer }: EngineState) => {
 
 const Hand = () => {
   const hand = useEngine(getHand);
-  const myName = useEngine(useCallback(({ myPlayer }) => myPlayer, []));
+  const myName = useEngine(getMyPlayer);
+  const myData = useEngine(getMyPlayerData);
   const isMyTurn = useEngine(getIsMyTurn);
   const selectedTile = useEngine(getSelectedTile);
   const isLoading = useEngine(getIsLoading);
@@ -119,9 +122,11 @@ const Hand = () => {
       ) : (
         <p className={styles.hint}>{turns[0]}&apos;s turn</p>
       )}
-      <p className={styles.hint}>
-        Click on a tile to select it and click again to rotate
-      </p>
+      {myData.status === "playing" && (
+        <p className={styles.hint}>
+          Click on a tile to select it and click again to rotate
+        </p>
+      )}
     </div>
   );
 };

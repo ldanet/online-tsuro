@@ -17,7 +17,6 @@ import styles from "./GameStatus.module.css";
 
 const GameStatus = () => {
   const players = useEngine(getPlayers);
-  const hostId = useEngine(getHostId);
   const winners = useEngine(getWinners);
   const turnOrder = useEngine(getTurnOrder);
   const isHost = useEngine(getIsHost);
