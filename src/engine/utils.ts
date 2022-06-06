@@ -148,6 +148,30 @@ export const getNextTurnOrder = (order: string[]) => {
   return [...rest, curr];
 };
 
+export const getPlayerCoordinates = (player: Player, paths: ColoredPath[]) => {
+  const playerPaths = paths.filter((path) => path.color === player.color);
+  let playerCoord: Coordinate | undefined;
+  if (playerPaths.length > 0) {
+    const lastPath = playerPaths[playerPaths.length - 1];
+    playerCoord = {
+      row: lastPath.row,
+      col: lastPath.col,
+      notch: lastPath.pair[1] as Notch,
+    };
+  } else {
+    playerCoord = player.startingNotch;
+  }
+  return playerCoord;
+};
+
+export const getAllPlayerCoordinates = (
+  players: Player[],
+  paths: ColoredPath[]
+) =>
+  players.reduce((coords, p) => {
+    return { ...coords, [p.name]: getPlayerCoordinates(p, paths) };
+  }, {} as { [p: string]: Coordinate | undefined });
+
 export function isBoardTile(tile: unknown): tile is BoardTile {
   return (
     hasProperty(tile, "id") &&

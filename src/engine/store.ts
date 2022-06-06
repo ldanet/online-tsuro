@@ -88,12 +88,23 @@ export const useEngine = create<
     {
       name: "tsuro-game",
       getStorage: () => sessionStorage,
-      partialize: (state) =>
-        Object.fromEntries(
-          Object.entries(state).filter(
+      partialize: (state) => {
+        let savedState: Partial<EngineState> = {
+          ...state,
+          players: Object.fromEntries(
+            Object.entries(state.players).map(([name, player]) => [
+              name,
+              { ...player, disconnected: state.myPlayer !== name },
+            ])
+          ),
+        };
+        savedState = Object.fromEntries(
+          Object.entries(savedState).filter(
             ([key]) => !["peer", "hostConn", "clientConns"].includes(key)
           )
-        ),
+        ) as Partial<EngineState>;
+        return savedState;
+      },
     }
   )
 );

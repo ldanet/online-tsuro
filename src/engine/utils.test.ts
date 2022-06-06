@@ -217,14 +217,12 @@ describe("give dragon to next player", () => {
           color: "red",
           hand: [],
           status: "playing",
-          coord: { notch: "5", row: 1, col: 1 },
         },
         bar: {
           name: "bar",
           color: "orange",
           hand: [],
           status: "playing",
-          coord: { notch: "2", row: 0, col: 0 },
           hasDragon: true,
         },
         baz: {
@@ -232,7 +230,6 @@ describe("give dragon to next player", () => {
           color: "blue",
           hand: [],
           status: "playing",
-          coord: { notch: "4", row: 1, col: 1 },
         },
       },
       ["foo", "bar", "baz"]
@@ -249,14 +246,12 @@ describe("give dragon to next player", () => {
           color: "red",
           hand: [],
           status: "playing",
-          coord: { notch: "5", row: 1, col: 1 },
         },
         bar: {
           name: "bar",
           color: "orange",
           hand: [],
           status: "playing",
-          coord: { notch: "2", row: 0, col: 0 },
           hasDragon: true,
         },
         baz: {
@@ -264,7 +259,6 @@ describe("give dragon to next player", () => {
           color: "blue",
           hand: ["1", "2", "3"],
           status: "playing",
-          coord: { notch: "4", row: 1, col: 1 },
         },
       },
       ["foo", "bar", "baz"]

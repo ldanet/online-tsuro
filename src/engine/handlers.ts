@@ -15,8 +15,10 @@ import {
   getNextNotch,
   getNextTileCoordinate,
   getNextTurnOrder,
+  getAllPlayerCoordinates,
   giveDragonToNextPlayer,
   shuffle,
+  getPlayerCoordinates,
 } from "./utils";
 
 export const createGame: EngineHandler<[string]> = (
@@ -73,7 +75,7 @@ export const startGame: EngineHandler = (state) => {
         status: "playing",
         hasDragon: false,
         hand: [],
-        coord: undefined,
+        startingNotch: undefined,
       };
     } else {
       playersWithoutColor.push(player.name);
@@ -163,10 +165,10 @@ export const placePlayer: EngineHandler<[string, Coordinate]> = (
 
   const newPlayers = {
     ...state.players,
-    [currentPlayer.name]: { ...currentPlayer, coord },
+    [currentPlayer.name]: { ...currentPlayer, startingNotch: coord },
   };
   const everyonePlaced = playerTurnsOrder.every(
-    (name) => !!newPlayers[name].coord
+    (name) => !!newPlayers[name].startingNotch
   );
   return {
     gamePhase: everyonePlaced ? "main" : gamePhase,
@@ -183,20 +185,24 @@ export const movePlayers: EngineHandler = (state) => {
   let newOrder = [...playerTurnsOrder];
   let newDeck = [...deck];
   let newColoredPaths = [...coloredPaths];
+
   playerTurnsOrder.forEach((name) => {
     const player = { ...newPlayers[name] };
-    if (player.status === "playing" && player.coord) {
+    let coords = getPlayerCoordinates(player, newColoredPaths);
+    if (player.status === "playing" && coords) {
       let keepOn = true;
 
-      while (keepOn) {
-        let { notch, row, col } = getNextTileCoordinate(player.coord);
+      while (keepOn && coords) {
+        let { notch, row, col } = getNextTileCoordinate(coords);
         const playerCollision = playerTurnsOrder.find((playerName) => {
-          const c = newPlayers[playerName].coord;
+          const c = getPlayerCoordinates(
+            newPlayers[playerName],
+            newColoredPaths
+          );
           return c && c.col === col && c.row === row && c.notch === notch;
         });
         if (playerCollision || col < 0 || col >= 6 || row < 0 || row >= 6) {
           // Kill current player
-          player.coord = { row, col, notch };
           player.status = "dead";
           newDeck = [...newDeck, ...player.hand];
           player.hand = [];
@@ -232,7 +238,6 @@ export const movePlayers: EngineHandler = (state) => {
           break;
         }
         let newNotch = getNextNotch(notch, nextTile.combination);
-        player.coord = { notch: newNotch, row: row, col };
 
         const pair = nextTile.combination.find((p) => p.includes(newNotch));
         if (player.color && pair) {
@@ -246,6 +251,7 @@ export const movePlayers: EngineHandler = (state) => {
             color: player.color,
           });
         }
+        coords = getPlayerCoordinates(player, newColoredPaths);
       }
     }
   });
@@ -298,8 +304,16 @@ export const playTile: EngineHandler<[string, BoardTile]> = (
   tile
 ) => {
   const { id: tileId, combination } = tile;
-  const { players, board, playerTurnsOrder, deck, myPlayer, isHost, hostConn } =
-    state;
+  const {
+    players,
+    board,
+    playerTurnsOrder,
+    deck,
+    myPlayer,
+    isHost,
+    hostConn,
+    coloredPaths,
+  } = state;
 
   if (!isHost && hostConn) {
     hostConn.send({ type: "playTile", tile });
@@ -309,7 +323,7 @@ export const playTile: EngineHandler<[string, BoardTile]> = (
   if (player !== playerTurnsOrder[0]) return {};
 
   // place tile
-  const coord = players[player]?.coord;
+  const coord = getPlayerCoordinates(players[player], coloredPaths);
   const newBoard = [...board];
   if (coord) {
     const { row, col } = getNextTileCoordinate(coord);

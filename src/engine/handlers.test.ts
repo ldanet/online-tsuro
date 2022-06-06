@@ -60,11 +60,6 @@ const stateWithGame: EngineState = {
       hand: ["16", "7", "22"],
       color: "red",
       hasDragon: false,
-      coord: {
-        notch: "2",
-        row: 4,
-        col: 3,
-      },
     },
     bar: {
       name: "bar",
@@ -72,11 +67,6 @@ const stateWithGame: EngineState = {
       hand: ["10", "34", "2"],
       color: "purple",
       hasDragon: false,
-      coord: {
-        notch: "1",
-        row: 1,
-        col: 4,
-      },
     },
     baz: {
       name: "baz",
@@ -84,11 +74,6 @@ const stateWithGame: EngineState = {
       hand: ["18", "26", "25"],
       color: "orange",
       hasDragon: false,
-      coord: {
-        notch: "0",
-        row: 1,
-        col: 1,
-      },
     },
   },
   playerTurnsOrder: ["foo", "bar", "baz"],
@@ -359,7 +344,7 @@ describe("startGame", () => {
 
     Object.values(newState.players!).forEach((player) => {
       expect(player.hasDragon).toBeFalsy();
-      expect(player.coord).toBeUndefined();
+      expect(player.startingNotch).toBeUndefined();
     });
     expect(newState.board).toEqual(emptytBoard);
     expect(newState.gamePhase).toEqual("round1");
@@ -423,13 +408,12 @@ describe("movePlayers", () => {
           color: "red",
           hand: [],
           status: "playing",
-          coord: { notch: "5", row: 1, col: 1 },
         },
       },
       playerTurnsOrder: ["foo"],
+      coloredPaths: [{ row: 1, col: 1, pair: "05", color: "red" }],
     });
 
-    expect(newState.players!.foo.coord).toEqual({ notch: "3", row: 0, col: 1 });
     expect(newState.coloredPaths).toContainEqual({
       pair: "03",
       row: 0,
@@ -461,13 +445,12 @@ describe("movePlayers", () => {
           color: "red",
           hand: [],
           status: "playing",
-          coord: { notch: "5", row: 1, col: 1 },
         },
       },
       playerTurnsOrder: ["foo"],
+      coloredPaths: [{ row: 1, col: 1, pair: "05", color: "red" }],
     });
 
-    expect(newState.players!.foo.coord).toEqual({ notch: "1", row: 1, col: 2 });
     expect(newState.coloredPaths).toContainEqual({
       pair: "03",
       row: 0,
@@ -511,21 +494,58 @@ describe("movePlayers", () => {
           color: "red",
           hand: [],
           status: "playing",
-          coord: { notch: "5", row: 1, col: 1 },
         },
         bar: {
           name: "bar",
           color: "blue",
           hand: [],
           status: "playing",
-          coord: { notch: "4", row: 1, col: 1 },
         },
       },
       playerTurnsOrder: ["foo", "bar"],
+      coloredPaths: [
+        { pair: "05", row: 1, col: 1, color: "red" },
+        { pair: "34", row: 1, col: 1, color: "blue" },
+      ],
     });
 
-    expect(newState.players!.foo.coord).toEqual({ notch: "1", row: 1, col: 2 });
-    expect(newState.players!.bar.coord).toEqual({ notch: "3", row: 1, col: 2 });
+    expect(newState.coloredPaths).toContainEqual({
+      pair: "03",
+      row: 0,
+      col: 1,
+      color: "red",
+    });
+    expect(newState.coloredPaths).toContainEqual({
+      pair: "60",
+      row: 0,
+      col: 2,
+      color: "red",
+    });
+    expect(newState.coloredPaths).toContainEqual({
+      pair: "51",
+      row: 1,
+      col: 2,
+      color: "red",
+    });
+
+    expect(newState.coloredPaths).toContainEqual({
+      pair: "12",
+      row: 0,
+      col: 1,
+      color: "blue",
+    });
+    expect(newState.coloredPaths).toContainEqual({
+      pair: "71",
+      row: 0,
+      col: 2,
+      color: "blue",
+    });
+    expect(newState.coloredPaths).toContainEqual({
+      pair: "43",
+      row: 1,
+      col: 2,
+      color: "blue",
+    });
   });
 
   it("removes a player from the game when they go off the board and their tiles get distributed to other players", () => {
@@ -551,14 +571,12 @@ describe("movePlayers", () => {
           color: "red",
           hand: [],
           status: "playing",
-          coord: { notch: "5", row: 1, col: 1 },
         },
         bar: {
           name: "bar",
           color: "orange",
           hand: ["1", "2", "3"],
           status: "playing",
-          coord: { notch: "2", row: 0, col: 0 },
           hasDragon: true,
         },
         baz: {
@@ -566,10 +584,14 @@ describe("movePlayers", () => {
           color: "blue",
           hand: [],
           status: "playing",
-          coord: { notch: "4", row: 1, col: 1 },
         },
       },
       playerTurnsOrder: ["foo", "bar", "baz"],
+      coloredPaths: [
+        { pair: "05", row: 1, col: 1, color: "red" },
+        { pair: "12", row: 0, col: 0, color: "orange" },
+        { pair: "34", row: 1, col: 1, color: "blue" },
+      ],
     });
 
     expect(newState.players!.bar.status).toBe("dead");

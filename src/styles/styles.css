@@ -12,7 +12,7 @@ body {
   --line-color: hsl(230, 50%, 28%);
   --edge-color: hsl(230, 50%, 34%);
 
-  --tile-size: min(calc((90vh - 15rem)  / 6.4), calc((100vw - 2em) / 6.4));
+  --tile-size: min(calc((90vh - 16rem)  / 6.4), calc((100vw - 2em) / 6.4));
 
   --color-red: #F43F5E;
   --color-red-dark: #BE123C;

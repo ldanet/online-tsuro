@@ -69,7 +69,7 @@ const GameStatus = () => {
                 <div {...tokenProps} />
               )}
               {name} {winners.includes(name) && <>🏆</>}{" "}
-              {status === "dead" && <>☠️</>}
+              {status === "dead" && <>💩</>}
             </div>
           );
         })}

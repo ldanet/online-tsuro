@@ -18,7 +18,7 @@ export type Player = {
   name: string;
   color?: PlayerColor;
   status: PlayerStatus;
-  coord?: Coordinate;
+  startingNotch?: Coordinate;
   hand: TileID[];
   hasDragon?: boolean;
   disconnected?: boolean;

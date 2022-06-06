@@ -2,19 +2,20 @@ import { motion, useAnimation } from "framer-motion";
 import { memo, useCallback, useEffect, useState } from "react";
 import { getSelectedTile } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
-import { getNextTileCoordinate } from "../../engine/utils";
+import {
+  getNextTileCoordinate,
+  getPlayerCoordinates,
+} from "../../engine/utils";
 import { getTranslate } from "../../utils/math";
 import Tile from "../Tile/Tile";
 
 const SelectedTile = () => {
   const selectedTile = useEngine(getSelectedTile);
   const selectedTileCoord = useEngine(
-    useCallback(
-      ({ players, myPlayer }) =>
-        players[myPlayer]?.coord &&
-        getNextTileCoordinate(players[myPlayer]?.coord!),
-      []
-    )
+    useCallback(({ players, myPlayer, coloredPaths }) => {
+      const coords = getPlayerCoordinates(players[myPlayer], coloredPaths);
+      return coords && getNextTileCoordinate(coords);
+    }, [])
   );
   const [localSelectedTile, setLocalSelectedTile] = useState(selectedTile);
   const controls = useAnimation();
