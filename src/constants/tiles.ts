@@ -467,7 +467,7 @@ const notchesToLineType: { [n1 in Notch]: { [n2 in Notch]: LineType } } = {
   },
 };
 
-const notchToTransform = {
+export const notchToTransform = {
   "0": { flip: false, rotation: 0 },
   "1": { flip: true, rotation: 0 },
   "2": { flip: false, rotation: 90 },

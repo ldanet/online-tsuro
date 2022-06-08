@@ -149,6 +149,7 @@ export const getNextTurnOrder = (order: string[]) => {
 };
 
 export const getPlayerCoordinates = (player: Player, paths: ColoredPath[]) => {
+  if (!player.color) return undefined;
   const playerPaths = paths.filter((path) => path.color === player.color);
   let playerCoord: Coordinate | undefined;
   if (playerPaths.length > 0) {
@@ -163,14 +164,6 @@ export const getPlayerCoordinates = (player: Player, paths: ColoredPath[]) => {
   }
   return playerCoord;
 };
-
-export const getAllPlayerCoordinates = (
-  players: Player[],
-  paths: ColoredPath[]
-) =>
-  players.reduce((coords, p) => {
-    return { ...coords, [p.name]: getPlayerCoordinates(p, paths) };
-  }, {} as { [p: string]: Coordinate | undefined });
 
 export function isBoardTile(tile: unknown): tile is BoardTile {
   return (

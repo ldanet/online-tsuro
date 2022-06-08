@@ -15,7 +15,6 @@ import {
   getNextNotch,
   getNextTileCoordinate,
   getNextTurnOrder,
-  getAllPlayerCoordinates,
   giveDragonToNextPlayer,
   shuffle,
   getPlayerCoordinates,

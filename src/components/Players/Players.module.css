@@ -3,6 +3,10 @@
   /* filter: url(#player-shadow); */
 }
 
+.splotch {
+  stroke-width: .3;
+}
+
 .player_red {
   fill: var(--color-red);
   stroke: var(--color-red-dark);

@@ -1,11 +1,8 @@
 import { memo, useCallback } from "react";
 import {
-  getStartGame,
-  getHostId,
   getIsHost,
   getPhase,
-  getPlayers,
-  getResetGame,
+  getPlayersArray,
   getTurnOrder,
   getWinners,
   getRemovePlayer,
@@ -16,7 +13,7 @@ import { cn } from "../../utils/styles";
 import styles from "./GameStatus.module.css";
 
 const GameStatus = () => {
-  const players = useEngine(getPlayers);
+  const players = useEngine(getPlayersArray);
   const winners = useEngine(getWinners);
   const turnOrder = useEngine(getTurnOrder);
   const isHost = useEngine(getIsHost);

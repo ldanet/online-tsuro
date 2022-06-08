@@ -3,7 +3,8 @@ import { EngineState } from "./types";
 // Game state
 export const getBoard = (state: EngineState) => state.board;
 export const getPhase = ({ gamePhase }: EngineState) => gamePhase;
-export const getPlayers = ({ players }: EngineState) => {
+export const getPlayers = ({ players }: EngineState) => players;
+export const getPlayersArray = ({ players }: EngineState) => {
   return Object.values(players);
 };
 export const getWinners = ({ winners }: EngineState) => winners;
