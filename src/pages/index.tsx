@@ -29,7 +29,8 @@ const Home: NextPage = () => {
       nameInput.current?.focus();
       return false;
     } else if (nameInput.current.value.length > 12) {
-      setNameError("Your name must be 12 characters or shorter");
+      setNameError("Your nickname must be 12 characters or shorter");
+      return false;
     }
     return true;
   }, []);
@@ -122,13 +123,6 @@ const Home: NextPage = () => {
             </button>
           </fieldset>
         </form>
-        {/* <h2>How is your data used?</h2>
-        <p>
-          Your name will only be used for display on the screen of player&apos;s
-          who have joined the same game as you. It will be stored temporarily in
-          their browser along with the moves you make in game for the game to
-          work. This data will not be sent to or stored on any server.
-        </p> */}
       </main>
     </div>
   );
