@@ -290,7 +290,7 @@ export const useNetwork = () => {
 
         peer.on("error", (error) => {
           if ((error as any).type === "peer-unavailable") {
-            alert("This game ID does not exist.");
+            alert("This game does not exist.");
           }
           console.error(error);
           setIsConnected(false);
