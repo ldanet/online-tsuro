@@ -81,16 +81,15 @@ const host = () => {
               message.name &&
               typeof message.name === "string"
             ) {
+              const { players, myPlayer } = useEngine.getState();
               // In case player with same name already exists
-              if (
-                Object.keys(useEngine.getState().players).includes(message.name)
-              ) {
-                console.log();
+              if (Object.keys(players).includes(message.name)) {
                 if (
-                  message.name !== useEngine.getState().myPlayer &&
-                  confirm(
-                    `Another player named ${message.name} wishes to join the game. Press OK to let them take over ${message.name}'s seat or cancel to ask them to pick a different name.`
-                  )
+                  message.name !== myPlayer &&
+                  (players[message.name].disconnected ||
+                    confirm(
+                      `Another player named ${message.name} wishes to join the game. Press OK to let them take over ${message.name}'s seat or cancel to ask them to pick a different name.`
+                    ))
                 ) {
                   name = message.name;
                   // Replace player's connection
@@ -102,7 +101,10 @@ const host = () => {
                       [name]: { ...state.players[name], disconnected: false },
                     },
                   }));
-                  conn.send({ type: "welcome" });
+                  conn.send({
+                    type: "welcome",
+                    hostName: useEngine.getState().hostName,
+                  });
                 } else {
                   conn.send({ type: "nameTaken" });
                   return;
@@ -111,7 +113,10 @@ const host = () => {
                 name = message.name;
                 useEngine.getState().addPlayer(message.name, conn);
 
-                conn.send({ type: "welcome" });
+                conn.send({
+                  type: "welcome",
+                  hostName: useEngine.getState().hostName,
+                });
               }
             }
             break;
@@ -199,8 +204,16 @@ const join = (hostId: string) => {
             }
           }
           if (hasProperty(message, "type")) {
-            if (message.type === "welcome") {
-              useEngine.setState({ isConnected: true, isLoading: false });
+            if (
+              message.type === "welcome" &&
+              hasProperty(message, "hostName") &&
+              typeof message.hostName === "string"
+            ) {
+              useEngine.setState({
+                isConnected: true,
+                isLoading: false,
+                hostName: message.hostName,
+              });
             }
             if (
               message.type === "error" &&
@@ -259,9 +272,11 @@ export const useNetwork = () => {
       setIsLoading(true);
       importingPeer.current = true;
       const fn = async () => {
-        const PeerJs = (await import("peerjs")).default;
+        const { default: PeerJs } = await import("peerjs");
         importingPeer.current = false;
-        peer = new PeerJs({ debug: 3 });
+        peer = new PeerJs({
+          debug: process.env.NODE_ENV === "production" ? 0 : 3,
+        });
 
         setPeer(peer);
 
@@ -280,7 +295,7 @@ export const useNetwork = () => {
           console.error(error);
           setIsConnected(false);
           setIsLoading(false);
-          setHostId(undefined);
+          router.replace("/");
         });
 
         peer.on("disconnected", () => {

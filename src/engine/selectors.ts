@@ -39,8 +39,12 @@ export const getRemovePlayer = ({ removePlayer }: EngineState) => removePlayer;
 export const getHostId = ({ hostId }: EngineState) => {
   return hostId;
 };
+export const getHostName = ({ hostName }: EngineState) => {
+  return hostName;
+};
 export const getIsHost = ({ isHost }: EngineState) => isHost;
 export const getIsLoading = ({ isLoading }: EngineState) => isLoading;
+export const getIsConnected = ({ isConnected }: EngineState) => isConnected;
 
 // Network actions
 export const getSetPeer = ({ setPeer }: EngineState) => setPeer;

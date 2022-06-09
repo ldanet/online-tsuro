@@ -3,6 +3,7 @@ import { useEngine } from "../../engine/store";
 import {
   getAvailableColors,
   getHaspickedColors,
+  getHostName,
   getIsHost,
   getIsLoading,
   getIsMyTurn,
@@ -28,6 +29,7 @@ const PlayerActions = () => {
   const winners = useEngine(getWinners);
   const myPlayer = useEngine(getMyPlayer);
   const turns = useEngine(getTurnOrder);
+  const hostName = useEngine(getHostName);
 
   if (isLoading) return <p>Connecting...</p>;
 
@@ -40,7 +42,7 @@ const PlayerActions = () => {
           Start game
         </button>
       ) : (
-        <p>Waiting for the game to start</p>
+        <p>Waiting for {hostName} to start the game</p>
       );
     } else {
       return availableColos.length ? (

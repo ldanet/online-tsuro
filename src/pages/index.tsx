@@ -2,67 +2,31 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { useEngine } from "../engine/store";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
   getCreateGame,
   getHostId,
   getJoinGame,
   getMyPlayer,
+  getSetHostId,
 } from "../engine/selectors";
+import { useIsMounted, useNameInput } from "../utils/hooks";
+import { cn } from "../utils/styles";
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const nameInput = useRef<HTMLInputElement>(null);
-  const gameIdInput = useRef<HTMLInputElement>(null);
   const createGame = useEngine(getCreateGame);
-  const joinGame = useEngine(getJoinGame);
   const myPlayer = useEngine(getMyPlayer);
-  const hostId = useEngine(getHostId);
 
-  const [nameError, setNameError] = useState<string>();
-  const [gameIdError, setGameIdError] = useState<string>();
+  const { nameInput, nameError, validateName, clearNameError } = useNameInput();
 
-  const validateName = useCallback(() => {
-    if (!nameInput.current?.value) {
-      setNameError("Please enter your a nickname to start playing.");
-      nameInput.current?.focus();
-      return false;
-    } else if (nameInput.current.value.length > 12) {
-      setNameError("Your nickname must be 12 characters or shorter");
-      return false;
-    }
-    return true;
-  }, []);
-
-  const handleClickHost = useCallback(() => {
+  const handleHost = useCallback(() => {
     if (validateName()) {
       createGame(nameInput.current!.value);
       router.push("/game");
     }
-  }, [router, createGame, validateName]);
-
-  const handleClickJoin = useCallback(() => {
-    let hasGameIdError = false;
-    if (!gameIdInput.current?.value) {
-      setGameIdError("Please enter the ID for the game you wish to join.");
-      gameIdInput.current?.focus();
-      hasGameIdError = true;
-    }
-    const hasNameError = !validateName();
-
-    if (!hasNameError && !hasGameIdError) {
-      joinGame(nameInput.current!.value, gameIdInput.current!.value);
-      router.push("/game");
-    }
-  }, [router, joinGame, validateName]);
-
-  const clearNameError = useCallback(() => {
-    setNameError(undefined);
-  }, []);
-  const clearGameIdError = useCallback(() => {
-    setGameIdError(undefined);
-  }, []);
+  }, [router, createGame, validateName, nameInput]);
 
   return (
     <div className={styles.container}>
@@ -77,51 +41,41 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>Tsuro</h1>
-        <form>
-          <label htmlFor="player-name">Choose a nickname</label>:{" "}
-          <input
-            id="player-name"
-            type="text"
-            ref={nameInput}
-            defaultValue={myPlayer ?? ""}
-            maxLength={12}
-            required
-            aria-describedby={nameError ? "name-error" : undefined}
-            placeholder="Enter your nickname"
-            onChange={clearNameError}
-          />
-          {nameError && (
-            <p className={styles.validation_error} id="name-error">
-              {nameError}
-            </p>
-          )}
-          <fieldset>
-            <legend>Join existing game</legend>
-            <label htmlFor="game-id">Game ID</label>:{" "}
+        <form className={styles.home_container} onSubmit={handleHost}>
+          <fieldset className={styles.home_fieldset}>
+            <legend className={styles.home_legend}>Host a new game</legend>
+            <label className={styles.home_label} htmlFor="player-name">
+              Choose a nickname:
+            </label>
             <input
-              id="game-id"
+              className={styles.home_input}
+              id="player-name"
               type="text"
-              ref={gameIdInput}
-              defaultValue={hostId ?? ""}
-              aria-describedby={gameIdError ? "game-id-error" : undefined}
-              onChange={clearGameIdError}
+              ref={nameInput}
+              defaultValue={myPlayer ?? ""}
+              maxLength={12}
+              required
+              aria-describedby={nameError ? "name-error" : undefined}
+              placeholder="Enter your nickname"
+              onChange={clearNameError}
             />
-            <button type="button" onClick={handleClickJoin}>
-              Join
-            </button>
-            {gameIdError && (
-              <p className={styles.validation_error} id="game-id-error">
-                {gameIdError}
+            {nameError && (
+              <p className={styles.validation_error} id="name-error">
+                {nameError}
               </p>
             )}
-          </fieldset>
-          <fieldset>
-            <legend>Host a new game</legend>
-
-            <button onClick={handleClickHost} type="button">
+            <button
+              className={styles.home_button}
+              onClick={handleHost}
+              type="button"
+            >
               New game room
             </button>
           </fieldset>
+          <p>
+            Trying to join an existing game? Ask the host or other players in
+            the game for the link!
+          </p>
         </form>
       </main>
     </div>

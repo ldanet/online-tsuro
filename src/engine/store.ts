@@ -100,7 +100,8 @@ export const useEngine = create<
         };
         savedState = Object.fromEntries(
           Object.entries(savedState).filter(
-            ([key]) => !["peer", "hostConn", "clientConns"].includes(key)
+            ([key]) =>
+              !["peer", "hostConn", "clientConns", "hostId"].includes(key)
           )
         ) as Partial<EngineState>;
         return savedState;

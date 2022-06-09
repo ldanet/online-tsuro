@@ -1,41 +1,27 @@
 import { memo, useCallback, useEffect, useState } from "react";
-import { getHostId } from "../../engine/selectors";
+import { getHostId, getHostName } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
 import styles from "./ShareUrl.module.css";
 
-const getGameURL = (gameID: string) =>
-  `${document.location.origin}/?gameId=${gameID}`;
+const getGameURL = (gameID: string, name: string) =>
+  `${document.location.origin}/game?gameId=${gameID}&name=${name}`;
 
 const ShareUrl = () => {
   const gameID = useEngine(getHostId);
+  const name = useEngine(getHostName);
   const [copyLinkSuccess, setCopyLinkSuccess] = useState<boolean | null>(null);
-  // const [copyGameIDSuccess, setCopyGameIDSuccess] = useState<boolean | null>(
-  //   null
-  // );
 
   const handleCopyLink = useCallback(() => {
-    if (gameID)
+    if (gameID && name)
       navigator.clipboard
-        .writeText(getGameURL(gameID))
+        .writeText(getGameURL(gameID, name))
         .then(() => {
           setCopyLinkSuccess(true);
         })
         .catch(() => {
           setCopyLinkSuccess(false);
         });
-  }, [gameID]);
-
-  // const handleCopyGameID = useCallback(() => {
-  //   if (gameID)
-  //     navigator.clipboard
-  //       .writeText(getGameURL(gameID))
-  //       .then(() => {
-  //         setCopyGameIDSuccess(true);
-  //       })
-  //       .catch(() => {
-  //         setCopyGameIDSuccess(false);
-  //       });
-  // }, [gameID]);
+  }, [gameID, name]);
 
   useEffect(() => {
     if (copyLinkSuccess !== null) {
@@ -45,16 +31,14 @@ const ShareUrl = () => {
       };
     }
   }, [copyLinkSuccess]);
-  // useEffect(() => {
-  //   if (copyGameIDSuccess !== null) {
-  //     const timeoutID = setTimeout(() => setCopyGameIDSuccess(null), 3000);
-  //     return () => {
-  //       clearTimeout(timeoutID);
-  //     };
-  //   }
-  // }, [copyGameIDSuccess]);
 
-  return gameID ? (
+  useEffect(() => {
+    if (gameID && name) {
+      window.history.replaceState(null, "", getGameURL(gameID, name));
+    }
+  }, [gameID, name]);
+
+  return gameID && name ? (
     <div className={styles.share_container}>
       <p>
         <label htmlFor="shareable-link">
@@ -66,7 +50,7 @@ const ShareUrl = () => {
           id="shareable-link"
           type="text"
           readOnly
-          value={getGameURL(gameID)}
+          value={getGameURL(gameID, name)}
         />
         <button type="button" onClick={handleCopyLink}>
           {copyLinkSuccess ? (
@@ -78,18 +62,6 @@ const ShareUrl = () => {
           )}
         </button>
       </p>
-
-      {/* <p>
-        <button type="button" onClick={handleCopyGameID}>
-          {copyGameIDSuccess ? (
-            <>✔️ Copied to clipboard</>
-          ) : copyGameIDSuccess === false ? (
-            <>Failed to copy game ID</>
-          ) : (
-            <>Copy game ID to clipboard</>
-          )}
-        </button>
-      </p> */}
     </div>
   ) : null;
 };

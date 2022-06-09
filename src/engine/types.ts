@@ -62,6 +62,7 @@ export type LocalState = {
   isLoading: boolean;
   isConnected: boolean;
   hostId?: string;
+  hostName?: string;
   isHost: boolean;
   peer: TPeer | null;
   hostConn: TDataConnection | null;

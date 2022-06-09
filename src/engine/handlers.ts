@@ -29,6 +29,7 @@ export const createGame: EngineHandler<[string]> = (
     board: emptytBoard,
     isHost: true,
     hostId: undefined,
+    hostName: name,
     myPlayer: name,
     availableColors: colors,
     players: {
