@@ -188,7 +188,15 @@ const join = (hostId: string) => {
               coloredPaths: state.coloredPaths,
               winners: state.winners,
             };
-            useEngine.setState(update);
+
+            const isGamePhaseChange =
+              useEngine.getState().gamePhase !== state.gamePhase;
+            if (isGamePhaseChange) {
+              // Clear selected tile so it doesn't hang around from previous games
+              useEngine.setState({ ...update, selectedTile: undefined });
+            } else {
+              useEngine.setState(update);
+            }
           }
           if (hasProperty(message, "type")) {
             if (message.type === "welcome") {
