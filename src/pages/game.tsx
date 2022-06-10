@@ -1,16 +1,10 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import Board from "../components/Board/Board";
-import GameStatus from "../components/GameStatus/GameStatus";
 import { useRouter } from "next/router";
 import { useEngine } from "../engine/store";
 import { useCallback, useEffect, useState } from "react";
-import { EngineState } from "../engine/types";
-import { useNetwork } from "../engine/network";
-import PlayerActions from "../components/PlayerActions/PlayerActions";
-import ShareUrl from "../components/ShareUrl/ShareUrl";
-import { useIsMounted, useNameInput } from "../utils/hooks";
+import { useIsMounted } from "../utils/hooks";
 import {
   getHostId,
   getIsConnected,
@@ -21,6 +15,7 @@ import {
 } from "../engine/selectors";
 import { cn } from "../utils/styles";
 import Game from "../components/Game/Game";
+import NameInput, { useNameInput } from "../components/NameInput/NameInput";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -78,26 +73,11 @@ const Home: NextPage = () => {
             <>
               <h1 className={styles.title}>Tsuro</h1>
               <form className={styles.home_container} onSubmit={handleJoin}>
-                <label className={styles.home_label} htmlFor="player-name">
-                  Choose a nickname:
-                </label>
-                <input
-                  className={styles.home_input}
-                  id="player-name"
-                  type="text"
-                  ref={nameInput}
-                  defaultValue={myPlayer ?? ""}
-                  maxLength={12}
-                  required
-                  aria-describedby={nameError ? "name-error" : undefined}
-                  placeholder="Enter your nickname"
-                  onChange={clearNameError}
+                <NameInput
+                  nameInput={nameInput}
+                  nameError={nameError}
+                  clearNameError={clearNameError}
                 />
-                {nameError && (
-                  <p className={styles.validation_error} id="name-error">
-                    {nameError}
-                  </p>
-                )}
                 {hostId && isMounted && (
                   <>
                     <button
