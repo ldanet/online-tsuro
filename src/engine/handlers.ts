@@ -114,6 +114,7 @@ export const startGame: EngineHandler = (state) => {
     gamePhase: "round1",
     winners: [],
     coloredPaths: [],
+    selectedTile: undefined,
   };
 };
 
