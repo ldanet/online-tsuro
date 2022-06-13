@@ -220,7 +220,7 @@ export const movePlayers: EngineHandler = (state) => {
             const collider = { ...newPlayers[playerCollision] };
             collider.status = "dead";
             newDeck = [...newDeck, ...collider.hand];
-            player.hand = [];
+            collider.hand = [];
             newPlayers = { ...newPlayers, [collider.name]: collider };
             newPlayers = giveDragonToNextPlayer(
               collider.name,
