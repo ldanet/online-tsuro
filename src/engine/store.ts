@@ -36,6 +36,7 @@ export const useEngine = create<
 
       isLoading: false,
       isConnected: false,
+      isOffline: false,
       peer: null,
       isHost: false,
       hostConn: null,
@@ -50,6 +51,9 @@ export const useEngine = create<
       },
       setIsConnected: (isConnected) => {
         set({ isConnected });
+      },
+      setIsOffline: (isOffline) => {
+        set({ isOffline });
       },
       setHostId: (hostId) => {
         set({ hostId });
@@ -101,7 +105,15 @@ export const useEngine = create<
         savedState = Object.fromEntries(
           Object.entries(savedState).filter(
             ([key]) =>
-              !["peer", "hostConn", "clientConns", "hostId"].includes(key)
+              ![
+                "peer",
+                "hostConn",
+                "clientConns",
+                "hostId",
+                "isConnected",
+                "isLoading",
+                "isOffline",
+              ].includes(key)
           )
         ) as Partial<EngineState>;
         return savedState;

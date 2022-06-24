@@ -10,8 +10,8 @@ import { useRouter } from "next/router";
 import { useEngine } from "../../engine/store";
 import { EngineState } from "../../engine/types";
 
-const getHasGame = ({ isConnected, isLoading }: EngineState) =>
-  isConnected || isLoading;
+const getHasGame = ({ isConnected, isLoading, isOffline }: EngineState) =>
+  isConnected || isLoading || isOffline;
 
 const Game = () => {
   const router = useRouter();

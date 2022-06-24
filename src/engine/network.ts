@@ -8,6 +8,7 @@ import {
   getSetHostId,
   getSetIsConnected,
   getSetIsLoading,
+  getSetIsOffline,
   getSetPeer,
 } from "./selectors";
 import { useEngine } from "./store";
@@ -51,7 +52,6 @@ let unsubGameUpdate: (() => void) | null = null;
 const host = () => {
   const { peer } = useEngine.getState();
   peer?.on("open", (hostId) => {
-    console.log("hostId: ", hostId);
     if (typeof hostId === "string") useEngine.setState({ hostId });
 
     useEngine.setState({ isConnected: true, isLoading: false });
@@ -262,6 +262,7 @@ export const useNetwork = () => {
   const isHost = useEngine(getIsHost);
   const hostId = useEngine(getHostId);
   const setIsConnected = useEngine(getSetIsConnected);
+  const setIsOffline = useEngine(getSetIsOffline);
   const setIsLoading = useEngine(getSetIsLoading);
   const setHostId = useEngine(getSetHostId);
 
@@ -293,9 +294,16 @@ export const useNetwork = () => {
             alert("This game does not exist.");
           }
           console.error(error);
+          if (
+            isHost &&
+            confirm(
+              "Unable to connect. Do you wish to continue playing offline?"
+            )
+          ) {
+            setIsOffline(true);
+          }
           setIsConnected(false);
           setIsLoading(false);
-          router.replace("/");
         });
 
         peer.on("disconnected", () => {
@@ -311,6 +319,7 @@ export const useNetwork = () => {
     setIsConnected,
     setIsLoading,
     setHostId,
+    setIsOffline,
     router,
   ]);
 

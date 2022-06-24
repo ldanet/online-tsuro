@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useState } from "react";
-import { getHostId, getHostName } from "../../engine/selectors";
+import { getHostId, getHostName, getIsOffline } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
 import styles from "./ShareUrl.module.css";
 
@@ -8,6 +8,7 @@ const getGameURL = (gameID: string, name: string) =>
 
 const ShareUrl = () => {
   const gameID = useEngine(getHostId);
+  const isOffline = useEngine(getIsOffline);
   const name = useEngine(getHostName);
   const [copyLinkSuccess, setCopyLinkSuccess] = useState<boolean | null>(null);
 
@@ -37,6 +38,18 @@ const ShareUrl = () => {
       window.history.replaceState(null, "", getGameURL(gameID, name));
     }
   }, [gameID, name]);
+
+  if (isOffline && !gameID) {
+    return (
+      <div className={styles.share_container}>
+        <p>
+          Playing offline.
+          <br />
+          Reload the page to get a shareable link to invite other players.
+        </p>
+      </div>
+    );
+  }
 
   return gameID && name ? (
     <div className={styles.share_container}>
