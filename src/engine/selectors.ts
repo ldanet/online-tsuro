@@ -48,6 +48,7 @@ export const getIsConnected = ({ isConnected }: EngineState) => isConnected;
 export const getIsOffline = ({ isOffline }: EngineState) => isOffline;
 
 // Network actions
+export const getSetIsHost = ({ setIsHost }: EngineState) => setIsHost;
 export const getSetPeer = ({ setPeer }: EngineState) => setPeer;
 export const getSetIsConnected = ({ setIsConnected }: EngineState) =>
   setIsConnected;

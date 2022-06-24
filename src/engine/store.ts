@@ -55,6 +55,9 @@ export const useEngine = create<
       setIsOffline: (isOffline) => {
         set({ isOffline });
       },
+      setIsHost: (isHost) => {
+        set({ isHost });
+      },
       setHostId: (hostId) => {
         set({ hostId });
       },

@@ -87,6 +87,7 @@ export type Actions = {
   setIsConnected: (isConnected: boolean) => void;
   setIsOffline: (isOffline: boolean) => void;
   setHostId: (hostId: string | undefined) => void;
+  setIsHost: (isHost: boolean) => void;
 
   // Game
   setSelectedTile: (tile: BoardTile) => void;

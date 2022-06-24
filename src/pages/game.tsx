@@ -12,6 +12,7 @@ import {
   getJoinGame,
   getMyPlayer,
   getSetHostId,
+  getSetIsHost,
 } from "../engine/selectors";
 import { cn } from "../utils/styles";
 import Game from "../components/Game/Game";
@@ -24,6 +25,7 @@ const Home: NextPage = () => {
   const hostId = useEngine(getHostId);
   const isHost = useEngine(getIsHost);
   const setHostId = useEngine(getSetHostId);
+  const setIsHost = useEngine(getSetIsHost);
   const isConnected = useEngine(getIsConnected);
   const isMounted = useIsMounted();
 
@@ -32,10 +34,11 @@ const Home: NextPage = () => {
   const isRouterReady = router.isReady;
 
   useEffect(() => {
-    if (gameId && typeof gameId === "string") {
+    if (gameId && typeof gameId === "string" && gameName !== myPlayer) {
       setHostId(gameId);
+      setIsHost(false);
     }
-  }, [gameId, setHostId]);
+  }, [gameId, setHostId, gameName, myPlayer, setIsHost]);
 
   useEffect(() => {
     if (isRouterReady && isMounted && !isHost && !gameId && !hostId) {
@@ -65,7 +68,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        {(isHost || hostId) && myPlayer && isMounted ? (
+        {(isHost || hostId) && myPlayer && isRouterReady ? (
           <Game />
         ) : (
           hostId &&
