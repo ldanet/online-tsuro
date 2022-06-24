@@ -58,13 +58,14 @@ export const getColorCoordinatesData = (
   paths: ColoredPath[]
 ) => {
   return Object.values(players).reduce(
-    ({ colorCoordinates, collisions }, player) => {
+    ({ colorCoordinates, collisions, outs }, player) => {
       const playerCoords = getPlayerCoordinates(player, paths);
 
       if (player.color && playerCoords) {
         // find collision
         const next = getNextTileCoordinate(playerCoords);
         const newCollisions = [...collisions];
+        const newOuts = [...outs];
         const [collisionColor] =
           (Object.entries(colorCoordinates).find(
             ([_, c]) =>
@@ -79,22 +80,30 @@ export const getColorCoordinatesData = (
         const isOut =
           next.row < 0 || next.row >= 6 || next.col < 0 || next.col >= 6;
 
+        if (isOut) {
+          newOuts.push({
+            ...playerCoords,
+            color: player.color,
+          });
+        }
         return {
           colorCoordinates: {
             ...colorCoordinates,
             [player.color]: { ...playerCoords, isOut },
           },
           collisions: newCollisions,
+          outs: newOuts,
         };
       }
 
-      return { colorCoordinates, collisions };
+      return { colorCoordinates, collisions, outs };
     },
-    { colorCoordinates: {}, collisions: [] } as {
+    { colorCoordinates: {}, collisions: [], outs: [] } as {
       colorCoordinates: {
         [key in PlayerColor]?: Coordinate & { isOut: boolean };
       };
       collisions: Array<Coordinate & { colors: PlayerColor[] }>;
+      outs: Array<Coordinate & { color: PlayerColor }>;
     }
   );
 };
@@ -130,7 +139,7 @@ const Players = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coloredPaths, existingPaths]);
 
-  const { colorCoordinates, collisions } = getColorCoordinatesData(
+  const { colorCoordinates, collisions, outs } = getColorCoordinatesData(
     players,
     existingPaths
   );
@@ -180,6 +189,25 @@ const Players = () => {
               r="3"
             />
           ) : null;
+        })}
+      </g>
+      <g>
+        {outs.map((out) => {
+          if (out.color === movingColor) return null;
+          // spill is tile shaped with the spill at notch 0
+          const translate = getTranslate(out.row, out.col);
+          const notchTransform = notchToTransform[out.notch];
+          const transform = `${translate}  rotate(${-notchTransform.rotation} 15 15) ${
+            notchTransform.flip ? `scale(-1 1) translate(-30)` : ""
+          }`;
+          return (
+            <path
+              key={`spill-${out.color}`}
+              className={cn(styles.splotch, styles[`player_${out.color}`])}
+              transform={transform}
+              d="m 7.4675123,30.003181 c 0.018152,0.08646 0.041037,0.173305 0.069424,0.260079 0.5485081,1.188296 -1.529986,2.541602 -0.4952548,2.961117 0.8229011,0.333632 0.6164606,-2.251042 1.3077601,-1.829999 0.53982,0.328783 -1.2536995,2.773147 -0.035233,2.969525 1.1771107,0.189713 0.1838275,-2.277249 0.7292438,-2.304617 0.5624362,-0.02822 -0.07002,1.076611 0.6863277,0.9495 0.9951309,-0.16724 -0.4958464,-1.348037 0.018784,-1.575616 0.6942695,-0.307018 0.8907475,3.072518 1.8784425,2.664547 0.920583,-0.38025 -1.589593,-2.46844 -1.318972,-3.825069 0.01681,-0.08428 0.07719,-0.236999 0.07567,-0.269467"
+            />
+          );
         })}
       </g>
       <g>
