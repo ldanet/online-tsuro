@@ -7,6 +7,8 @@ export type PlayerColor =
   | "yellow"
   | "orange"
   | "purple"
+  | "cyan"
+  | "pink"
   | "black"
   | "white";
 

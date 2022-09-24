@@ -16,6 +16,8 @@ export const colors: PlayerColor[] = [
   "yellow",
   "orange",
   "purple",
+  "cyan",
+  "pink",
   "black",
   "white",
 ];
