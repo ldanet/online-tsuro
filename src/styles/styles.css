@@ -15,24 +15,24 @@ body {
   --line-color: hsl(230, 50%, 28%);
   --edge-color: hsl(230, 50%, 34%);
 
-  --tile-size: min(calc((90vh - 16rem)  / 6.4), calc((100vw - 2em) / 6.4));
+  --tile-size: min(calc((90vh - 16rem) / 6.4), calc((100vw - 2em) / 6.4));
 
-  --color-red: #F43F5E;
-  --color-red-dark: #BE123C;
+  --color-red: #f43f5e;
+  --color-red-dark: #be123c;
   --color-blue: #3b82f6;
   --color-blue-dark: #1e3fae;
-  --color-green: #10B981;
+  --color-green: #10b981;
   --color-green-dark: #047857;
-  --color-yellow: #EAB308;
+  --color-yellow: #eab308;
   --color-yellow-dark: #a26107;
-  --color-purple: #8B5CF6;
-  --color-purple-dark: #6D28D9;
-  --color-orange: #F97316;
-  --color-orange-dark: #C2410C;
-  --color-black: #44403C;
-  --color-black-dark: #1C1917;
-  --color-white: #F5F5F4;
-  --color-white-dark: #D6D3D1;
+  --color-purple: #b46aff;
+  --color-purple-dark: #7e22ce;
+  --color-orange: #f97316;
+  --color-orange-dark: #c2410c;
+  --color-black: #44403c;
+  --color-black-dark: #1c1917;
+  --color-white: #f5f5f4;
+  --color-white-dark: #d6d3d1;
 }
 
 body {
