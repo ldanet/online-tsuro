@@ -373,10 +373,18 @@ export const pickColor: EngineHandler<[string, PlayerColor]> = (
   name,
   color
 ) => {
-  const { players, availableColors, isHost, hostConn } = state;
+  const { players, availableColors, isHost, hostConn, clientConns } = state;
 
   if (!isHost && hostConn) {
     hostConn.send({ type: "pickColor", color });
+  }
+
+  if (!availableColors.includes(color)) {
+    clientConns[name]?.send({
+      type: "error",
+      message: `Someone already picked ${color}. Please choose a different color.`,
+    });
+    return state;
   }
 
   const player = { ...players[name] };

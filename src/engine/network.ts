@@ -127,15 +127,7 @@ const host = () => {
               colors.includes(message.color as PlayerColor)
             ) {
               const color = message.color as PlayerColor;
-              if (!useEngine.getState().availableColors.includes(color)) {
-                conn.send({
-                  type: "error",
-                  message: `Someone already picked ${color}. Please choose a different color.`,
-                });
-              }
-              useEngine
-                .getState()
-                .pickColor(name, message.color as PlayerColor);
+              useEngine.getState().pickColor(name, color);
             }
             break;
           }
