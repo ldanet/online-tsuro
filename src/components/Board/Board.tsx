@@ -47,7 +47,12 @@ const Board = () => {
   const gamePhase = useEngine(getPhase);
 
   return (
-    <svg viewBox="0 0 190 190" className={styles.board}>
+    <svg
+      viewBox="0 0 190 190"
+      className={styles.board}
+      xmlns="http://www.w3.org/2000/svg"
+      version="1.1"
+    >
       <defs>
         <filter id="tile-shadow" colorInterpolationFilters="sRGB">
           <feDropShadow

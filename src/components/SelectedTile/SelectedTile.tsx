@@ -1,6 +1,6 @@
 import { motion, useAnimation } from "framer-motion";
 import { memo, useCallback, useEffect, useState } from "react";
-import { getSelectedTile } from "../../engine/selectors";
+import { getMyPlayerData, getSelectedTile } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
 import {
   getNextTileCoordinate,
@@ -16,6 +16,9 @@ const SelectedTile = () => {
       const coords = getPlayerCoordinates(players[myPlayer], coloredPaths);
       return coords && getNextTileCoordinate(coords);
     }, [])
+  );
+  const isPlaying = useEngine(
+    useCallback((state) => getMyPlayerData(state).status === "playing", [])
   );
   const [localSelectedTile, setLocalSelectedTile] = useState(selectedTile);
   const controls = useAnimation();
@@ -33,7 +36,7 @@ const SelectedTile = () => {
   }, [controls, selectedTile]);
   return (
     <>
-      {selectedTile && selectedTileCoord && (
+      {isPlaying && selectedTile && selectedTileCoord && (
         <motion.g animate={controls}>
           <Tile
             combination={selectedTile.combination}
