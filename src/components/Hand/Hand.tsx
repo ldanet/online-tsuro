@@ -87,7 +87,12 @@ const Hand = () => {
                   transition: { duration: 0.5, type: "spring" },
                 }}
               >
-                <svg className={styles.tileSvg} viewBox="0 0 40 40">
+                <svg
+                  className={styles.tileSvg}
+                  viewBox="0 0 40 40"
+                  xmlns="http://www.w3.org/2000/svg"
+                  version="1.1"
+                >
                   <g filter="url(#tile-shadow)" transform="translate(5 5)">
                     <Tile
                       combination={
