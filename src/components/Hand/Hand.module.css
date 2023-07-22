@@ -25,6 +25,12 @@
   height: calc(var(--tile-size) * 1.33);
 }
 
+.instruction {
+  text-align: center;
+  margin: 0 0 0.2rem;
+  /* font-size: 0.8rem; */
+}
+
 .hint {
   margin: 0;
   font-size: 0.8rem;

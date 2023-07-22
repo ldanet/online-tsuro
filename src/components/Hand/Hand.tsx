@@ -6,6 +6,7 @@ import {
   getIsMyTurn,
   getMyPlayer,
   getMyPlayerData,
+  getPhase,
   getPlayTile,
   getSelectedTile,
   getSetSelectedTile,
@@ -29,6 +30,7 @@ const Hand = () => {
   const selectedTile = useEngine(getSelectedTile);
   const isLoading = useEngine(getIsLoading);
   const turns = useEngine(getTurnOrder);
+  const gamePhase = useEngine(getPhase);
 
   const setSelectedTile = useEngine(getSetSelectedTile);
   const playTile = useEngine(getPlayTile);
@@ -73,7 +75,11 @@ const Hand = () => {
                 layout
                 className={styles.tileButton}
                 type="button"
-                onClick={onTileClick.bind(null, i, tile)}
+                onClick={
+                  gamePhase === "main"
+                    ? onTileClick.bind(null, i, tile)
+                    : undefined
+                }
                 title="Click to select, click again to rotate"
                 initial={{ opacity: 0, x: 50 }}
                 animate={{
@@ -111,7 +117,11 @@ const Hand = () => {
       </div>
 
       {isMyTurn ? (
-        selectedTile ? (
+        gamePhase === "round1" ? (
+          <p className={styles.instruction}>
+            It&apos;s your turn! Pick a notch on the edge of the board
+          </p>
+        ) : selectedTile ? (
           <button
             type="button"
             onClick={onPlayClick}
@@ -120,14 +130,15 @@ const Hand = () => {
             Play selected tile
           </button>
         ) : (
-          <p className={styles.hint}>
+          <p className={styles.instruction}>
             It&apos;s your turn! Select a tile to play
           </p>
         )
       ) : (
         <p className={styles.hint}>{turns[0]}&apos;s turn</p>
       )}
-      {myData.status === "playing" && (
+
+      {myData.status === "playing" && gamePhase === "main" && (
         <p className={styles.hint}>
           Click on a tile to select it and click again to rotate
         </p>

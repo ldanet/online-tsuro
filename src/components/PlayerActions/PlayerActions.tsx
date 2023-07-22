@@ -33,7 +33,7 @@ const PlayerActions = () => {
 
   if (isLoading) return <p>Connecting...</p>;
 
-  if (gamePhase === "main") return <Hand />;
+  if (gamePhase === "main" || gamePhase === "round1") return <Hand />;
 
   if (gamePhase === "joining") {
     if (hasPickedColor) {
@@ -52,13 +52,7 @@ const PlayerActions = () => {
       );
     }
   }
-  if (gamePhase === "round1" && hasPickedColor) {
-    return isMyTurn ? (
-      <p>It&apos;s your turn! Pick a notch on the edge of the board</p>
-    ) : (
-      <p>{turns[0]}&apos;s turn</p>
-    );
-  }
+
   if (gamePhase === "finished") {
     let message: ReactNode;
     if (winners.length > 1) {
