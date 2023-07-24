@@ -1,5 +1,5 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { Variants } from "framer-motion/types/types";
+import { motion } from "framer-motion";
+import { Variants } from "framer-motion";
 import { memo, useEffect, useRef, useState } from "react";
 import { notchCoordinates } from "../../constants/tiles";
 import { getColoredPaths, getPlayers } from "../../engine/selectors";
