@@ -1,16 +1,11 @@
+import { motion, Variant } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
 import { Notch } from "../../constants/tiles";
+import { useEngine } from "../../engine/store";
+import { getTranslate } from "../../utils/math";
 import styles from "./Edge.module.css";
 
 export type EdgeType = "top" | "bottom" | "left" | "right";
-
-export type EdgeProps = Omit<JSX.IntrinsicElements["g"], "onClick"> & {
-  type: EdgeType;
-} & (
-    | {
-        isClickable?: false;
-      }
-    | { isClickable: true; onClick: (notch: Notch) => void }
-  );
 
 const paths = {
   "0": "M9 27.5L9 32.5",
@@ -34,89 +29,136 @@ const clickablePaths = {
   "7": "M-2.5 32.5L-2.5 15L5 15L5 32.5 z",
 };
 
-export const Edge = ({ type, transform, ...props }: EdgeProps) => {
+const typeToNotches = {
+  top: ["0", "1"],
+  left: ["2", "3"],
+  bottom: ["4", "5"],
+  right: ["6", "7"],
+} as const;
+
+const boardAnimationLength = 2;
+const timePerNotch = boardAnimationLength / 24;
+const initialDelay = 2;
+
+type Variants = {
+  still: Variant;
+  blink: Variant;
+  hover: Variant;
+};
+type VariantKey = keyof Variants;
+
+const animationVariants: Variants = {
+  still: {
+    scale: 1,
+    opacity: 1,
+  },
+  hover: {
+    scale: [null, 1.5],
+    opacity: 1,
+  },
+  blink: (delay: number) => {
+    return {
+      scale: [1, 0.2, 1.2, 1],
+      opacity: [1, 0.2, 1, 1],
+      transition: {
+        delay,
+      },
+    };
+  },
+};
+
+type NotchProps = {
+  notch: Notch;
+  delay: number;
+  isClickable?: boolean;
+  handleClick: (notch: Notch) => void;
+};
+
+const Notch = ({ notch, delay, isClickable, handleClick }: NotchProps) => {
+  const [variant, setVariant] = useState<VariantKey>("still");
+
+  useEffect(() => {
+    setVariant(isClickable ? "blink" : "still");
+  }, [isClickable]);
+
+  const handleHoverStart = useCallback(() => {
+    if (isClickable) setVariant("hover");
+  }, [isClickable]);
+
+  const handleHoverEnd = useCallback(() => {
+    setVariant("still");
+  }, []);
+
   return (
-    <g transform={transform}>
-      {type === "top" && (
-        <>
-          <path className={styles.notch} d={paths["0"]} />
-          <path className={styles.notch} d={paths["1"]} />
-          {props.isClickable && (
-            <>
-              <path
-                className={styles.clickable_notch}
-                d={clickablePaths["0"]}
-                onClick={props.onClick.bind(null, "0")}
-              />
-              <path
-                className={styles.clickable_notch}
-                d={clickablePaths["1"]}
-                onClick={props.onClick.bind(null, "1")}
-              />
-            </>
-          )}
-        </>
+    <motion.g
+      onHoverStart={handleHoverStart}
+      onHoverEnd={handleHoverEnd}
+      animate={variant}
+      initial="still"
+      onClick={handleClick.bind(null, notch)}
+    >
+      <motion.path
+        className={styles.notch}
+        variants={animationVariants}
+        custom={delay}
+        transition={{
+          scale: {
+            type: "spring",
+          },
+        }}
+        d={paths[notch]}
+      />
+      {isClickable && (
+        <path className={styles.clickable_notch} d={clickablePaths[notch]} />
       )}
-      {type === "left" && (
-        <>
-          <path className={styles.notch} d={paths["2"]} />
-          <path className={styles.notch} d={paths["3"]} />
-          {props.isClickable && (
-            <>
-              <path
-                className={styles.clickable_notch}
-                d={clickablePaths["2"]}
-                onClick={props.onClick.bind(null, "2")}
-              />
-              <path
-                className={styles.clickable_notch}
-                d={clickablePaths["3"]}
-                onClick={props.onClick.bind(null, "3")}
-              />
-            </>
-          )}
-        </>
-      )}
-      {type === "bottom" && (
-        <>
-          <path className={styles.notch} d={paths["4"]} />
-          <path className={styles.notch} d={paths["5"]} />
-          {props.isClickable && (
-            <>
-              <path
-                className={styles.clickable_notch}
-                d={clickablePaths["4"]}
-                onClick={props.onClick.bind(null, "4")}
-              />
-              <path
-                className={styles.clickable_notch}
-                d={clickablePaths["5"]}
-                onClick={props.onClick.bind(null, "5")}
-              />
-            </>
-          )}
-        </>
-      )}
-      {type === "right" && (
-        <>
-          <path className={styles.notch} d={paths["6"]} />
-          <path className={styles.notch} d={paths["7"]} />
-          {props.isClickable && (
-            <>
-              <path
-                className={styles.clickable_notch}
-                d={clickablePaths["6"]}
-                onClick={props.onClick.bind(null, "6")}
-              />
-              <path
-                className={styles.clickable_notch}
-                d={clickablePaths["7"]}
-                onClick={props.onClick.bind(null, "7")}
-              />
-            </>
-          )}
-        </>
-      )}
-    </g>
+    </motion.g>
+  );
+};
+
+type EdgeProps = Omit<JSX.IntrinsicElements["g"], "onClick" | "transform"> & {
+  type: EdgeType;
+  row: number;
+  col: number;
+  /** Used to animate notches in sequence */
+  index: number;
+};
+
+export const Edge = ({ type, row, col, index }: EdgeProps) => {
+  const [isClickable, myPlayer] = useEngine(
+    useCallback(({ gamePhase, myPlayer, playerTurnsOrder }) => {
+      return [
+        gamePhase === "round1" && myPlayer === playerTurnsOrder[0],
+        myPlayer,
+      ];
+    }, [])
+  );
+  const placePlayer = useEngine(
+    useCallback(({ placePlayer }) => placePlayer, [])
+  );
+  const handleClick = useCallback(
+    (notch: Notch) => {
+      placePlayer(myPlayer, { row, col, notch });
+    },
+    [row, col, myPlayer, placePlayer]
+  );
+
+  const notchIndex = index * 2;
+  const delayFirst = initialDelay + (notchIndex + 1) * timePerNotch;
+  const delaySecond = initialDelay + notchIndex * timePerNotch;
+
+  const delays = [delayFirst, delaySecond];
+
+  return (
+    <motion.g transform={getTranslate(row, col)}>
+      {typeToNotches[type].map((notch, i) => (
+        <Notch
+          key={notch}
+          notch={notch}
+          delay={delays[i]}
+          handleClick={handleClick}
+          isClickable={isClickable}
+        />
+      ))}
+    </motion.g>
   );
 };
