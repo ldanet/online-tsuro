@@ -6,7 +6,7 @@
 .player_pill {
   padding: 0.5rem;
   display: flex;
-  gap: .4rem;
+  gap: 0.4rem;
   border: 1px solid;
   border-radius: 1rem;
   justify-content: center;
@@ -15,7 +15,7 @@
 }
 
 .player_pill__turn {
-  border-width: 3px ;
+  border-width: 3px;
 }
 
 .player_pill__disconnected {
@@ -25,21 +25,21 @@
 .player_token {
   width: 1.2rem;
   height: 1.2rem;
-  border-radius: .6rem;
-  border: .1rem dashed;
+  border-radius: 0.6rem;
+  border: 0.1rem dashed;
   background: none;
 }
 
 .player_token__color {
-  border: .2rem solid;
-  filter: drop-shadow(.05rem .05rem .05rem rgba(0, 0, 0, 0.2));
+  border: 0.2rem solid;
+  filter: drop-shadow(0.05rem 0.05rem 0.05rem rgba(0, 0, 0, 0.2));
 }
 
 .watching_token {
   border: none;
   background: none;
   font-size: 1rem;
-  padding:0;
+  padding: 0;
 }
 
 .remove_button {
@@ -48,15 +48,15 @@
 }
 
 .remove_button:hover {
-  border: .1rem solid var(--color-red-dark);
+  border: 0.1rem solid var(--color-red-dark);
   background: none;
 }
 
 .remove_button:hover::after {
   content: "❌";
   position: absolute;
-  top:0;
-  left:0;
+  top: 0;
+  left: 0;
   height: 100%;
   width: 100%;
 }
@@ -85,6 +85,14 @@
   border-color: var(--color-purple-dark);
 }
 
+.player_pill__cyan {
+  border-color: var(--color-cyan-dark);
+}
+
+.player_pill__pink {
+  border-color: var(--color-pink-dark);
+}
+
 .player_pill__black {
   border-color: var(--color-black-dark);
 }
@@ -92,7 +100,6 @@
 .player_pill__white {
   border-color: var(--color-white-dark);
 }
-
 
 .player_token__red {
   background-color: var(--color-red);
@@ -122,6 +129,16 @@
 .player_token__purple {
   background-color: var(--color-purple);
   border-color: var(--color-purple-dark);
+}
+
+.player_token__cyan {
+  background-color: var(--color-cyan);
+  border-color: var(--color-cyan-dark);
+}
+
+.player_token__pink {
+  background-color: var(--color-pink);
+  border-color: var(--color-pink-dark);
 }
 
 .player_token__black {

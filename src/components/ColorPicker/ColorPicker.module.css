@@ -38,6 +38,16 @@
   stroke: var(--color-purple-dark);
 }
 
+.token_cyan {
+  fill: var(--color-cyan);
+  stroke: var(--color-cyan-dark);
+}
+
+.token_pink {
+  fill: var(--color-pink);
+  stroke: var(--color-pink-dark);
+}
+
 .token_black {
   fill: var(--color-black);
   stroke: var(--color-black-dark);

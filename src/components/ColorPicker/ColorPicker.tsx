@@ -45,8 +45,9 @@ const ColorPicker = () => {
         <rect x={0} y={0} height={190} width={190} fill="none" stroke="none" />
         {colors.map((color, i) => {
           const x = i % 4;
-          const col = x + 1;
-          const row = x < i ? 3 : 2;
+          const row = Math.ceil((i - x) / 4) + 1;
+          const offset = row === 3 ? 2 : 1;
+          const col = x + offset;
           return (
             <circle
               className={cn(

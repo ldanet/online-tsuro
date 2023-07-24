@@ -1,10 +1,10 @@
 .player {
-  stroke-width: .75;
+  stroke-width: 0.75;
   /* filter: url(#player-shadow); */
 }
 
 .splotch {
-  stroke-width: .3;
+  stroke-width: 0.3;
 }
 
 .player_red {
@@ -35,6 +35,16 @@
 .player_purple {
   fill: var(--color-purple);
   stroke: var(--color-purple-dark);
+}
+
+.player_cyan {
+  fill: var(--color-cyan);
+  stroke: var(--color-cyan-dark);
+}
+
+.player_pink {
+  fill: var(--color-pink);
+  stroke: var(--color-pink-dark);
 }
 
 .player_black {
@@ -82,11 +92,25 @@
   stroke: var(--color-orange);
   fill: none;
 }
+
 .line_purple {
   stroke-width: 2;
   stroke: var(--color-purple);
   fill: none;
 }
+
+.line_cyan {
+  stroke-width: 2;
+  stroke: var(--color-cyan);
+  fill: none;
+}
+
+.line_pink {
+  stroke-width: 2;
+  stroke: var(--color-pink);
+  fill: none;
+}
+
 .line_black {
   stroke-width: 2;
   stroke: var(--color-black);
