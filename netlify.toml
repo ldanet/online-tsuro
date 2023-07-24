@@ -3,12 +3,6 @@
   command = "pnpm run build"
   publish = ".next"
 
-[build.environment]
-  NPM_FLAGS = "--version"
-
-[[plugins]]
-  package = "/.netlify/netlify-plugin-pnpm"
-
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
