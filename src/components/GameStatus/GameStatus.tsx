@@ -67,7 +67,9 @@ const GameStatus = () => {
               : {
                   className: cn(
                     "h-5 w-5 rounded-full border-2",
-                    color ? "border-solid" : "border-dashed bg-none",
+                    color
+                      ? "border-solid drop-shadow-[0.05rem_0.05rem_0.05rem_rgba(0,0,0,0.2)]"
+                      : "border-dashed bg-none",
                     color && playerBg[color],
                     color && playerBorder[color]
                   ),
