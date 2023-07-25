@@ -25,10 +25,8 @@ const PlayerActions = () => {
   const startGame = useEngine(getStartGame);
   const resetGame = useEngine(getResetGame);
   const availableColos = useEngine(getAvailableColors);
-  const isMyTurn = useEngine(getIsMyTurn);
   const winners = useEngine(getWinners);
   const myPlayer = useEngine(getMyPlayer);
-  const turns = useEngine(getTurnOrder);
   const hostName = useEngine(getHostName);
 
   if (isLoading) return <p>Connecting...</p>;

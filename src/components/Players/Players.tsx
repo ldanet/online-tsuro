@@ -37,7 +37,7 @@ const strokeColors = {
   white: "stroke-white",
 } as const;
 
-const playerStyles = {
+export const playerStyles = {
   red: "fill-red stroke-red-dark",
   blue: "fill-blue stroke-blue-dark",
   green: "fill-green stroke-green-dark",

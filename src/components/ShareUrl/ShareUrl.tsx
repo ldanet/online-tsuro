@@ -1,7 +1,6 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import { getHostId, getHostName, getIsOffline } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
-import styles from "./ShareUrl.module.css";
 
 const getGameURL = (gameID: string, name: string) =>
   `${document.location.origin}/game?gameId=${gameID}&name=${name}`;
@@ -39,8 +38,8 @@ const ShareUrl = () => {
 
   if (isOffline && !gameID) {
     return (
-      <div className={styles.share_container}>
-        <p>
+      <div className="flex-grow-0 basis-[3] border-2 border-solid border-gray-500 p-2 text-xs">
+        <p className="m-0 max-w-sm">
           Playing offline.
           <br />
           Reload the page to get a shareable link to invite other players.
@@ -50,11 +49,11 @@ const ShareUrl = () => {
   }
 
   return gameID && name ? (
-    <div className={styles.share_container}>
-      <p>
+    <div className="flex-grow-0 basis-[3] border-l-2 border-solid border-gray-500 p-2 text-xs">
+      <p className="m-0 max-w-sm">
         <label htmlFor="shareable-link">Share the URL to invite players</label>
       </p>
-      <p>
+      <p className="m-0 max-w-sm">
         <button type="button" onClick={handleCopyLink}>
           {copyLinkSuccess ? (
             <>✔️ Copied to clipboard</>

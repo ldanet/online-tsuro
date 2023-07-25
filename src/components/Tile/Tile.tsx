@@ -1,7 +1,5 @@
 import { memo } from "react";
 import { Combination, Pair } from "../../constants/tiles";
-import { PlayerColor } from "../../engine/types";
-import styles from "./Tile.module.css";
 
 type LineType = "ab" | "ac" | "ad" | "ae" | "af" | "ag" | "ah";
 
@@ -70,7 +68,6 @@ const lineTypeToPath: { [key in LineType]: string } = {
   ah: "M9 30C9 26 6 21 0 21",
 };
 
-type ColorLineProps = { pair: keyof typeof pairToLine; color?: PlayerColor };
 type LineProps = { pair: keyof typeof pairToLine; isColored?: boolean };
 
 const Line = ({ pair }: LineProps) => {
@@ -78,12 +75,12 @@ const Line = ({ pair }: LineProps) => {
   return (
     <>
       <path
-        className={styles.line_bg}
+        className="fill-none stroke-tile stroke-[1.5]"
         d={lineTypeToPath[type]}
         transform={transform}
       />
       <path
-        className={styles.line}
+        className="fill-none stroke-tile-line stroke-1"
         d={lineTypeToPath[type]}
         transform={transform}
       />
@@ -99,7 +96,7 @@ type TileProps = JSX.IntrinsicElements["g"] & {
 const Tile = ({ combination, withEdge, ...gProps }: TileProps) => {
   return (
     <g {...gProps}>
-      <rect x="0" y="0" width="30" height="30" rx="2" className={styles.tile} />
+      <rect x="0" y="0" width="30" height="30" rx="2" className="fill-tile" />
       {combination.map((pair) => (
         <Line key={pair} pair={pair} />
       ))}
@@ -110,7 +107,7 @@ const Tile = ({ combination, withEdge, ...gProps }: TileProps) => {
           width="30"
           height="30"
           rx="2"
-          className={styles.edge}
+          className="fill-none stroke-tile-edge stroke-[1.5]"
         />
       )}
     </g>

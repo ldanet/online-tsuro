@@ -11,31 +11,11 @@
 
 .main h1 {
   font-size: 1.6rem;
-  margin: 0 0 .5rem 0;
-}
-
-.game_header {
-  display:flex;
-  margin-bottom: 1rem;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  gap: 2rem;
-  justify-content: center;
-  align-items: stretch;
-  width: 100%;
-}
-
-.game_header > h1 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-grow: 0;
-  flex-shrink: 1;
-  flex-basis: 1;
+  margin: 0 0 0.5rem 0;
 }
 
 .validation_error {
-  font-size: .8rem;
+  font-size: 0.8rem;
   color: var(--color-red-dark);
   margin: 0;
 }
@@ -51,7 +31,6 @@
   font-size: 1.2rem;
 }
 .home_input {
-
   margin-block-end: 0.5rem;
   display: block;
   width: 100%;

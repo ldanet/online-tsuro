@@ -2,7 +2,6 @@ import { Fragment, memo, useCallback } from "react";
 import { Edge, EdgeType } from "../Edge/Edge";
 import { useEngine } from "../../engine/store";
 import Tile from "../Tile/Tile";
-import styles from "./Board.module.css";
 import Players from "../Players/Players";
 import { getTranslate } from "../../utils/math";
 import ColorPicker from "../ColorPicker/ColorPicker";
@@ -16,7 +15,7 @@ const Board = () => {
   return (
     <svg
       viewBox="0 0 190 190"
-      className={styles.board}
+      className="m-4 h-[--board-size] w-[--board-size] bg-board"
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
     >

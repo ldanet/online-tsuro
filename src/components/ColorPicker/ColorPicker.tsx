@@ -11,7 +11,7 @@ import { useEngine } from "../../engine/store";
 import { PlayerColor } from "../../engine/types";
 import { getTranslateValue } from "../../utils/math";
 import { cn } from "../../utils/styles";
-import styles from "./ColorPicker.module.css";
+import { playerStyles } from "../Players/Players";
 
 const ColorPicker = () => {
   const availableColors = useEngine(getAvailableColors);
@@ -51,9 +51,11 @@ const ColorPicker = () => {
           return (
             <circle
               className={cn(
-                styles.token,
-                styles[`token_${color}`],
-                availableColors.includes(color) ? styles.token__clickable : ""
+                "stroke-1",
+                playerStyles[color],
+                availableColors.includes(color)
+                  ? "cursor-pointer opacity-100"
+                  : "opacity-20"
               )}
               key={color}
               cx={getTranslateValue(col) + 15}

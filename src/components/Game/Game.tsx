@@ -1,5 +1,4 @@
 import { useIsMounted } from "../../utils/hooks";
-import styles from "../../styles/Home.module.css";
 import { memo, useEffect } from "react";
 import GameStatus from "../GameStatus/GameStatus";
 import Board from "../Board/Board";
@@ -28,8 +27,10 @@ const Game = () => {
 
   return (
     <>
-      <div className={styles.game_header}>
-        <h1 className={styles.title}>Tsuro</h1>
+      <div className="mb-4 flex w-full flex-row flex-nowrap items-stretch justify-center gap-8">
+        <h1 className="flex shrink grow-0 basis-[1] items-center justify-center">
+          Tsuro
+        </h1>
         {isMounted && <ShareUrl />}
       </div>
       {/* Prevent game from pre-rendering on server as rehydration will fail because of session storage state */}

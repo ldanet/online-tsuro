@@ -15,7 +15,6 @@ import {
 import { useEngine } from "../../engine/store";
 import { EngineState } from "../../engine/types";
 import Tile from "../Tile/Tile";
-import styles from "./Hand.module.css";
 
 export const getHand = ({ players, myPlayer }: EngineState) => {
   const hand = players[myPlayer]?.hand;
@@ -65,15 +64,14 @@ const Hand = () => {
   }
 
   return (
-    <div className={styles.hand}>
-      <div className={styles.handTiles}>
+    <div className="flex max-w-full flex-col items-center justify-center">
+      <div className="flex w-[calc(var(--tile-size)*5*1.33)] self-start pl-[calc(var(--tile-size)*1.33)]">
         <AnimatePresence initial={false}>
           {hand?.map((tile, i) =>
             tile ? (
               <motion.button
                 key={tile.id}
                 layout
-                className={styles.tileButton}
                 type="button"
                 onClick={
                   gamePhase === "main"
@@ -94,7 +92,7 @@ const Hand = () => {
                 }}
               >
                 <svg
-                  className={styles.tileSvg}
+                  className="h-[calc(var(--tile-size)*1.33)]"
                   viewBox="0 0 40 40"
                   xmlns="http://www.w3.org/2000/svg"
                   version="1.1"
@@ -118,7 +116,7 @@ const Hand = () => {
 
       {isMyTurn ? (
         gamePhase === "round1" ? (
-          <p className={styles.instruction}>
+          <p className="mb-1 ml-0 mr-0 mt-0 text-center">
             It&apos;s your turn! Pick a notch on the edge of the board
           </p>
         ) : selectedTile ? (
@@ -130,16 +128,16 @@ const Hand = () => {
             Play selected tile
           </button>
         ) : (
-          <p className={styles.instruction}>
+          <p className="mb-1 ml-0 mr-0 mt-0 text-center">
             It&apos;s your turn! Select a tile to play
           </p>
         )
       ) : (
-        <p className={styles.hint}>{turns[0]}&apos;s turn</p>
+        <p className="m-0 text-xs">{turns[0]}&apos;s turn</p>
       )}
 
       {myData.status === "playing" && gamePhase === "main" && (
-        <p className={styles.hint}>
+        <p className="m-0 text-xs">
           Click on a tile to select it and click again to rotate
         </p>
       )}

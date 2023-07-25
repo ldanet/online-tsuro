@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import { Notch } from "../../constants/tiles";
 import { useEngine } from "../../engine/store";
 import { getTranslate } from "../../utils/math";
-import styles from "./Edge.module.css";
 
 export type EdgeType = "top" | "bottom" | "left" | "right";
 
@@ -98,7 +97,7 @@ const Notch = ({ notch, delay, isClickable, handleClick }: NotchProps) => {
       onClick={handleClick.bind(null, notch)}
     >
       <motion.path
-        className={styles.notch}
+        className="fill-none stroke-tile-line"
         variants={animationVariants}
         custom={delay}
         transition={{
@@ -109,7 +108,10 @@ const Notch = ({ notch, delay, isClickable, handleClick }: NotchProps) => {
         d={paths[notch]}
       />
       {isClickable && (
-        <path className={styles.clickable_notch} d={clickablePaths[notch]} />
+        <path
+          className="cursor-pointer fill-transparent stroke-none"
+          d={clickablePaths[notch]}
+        />
       )}
     </motion.g>
   );

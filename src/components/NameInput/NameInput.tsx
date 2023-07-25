@@ -1,7 +1,6 @@
 import { memo, RefObject, useCallback, useRef, useState } from "react";
 import { getMyPlayer } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
-import styles from "../../styles/Home.module.css";
 
 type NameInputProps = {
   nameInput: RefObject<HTMLInputElement>;
@@ -17,11 +16,11 @@ const NameInput = ({
   const myPlayer = useEngine(getMyPlayer);
   return (
     <>
-      <label className={styles.home_label} htmlFor="player-name">
+      <label className="block text-xl" htmlFor="player-name">
         Choose a nickname:
       </label>
       <input
-        className={styles.home_input}
+        className="mr-2 block h-8 w-full text-2xl"
         id="player-name"
         type="text"
         ref={nameInput}
@@ -33,7 +32,7 @@ const NameInput = ({
         onChange={clearNameError}
       />
       {nameError && (
-        <p className={styles.validation_error} id="name-error">
+        <p className="text-sm text-red-dark" id="name-error">
           {nameError}
         </p>
       )}
