@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import styles from "../styles/Home.module.css";
 import { useEngine } from "../engine/store";
 import { useCallback } from "react";
 import { useRouter } from "next/router";
@@ -21,7 +20,7 @@ const Home: NextPage = () => {
   }, [router, createGame, validateName, nameInput]);
 
   return (
-    <div className={styles.container}>
+    <div className="flex">
       <Head>
         <title>Tsuro</title>
         <meta
@@ -31,30 +30,39 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.png" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>Tsuro</h1>
-        <form className={styles.home_container} onSubmit={handleHost}>
-          <fieldset className={styles.home_fieldset}>
-            <legend className={styles.home_legend}>Host a new game</legend>
+      <main className="flex min-h-[100dvh] w-full flex-col items-center justify-center space-y-4 bg-orange-200 p-4 text-orange-800">
+        <h1 className="text-5xl font-extrabold">Tsuro</h1>
+        <form
+          className="rounded-xl border-2 border-orange-800"
+          onSubmit={handleHost}
+        >
+          <fieldset className="m-4">
+            <legend className="text-center text-2xl">Host a new game</legend>
             <NameInput
               nameInput={nameInput}
               nameError={nameError}
               clearNameError={clearNameError}
             />
             <button
-              className={styles.home_button}
+              className="w-full mt-4 rounded-xl border-2 border-orange-800 py-3 text-lg text-orange-800 hover:bg-orange-800 hover:text-orange-50"
               onClick={handleHost}
               type="button"
             >
               New game room
             </button>
           </fieldset>
-          <p>
-            Trying to join an existing game? Ask the host or other players in
-            the game for the link!
-          </p>
         </form>
+        <p className="text-orange-700 text-center">
+          Trying to join an existing game? Ask the host or other players in the
+          game for the link!
+        </p>
       </main>
+      <div
+        role="presentation"
+        className="hidden w-full bg-orange-800 px-8 place-items-center text-8xl text-orange-50 xl:grid place-items-center"
+      >
+        Play with your friends, without limits.
+      </div>
     </div>
   );
 };

@@ -8,8 +8,6 @@ module.exports = {
     extend: {
       strokeWidth: {
         3: 3,
-        4: 4,
-        5: 5,
       },
       colors: {
         red: { DEFAULT: "#f43f5e", dark: "#be123c" },

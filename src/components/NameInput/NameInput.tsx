@@ -16,11 +16,11 @@ const NameInput = ({
   const myPlayer = useEngine(getMyPlayer);
   return (
     <>
-      <label className="block text-xl" htmlFor="player-name">
-        Choose a nickname:
+      <label className="block font-bold" htmlFor="player-name">
+        Choose a nickname
       </label>
       <input
-        className="mr-2 block h-8 w-full text-2xl"
+        className="mt-1 w-full rounded-lg border-2 border-orange-800 bg-orange-300 p-2 placeholder-orange-700 focus:bg-orange-200"
         id="player-name"
         type="text"
         ref={nameInput}
@@ -32,7 +32,7 @@ const NameInput = ({
         onChange={clearNameError}
       />
       {nameError && (
-        <p className="text-sm text-red-dark" id="name-error">
+        <p className="my-2" id="name-error">
           {nameError}
         </p>
       )}

@@ -17,7 +17,3 @@ body {
   --tile-size: min(calc((90vh - 16rem) / 6.4), calc((100vw - 2em) / 6.4));
   --board-size: calc(var(--tile-size) * 6.4);
 }
-
-body {
-  padding: 1rem;
-}
