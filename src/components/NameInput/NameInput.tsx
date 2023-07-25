@@ -1,6 +1,7 @@
 import { memo, RefObject, useCallback, useRef, useState } from "react";
 import { getMyPlayer } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
+import { cn } from "../../utils/styles";
 
 type NameInputProps = {
   nameInput: RefObject<HTMLInputElement>;
@@ -20,7 +21,7 @@ const NameInput = ({
         Choose a nickname
       </label>
       <input
-        className="mt-1 w-full rounded-lg border-2 border-orange-800 bg-orange-300 p-2 placeholder-orange-700 focus:bg-orange-200"
+        className="mt-1 w-full rounded-lg border-2 border-orange-800 bg-orange-200 p-2 placeholder-orange-700 outline-none focus:bg-orange-300 focus:outline-orange-800"
         id="player-name"
         type="text"
         ref={nameInput}
@@ -31,11 +32,9 @@ const NameInput = ({
         placeholder="Enter your nickname"
         onChange={clearNameError}
       />
-      {nameError && (
-        <p className="my-2" id="name-error">
-          {nameError}
-        </p>
-      )}
+      <p className={cn("my-2 block", !nameError && "hidden")} id="name-error">
+        {nameError}
+      </p>
     </>
   );
 };
@@ -48,7 +47,7 @@ export const useNameInput = () => {
 
   const validateName = useCallback(() => {
     if (!nameInput.current?.value) {
-      setNameError("Please enter your nickname to start playing.");
+      setNameError("Please enter a nickname to start playing.");
       nameInput.current?.focus();
       return false;
     } else if (nameInput.current.value.length > 12) {

@@ -33,33 +33,31 @@ const Home: NextPage = () => {
       <main className="flex min-h-[100dvh] w-full flex-col items-center justify-center space-y-4 bg-orange-200 p-4 text-orange-800">
         <h1 className="text-5xl font-extrabold">Tsuro</h1>
         <form
-          className="rounded-xl border-2 border-orange-800"
+          className="rounded-xl border-2 border-orange-800 p-4 w-[380px] max-w-full"
           onSubmit={handleHost}
         >
-          <fieldset className="m-4">
-            <legend className="text-center text-2xl">Host a new game</legend>
+            <h2 className="text-center text-2xl">Host a new game</h2>
             <NameInput
               nameInput={nameInput}
               nameError={nameError}
               clearNameError={clearNameError}
             />
             <button
-              className="w-full mt-4 rounded-xl border-2 border-orange-800 py-3 text-lg text-orange-800 hover:bg-orange-800 hover:text-orange-50"
+              className="mt-4 w-full rounded-xl border-2 border-orange-800 py-3 text-lg text-orange-800 hover:bg-orange-800 hover:text-orange-50"
               onClick={handleHost}
               type="button"
             >
               New game room
             </button>
-          </fieldset>
         </form>
-        <p className="text-orange-700 text-center">
+        <p className="text-center text-orange-700">
           Trying to join an existing game? Ask the host or other players in the
           game for the link!
         </p>
       </main>
       <div
         role="presentation"
-        className="hidden w-full bg-orange-800 px-8 place-items-center text-8xl text-orange-50 xl:grid place-items-center"
+        className="hidden w-full place-items-center bg-orange-800 px-8 text-8xl text-orange-50 lg:grid"
       >
         Play with your friends, without limits.
       </div>
