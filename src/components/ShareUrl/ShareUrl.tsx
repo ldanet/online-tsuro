@@ -12,16 +12,14 @@ const ShareUrl = () => {
   const name = useEngine(getHostName);
   const [copyLinkSuccess, setCopyLinkSuccess] = useState<boolean | null>(null);
 
-  const handleCopyLink = useCallback(() => {
+  const handleCopyLink = useCallback(async () => {
     if (gameID && name)
-      navigator.clipboard
-        .writeText(getGameURL(gameID, name))
-        .then(() => {
-          setCopyLinkSuccess(true);
-        })
-        .catch(() => {
-          setCopyLinkSuccess(false);
-        });
+      try {
+        await navigator.clipboard.writeText(getGameURL(gameID, name));
+        setCopyLinkSuccess(true);
+      } catch {
+        setCopyLinkSuccess(false);
+      }
   }, [gameID, name]);
 
   useEffect(() => {
@@ -54,24 +52,16 @@ const ShareUrl = () => {
   return gameID && name ? (
     <div className={styles.share_container}>
       <p>
-        <label htmlFor="shareable-link">
-          Invite players to join by sending them this link:
-        </label>
+        <label htmlFor="shareable-link">Share the URL to invite players</label>
       </p>
       <p>
-        <input
-          id="shareable-link"
-          type="text"
-          readOnly
-          value={getGameURL(gameID, name)}
-        />
         <button type="button" onClick={handleCopyLink}>
           {copyLinkSuccess ? (
             <>✔️ Copied to clipboard</>
           ) : copyLinkSuccess === false ? (
-            <>Failed to copy link</>
+            <>Failed to copy URL</>
           ) : (
-            <>Copy link to clipboard</>
+            <>Copy to clipboard</>
           )}
         </button>
       </p>
