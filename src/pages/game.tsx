@@ -3,7 +3,7 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { useRouter } from "next/router";
 import { useEngine } from "../engine/store";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useIsMounted } from "../utils/hooks";
 import {
   getHostId,
@@ -14,9 +14,10 @@ import {
   getSetHostId,
   getSetIsHost,
 } from "../engine/selectors";
-import { cn } from "../utils/styles";
 import Game from "../components/Game/Game";
 import NameInput, { useNameInput } from "../components/NameInput/NameInput";
+import Button from "../components/Button";
+import { cn } from "../utils/styles";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -57,7 +58,7 @@ const Home: NextPage = () => {
   }, [joinGame, validateName, hostId, nameInput]);
 
   return (
-    <div className={styles.container}>
+    <div className={cn(styles.container, 'bg-orange-200 text-orange-800 min-h-[100dvh]')}>
       <Head>
         <title>Tsuro</title>
         <meta
@@ -83,13 +84,9 @@ const Home: NextPage = () => {
                 />
                 {hostId && isMounted && (
                   <>
-                    <button
-                      className={cn(styles.home_button, styles.join_button)}
-                      type="button"
-                      onClick={handleJoin}
-                    >
+                    <Button type="button" onClick={handleJoin}>
                       Join{gameName ? <> {gameName}&apos;s game</> : ""}
-                    </button>
+                    </Button>
                   </>
                 )}
               </form>

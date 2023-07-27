@@ -19,22 +19,22 @@ const NameInput = ({
     <>
       <label className="block font-bold" htmlFor="player-name">
         Choose a nickname
+        <input
+          className="mt-1 w-full rounded-lg border-2 border-orange-800 bg-orange-200 p-2 placeholder-orange-700 outline-none focus:bg-orange-300 focus:outline-orange-800"
+          id="player-name"
+          type="text"
+          ref={nameInput}
+          defaultValue={myPlayer ?? ""}
+          maxLength={12}
+          required
+          aria-describedby={nameError ? "name-error" : undefined}
+          placeholder="Enter your nickname"
+          onChange={clearNameError}
+        />
+        <p className={cn("my-2 block", !nameError && "hidden")} id="name-error">
+          {nameError}
+        </p>
       </label>
-      <input
-        className="mt-1 w-full rounded-lg border-2 border-orange-800 bg-orange-200 p-2 placeholder-orange-700 outline-none focus:bg-orange-300 focus:outline-orange-800"
-        id="player-name"
-        type="text"
-        ref={nameInput}
-        defaultValue={myPlayer ?? ""}
-        maxLength={12}
-        required
-        aria-describedby={nameError ? "name-error" : undefined}
-        placeholder="Enter your nickname"
-        onChange={clearNameError}
-      />
-      <p className={cn("my-2 block", !nameError && "hidden")} id="name-error">
-        {nameError}
-      </p>
     </>
   );
 };

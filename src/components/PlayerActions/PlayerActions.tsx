@@ -16,6 +16,7 @@ import {
 } from "../../engine/selectors";
 import Hand from "../Hand/Hand";
 import { formatListHumanReadable } from "../../utils/strings";
+import Button from "../Button";
 
 const PlayerActions = () => {
   const isLoading = useEngine(getIsLoading);
@@ -36,9 +37,9 @@ const PlayerActions = () => {
   if (gamePhase === "joining") {
     if (hasPickedColor) {
       return isHost ? (
-        <button type="button" onClick={startGame}>
+        <Button type="button" onClick={startGame}>
           Start game
-        </button>
+        </Button>
       ) : (
         <p>Waiting for {hostName} to start the game</p>
       );
@@ -74,9 +75,9 @@ const PlayerActions = () => {
       <>
         {message}
         {isHost && (
-          <button type="button" onClick={resetGame}>
+          <Button type="button" onClick={resetGame}>
             New game
-          </button>
+          </Button>
         )}
       </>
     );

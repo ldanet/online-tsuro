@@ -35,11 +35,13 @@ const Game = () => {
       </div>
       {/* Prevent game from pre-rendering on server as rehydration will fail because of session storage state */}
       {isMounted && (
-        <>
+        <div className="flex flex-col lg:flex-row-reverse">
           <GameStatus />
-          <Board />
-          <PlayerActions />
-        </>
+          <div>
+            <Board />
+            <PlayerActions />
+          </div>
+        </div>
       )}
     </>
   );

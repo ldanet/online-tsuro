@@ -14,6 +14,7 @@ import {
 } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
 import { EngineState } from "../../engine/types";
+import Button from "../Button";
 import Tile from "../Tile/Tile";
 
 export const getHand = ({ players, myPlayer }: EngineState) => {
@@ -65,6 +66,12 @@ const Hand = () => {
 
   return (
     <div className="flex max-w-full flex-col items-center justify-center">
+      {myData.status === "playing" && gamePhase === "main" && (
+        <p className="m-0 text-xs">
+          Click on a tile to select it and click again to rotate
+        </p>
+      )}
+
       <div className="flex w-[calc(var(--tile-size)*5*1.33)] self-start pl-[calc(var(--tile-size)*1.33)]">
         <AnimatePresence initial={false}>
           {hand?.map((tile, i) =>
@@ -120,13 +127,13 @@ const Hand = () => {
             It&apos;s your turn! Pick a notch on the edge of the board
           </p>
         ) : selectedTile ? (
-          <button
+          <Button
             type="button"
             onClick={onPlayClick}
             disabled={!(selectedTile && isMyTurn)}
           >
             Play selected tile
-          </button>
+          </Button>
         ) : (
           <p className="mb-1 ml-0 mr-0 mt-0 text-center">
             It&apos;s your turn! Select a tile to play
@@ -134,12 +141,6 @@ const Hand = () => {
         )
       ) : (
         <p className="m-0 text-xs">{turns[0]}&apos;s turn</p>
-      )}
-
-      {myData.status === "playing" && gamePhase === "main" && (
-        <p className="m-0 text-xs">
-          Click on a tile to select it and click again to rotate
-        </p>
       )}
     </div>
   );

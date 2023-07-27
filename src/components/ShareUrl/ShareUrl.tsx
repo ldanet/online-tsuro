@@ -1,6 +1,7 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import { getHostId, getHostName, getIsOffline } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
+import Button from "../Button";
 
 const getGameURL = (gameID: string, name: string) =>
   `${document.location.origin}/game?gameId=${gameID}&name=${name}`;
@@ -54,7 +55,7 @@ const ShareUrl = () => {
         <label htmlFor="shareable-link">Share the URL to invite players</label>
       </p>
       <p className="m-0 max-w-sm">
-        <button type="button" onClick={handleCopyLink}>
+        <Button type="button" onClick={handleCopyLink}>
           {copyLinkSuccess ? (
             <>✔️ Copied to clipboard</>
           ) : copyLinkSuccess === false ? (
@@ -62,7 +63,7 @@ const ShareUrl = () => {
           ) : (
             <>Copy to clipboard</>
           )}
-        </button>
+        </Button>
       </p>
     </div>
   ) : null;

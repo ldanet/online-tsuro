@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import { useRouter } from "next/router";
 import { getCreateGame } from "../engine/selectors";
 import NameInput, { useNameInput } from "../components/NameInput/NameInput";
+import Button from "../components/Button";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -33,22 +34,18 @@ const Home: NextPage = () => {
       <main className="flex min-h-[100dvh] w-full flex-col items-center justify-center space-y-4 bg-orange-200 p-4 text-orange-800">
         <h1 className="text-5xl font-extrabold">Tsuro</h1>
         <form
-          className="rounded-xl border-2 border-orange-800 p-4 w-[380px] max-w-full"
+          className="w-[380px] max-w-full space-y-4 rounded-xl border-2 border-orange-800 p-4"
           onSubmit={handleHost}
         >
-            <h2 className="text-center text-2xl">Host a new game</h2>
-            <NameInput
-              nameInput={nameInput}
-              nameError={nameError}
-              clearNameError={clearNameError}
-            />
-            <button
-              className="mt-4 w-full rounded-xl border-2 border-orange-800 py-3 text-lg text-orange-800 hover:bg-orange-800 hover:text-orange-50"
-              onClick={handleHost}
-              type="button"
-            >
-              New game room
-            </button>
+          <h2 className="text-center text-2xl">Host a new game</h2>
+          <NameInput
+            nameInput={nameInput}
+            nameError={nameError}
+            clearNameError={clearNameError}
+          />
+          <Button fullSize onClick={handleHost} type="button">
+            New game room
+          </Button>
         </form>
         <p className="text-center text-orange-700">
           Trying to join an existing game? Ask the host or other players in the

@@ -53,10 +53,10 @@ const GameStatus = () => {
     },
     [removePlayer]
   );
-  const foo = <div className="border-none bg-none p-0 text-base" />;
+
   return (
     <>
-      <div className="flex gap-4 ">
+      <div className="flex gap-4 lg:flex-col">
         {players.map(({ name, status, color, disconnected }) => {
           const tokenProps =
             gamePhase !== "joining" && status === "watching"
@@ -78,7 +78,7 @@ const GameStatus = () => {
           return (
             <div
               className={cn(
-                "flex items-center justify-center gap-2 rounded-2xl border-2 border-solid p-2 text-base",
+                "flex items-center justify-center gap-2 rounded-2xl border-2 border-solid p-2",
                 color && playerBorder[color],
                 turnOrder[0] === name && "border-4",
                 disconnected && "opacity-50"
