@@ -1,5 +1,6 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+import { Config } from "tailwindcss";
+
+const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx}",
     "./src/components/**/*.{js,ts,jsx,tsx}",
@@ -7,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       strokeWidth: {
-        3: 3,
+        3: "3",
       },
       colors: {
         red: { DEFAULT: "#f43f5e", dark: "#be123c" },
@@ -31,3 +32,5 @@ module.exports = {
   },
   plugins: [],
 };
+
+export default config;
