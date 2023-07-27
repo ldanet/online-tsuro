@@ -117,7 +117,7 @@ const Notch = ({ notch, delay, isClickable, handleClick }: NotchProps) => {
   );
 };
 
-type EdgeProps = Omit<JSX.IntrinsicElements["g"], "onClick" | "transform"> & {
+type EdgeProps = {
   type: EdgeType;
   row: number;
   col: number;
