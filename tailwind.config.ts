@@ -1,12 +1,16 @@
-import { Config } from "tailwindcss";
+import type { Config } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
 
-const config: Config = {
+const config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx}",
     "./src/components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
+      fontFamily: {
+        display: ["var(--font-display)", ...defaultTheme.fontFamily.sans],
+      },
       strokeWidth: {
         3: "3",
       },
@@ -31,6 +35,6 @@ const config: Config = {
     },
   },
   plugins: [],
-};
+} satisfies Config;
 
 export default config;

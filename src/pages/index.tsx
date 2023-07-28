@@ -43,7 +43,7 @@ const Home: NextPage = () => {
             nameError={nameError}
             clearNameError={clearNameError}
           />
-          <Button fullSize onClick={handleHost} type="button">
+          <Button fullSize type="submit">
             New game room
           </Button>
         </form>

@@ -58,12 +58,17 @@ const Home: NextPage = () => {
   }, [joinGame, validateName, hostId, nameInput]);
 
   return (
-    <div className={cn(styles.container, 'bg-orange-200 text-orange-800 min-h-[100dvh]')}>
+    <div
+      className={cn(
+        styles.container,
+        "min-h-[100dvh] bg-orange-200 text-orange-800"
+      )}
+    >
       <Head>
         <title>Tsuro</title>
         <meta
           name="description"
-          content="An online version of the board game Tsuro"
+          content="An online version of the Tsuro board game"
         />
         <link rel="icon" href="/favicon.png" />
       </Head>
@@ -83,11 +88,9 @@ const Home: NextPage = () => {
                   clearNameError={clearNameError}
                 />
                 {hostId && isMounted && (
-                  <>
-                    <Button type="button" onClick={handleJoin}>
-                      Join{gameName ? <> {gameName}&apos;s game</> : ""}
-                    </Button>
-                  </>
+                  <Button type="submit" className="mt-4">
+                    Join{gameName ? ` ${gameName}'s game` : ""}
+                  </Button>
                 )}
               </form>
             </>
