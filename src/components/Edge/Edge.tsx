@@ -1,7 +1,6 @@
 import { motion, Variant } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { Notch } from "../../constants/tiles";
-import { useEngine } from "../../engine/store";
 import { getTranslate } from "../../utils/math";
 
 export type EdgeType = "top" | "bottom" | "left" | "right";
@@ -66,12 +65,20 @@ const animationVariants: Variants = {
   },
 };
 
+type ClickableProps =
+  | {
+      isClickable: true;
+      handleClick: (notch: Notch) => void;
+    }
+  | {
+      isClickable?: false;
+      handleClick?: (notch: Notch) => void;
+    };
+
 type NotchProps = {
   notch: Notch;
   delay: number;
-  isClickable?: boolean;
-  handleClick: (notch: Notch) => void;
-};
+} & ClickableProps;
 
 const Notch = ({ notch, delay, isClickable, handleClick }: NotchProps) => {
   const [variant, setVariant] = useState<VariantKey>("still");
@@ -94,7 +101,7 @@ const Notch = ({ notch, delay, isClickable, handleClick }: NotchProps) => {
       onHoverEnd={handleHoverEnd}
       animate={variant}
       initial="still"
-      onClick={handleClick.bind(null, notch)}
+      onClick={handleClick?.bind(null, notch)}
     >
       <motion.path
         className="fill-none stroke-tile-line"
@@ -123,27 +130,15 @@ type EdgeProps = {
   col: number;
   /** Used to animate notches in sequence */
   index: number;
-};
+} & ClickableProps;
 
-export const Edge = ({ type, row, col, index }: EdgeProps) => {
-  const [isClickable, myPlayer] = useEngine(
-    useCallback(({ gamePhase, myPlayer, playerTurnsOrder }) => {
-      return [
-        gamePhase === "round1" && myPlayer === playerTurnsOrder[0],
-        myPlayer,
-      ];
-    }, [])
-  );
-  const placePlayer = useEngine(
-    useCallback(({ placePlayer }) => placePlayer, [])
-  );
-  const handleClick = useCallback(
-    (notch: Notch) => {
-      placePlayer(myPlayer, { row, col, notch });
-    },
-    [row, col, myPlayer, placePlayer]
-  );
-
+export const Edge = ({
+  type,
+  row,
+  col,
+  index,
+  ...clickableProps
+}: EdgeProps) => {
   const notchIndex = index * 2;
   const delayFirst = initialDelay + (notchIndex + 1) * timePerNotch;
   const delaySecond = initialDelay + notchIndex * timePerNotch;
@@ -157,8 +152,7 @@ export const Edge = ({ type, row, col, index }: EdgeProps) => {
           key={notch}
           notch={notch}
           delay={delays[i]}
-          handleClick={handleClick}
-          isClickable={isClickable}
+          {...clickableProps}
         />
       ))}
     </motion.g>
