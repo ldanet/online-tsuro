@@ -1,5 +1,5 @@
 import { motion, useAnimation } from "framer-motion";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { getMyPlayerData, getSelectedTile } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
 import {
@@ -20,19 +20,17 @@ const SelectedTile = () => {
   const isPlaying = useEngine(
     useCallback((state) => getMyPlayerData(state).status === "playing", [])
   );
-  const [localSelectedTile, setLocalSelectedTile] = useState(selectedTile);
+  const localSelectedTile = useRef(selectedTile);
   const controls = useAnimation();
   useEffect(() => {
-    if (selectedTile?.id === localSelectedTile?.id) {
+    if (selectedTile?.id === localSelectedTile.current?.id) {
       controls.start({
         rotate: ["-90deg", "-45deg", "0deg"],
         scale: [1, 1.2, 1],
         transition: { duration: 0.3, times: [0, 0.5, 1], ease: "easeOut" },
       });
     }
-    setLocalSelectedTile(selectedTile);
-    // We want to only run this when the global selected tile updates
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    localSelectedTile.current = selectedTile;
   }, [controls, selectedTile]);
   return (
     <>
