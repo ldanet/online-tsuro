@@ -1,6 +1,7 @@
 import { motion, Variant } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { Notch } from "../../constants/tiles";
+import { useEngine } from "../../engine/store";
 import { getTranslate } from "../../utils/math";
 
 export type EdgeType = "top" | "bottom" | "left" | "right";
@@ -158,3 +159,44 @@ export const Edge = ({
     </motion.g>
   );
 };
+
+type GameEdgeProps = {
+  type: EdgeType;
+  row: number;
+  col: number;
+  /** Used to animate notches in sequence */
+  index: number;
+};
+
+// Keeps the Edge component decoupled from the engine
+export const GameEdge = ({ type, row, col, index }: GameEdgeProps) => {
+  const [isClickable, myPlayer] = useEngine(
+    useCallback(({ gamePhase, myPlayer, playerTurnsOrder }) => {
+      return [
+        gamePhase === "round1" && myPlayer === playerTurnsOrder[0],
+        myPlayer,
+      ] as const;
+    }, [])
+  );
+  const placePlayer = useEngine(
+    useCallback(({ placePlayer }) => placePlayer, [])
+  );
+  const handleClick = useCallback(
+    (notch: Notch) => {
+      placePlayer(myPlayer, { row, col, notch });
+    },
+    [row, col, myPlayer, placePlayer]
+  );
+  return (
+    <Edge
+      type={type}
+      row={row}
+      col={col}
+      index={index}
+      isClickable={isClickable}
+      handleClick={handleClick}
+    />
+  );
+};
+
+export default Edge;

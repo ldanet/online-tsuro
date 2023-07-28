@@ -55,7 +55,7 @@ const ColoredLine = ({ pair, color, row, col }: ColoredPath) => {
     <>
       <motion.path
         key={`path-${color}-${pair}-${col}-${row}-shadow`}
-        className="stroke-3 stroke-tile-line fill-none"
+        className="fill-none stroke-tile-line stroke-3"
         d={getPath(pair)}
         transform={getTranslate(row, col)}
         variants={coloredLineAnimationVariants}
@@ -136,10 +136,12 @@ export const getColorCoordinatesData = (
   );
 };
 
-const Players = () => {
-  const players = useEngine(getPlayers);
-  const coloredPaths = useEngine(getColoredPaths);
+type PlayersProps = {
+  players: Players;
+  coloredPaths: ColoredPath[];
+};
 
+const Players = ({ players, coloredPaths }: PlayersProps) => {
   const isAnimating = useRef(false);
   const [existingPaths, setExistingPaths] = useState(coloredPaths);
   const [movingColor, setMovingColor] = useState<PlayerColor>();
@@ -268,6 +270,12 @@ const Players = () => {
       </g>
     </>
   );
+};
+
+export const GamePlayers = () => {
+  const players = useEngine(getPlayers);
+  const coloredPaths = useEngine(getColoredPaths);
+  return <Players players={players} coloredPaths={coloredPaths} />;
 };
 
 export default memo(Players);
