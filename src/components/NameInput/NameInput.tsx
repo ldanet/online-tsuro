@@ -26,6 +26,7 @@ const NameInput = ({
           ref={nameInput}
           defaultValue={myPlayer ?? ""}
           maxLength={12}
+          autoComplete="username"
           required
           aria-describedby={nameError ? "name-error" : undefined}
           placeholder="Enter your nickname"

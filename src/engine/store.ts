@@ -1,5 +1,5 @@
-import create from "zustand";
-import { persist, subscribeWithSelector } from "zustand/middleware";
+import { create } from "zustand";
+import { createJSONStorage, persist, subscribeWithSelector } from "zustand/middleware";
 import { EngineState } from "./types";
 import { emptytBoard } from "./constants";
 import {
@@ -22,7 +22,7 @@ export const useEngine = create<
   ]
 >(
   persist(
-    subscribeWithSelector((set, get) => ({
+    subscribeWithSelector((set) => ({
       deck: [],
       players: {},
       board: emptytBoard,
@@ -94,7 +94,7 @@ export const useEngine = create<
     })),
     {
       name: "tsuro-game",
-      getStorage: () => sessionStorage,
+      storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => {
         let savedState: Partial<EngineState> = {
           ...state,
@@ -118,7 +118,7 @@ export const useEngine = create<
                 "isOffline",
               ].includes(key)
           )
-        ) as Partial<EngineState>;
+        ) satisfies Partial<EngineState>;
         return savedState;
       },
     }
