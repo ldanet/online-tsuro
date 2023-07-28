@@ -9,6 +9,7 @@ import {
   Players,
   Coordinate,
   PlayerColor,
+  SharedGameState,
 } from "./types";
 import {
   dealTiles,
@@ -60,7 +61,7 @@ export const addPlayer: EngineHandler<[string, DataConnection]> = (
   };
 };
 
-export const startGame: EngineHandler = (state) => {
+export const startGame = (state: SharedGameState) => {
   const { players, winners } = state;
   const deck = shuffle(Object.keys(tiles) as TileID[]);
   const newPlayers = { ...players };
@@ -118,7 +119,7 @@ export const startGame: EngineHandler = (state) => {
   };
 };
 
-export const resetGame: EngineHandler = (state) => {
+export const resetGame = (state: SharedGameState) => {
   // If no player is waiting to pick a colour we can start straight away
   if (Object.values(state.players).every((p) => p.status !== "watching")) {
     return startGame(state);
@@ -178,7 +179,7 @@ export const placePlayer: EngineHandler<[string, Coordinate]> = (
   };
 };
 
-export const movePlayers: EngineHandler = (state) => {
+export const movePlayers = (state: SharedGameState) => {
   const { board, players, playerTurnsOrder, deck, gamePhase, coloredPaths } =
     state;
   let newPlayers = { ...players };

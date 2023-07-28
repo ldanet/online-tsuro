@@ -13,7 +13,6 @@ import {
   ColoredPair,
   coloredPairs,
   Combination,
-  Pair,
   pairs,
   TileID,
   tileIds,
@@ -53,7 +52,7 @@ export const getNextNotch = (notch: Notch, combination: Combination): Notch => {
   return pair?.replace(notch, "") as Notch;
 };
 
-export const shuffle = <T extends any>(a: T[]): T[] => {
+export const shuffle = <T extends any>(a: readonly T[]): T[] => {
   const array = [...a];
   let curr = array.length;
 

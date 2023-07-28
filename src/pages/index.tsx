@@ -6,6 +6,14 @@ import { useRouter } from "next/router";
 import { getCreateGame } from "../engine/selectors";
 import NameInput, { useNameInput } from "../components/NameInput/NameInput";
 import Button from "../components/Button";
+import dynamic from "next/dynamic";
+
+const TileShowcase = dynamic(
+  () => import("../components/TileShowcase/TileShowcase"),
+  {
+    ssr: false,
+  }
+);
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -54,9 +62,9 @@ const Home: NextPage = () => {
       </main>
       <div
         role="presentation"
-        className="hidden w-full place-items-center bg-orange-800 px-8 text-8xl text-orange-50 lg:grid"
+        className="hidden w-full place-items-center overflow-clip bg-orange-800 lg:grid"
       >
-        Play with your friends, without limits.
+        <TileShowcase />
       </div>
     </div>
   );

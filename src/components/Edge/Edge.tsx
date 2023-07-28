@@ -28,7 +28,7 @@ const clickablePaths = {
   "7": "M-2.5 32.5L-2.5 15L5 15L5 32.5 z",
 };
 
-const typeToNotches = {
+export const typeToNotches = {
   top: ["0", "1"],
   left: ["2", "3"],
   bottom: ["4", "5"],
