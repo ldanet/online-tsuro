@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import defaultTheme from "tailwindcss/defaultTheme";
+import colors  from 'tailwindcss/colors';
 
 const config = {
   content: [
@@ -26,11 +27,11 @@ const config = {
         black: { DEFAULT: "#44403c", dark: "#1c1917" },
         white: { DEFAULT: "#f5f5f4", dark: "#d6d3d1" },
         tile: {
-          DEFAULT: "hsl(212, 75%, 72%)",
-          line: "hsl(230, 50%, 28%)",
-          edge: "hsl(230, 50%, 34%)",
+          DEFAULT: colors.orange[100],
+          line: colors.orange[900],
+          edge: colors.orange[800],
         },
-        board: "hsl(212, 75%, 83%)",
+        board: colors.orange[200],
       },
     },
   },

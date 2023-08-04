@@ -15,7 +15,7 @@ const Board = () => {
   return (
     <svg
       viewBox="0 0 190 190"
-      className="m-4 h-[--board-size] w-[--board-size] bg-board"
+      className="m-4 h-[--board-size] w-[--board-size] rounded-xl border-2 border-orange-800 bg-board"
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
     >
