@@ -183,7 +183,6 @@ export const movePlayers = (state: SharedGameState) => {
   const { board, players, playerTurnsOrder, deck, gamePhase, coloredPaths } =
     state;
   let newPlayers = { ...players };
-  let newBoard = [...board];
   let newOrder = [...playerTurnsOrder];
   let newDeck = [...deck];
   let newColoredPaths = [...coloredPaths];
@@ -291,7 +290,7 @@ export const movePlayers = (state: SharedGameState) => {
 
   return {
     players: newPlayers,
-    board: newBoard,
+    board,
     playerTurnsOrder: newOrder,
     deck: newDeck,
     coloredPaths: newColoredPaths,
