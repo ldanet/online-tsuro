@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 import defaultTheme from "tailwindcss/defaultTheme";
-import colors  from 'tailwindcss/colors';
+import colors from "tailwindcss/colors";
 
 const config = {
   content: [
@@ -16,16 +16,17 @@ const config = {
         3: "3",
       },
       colors: {
-        red: { DEFAULT: "#f43f5e", dark: "#be123c" },
-        blue: { DEFAULT: "#3b82f6", dark: "#1e3fae" },
-        green: { DEFAULT: "#10b981", dark: "#047857" },
-        yellow: { DEFAULT: "#eab308", dark: "#a26107" },
-        purple: { DEFAULT: "#b46aff", dark: "#7e22ce" },
-        orange: { DEFAULT: "#f97316", dark: "#c2410c" },
-        cyan: { DEFAULT: "#06b6d4", dark: "#0e7490" },
-        pink: { DEFAULT: "#f472b6", dark: "#db2777" },
-        black: { DEFAULT: "#44403c", dark: "#1c1917" },
-        white: { DEFAULT: "#f5f5f4", dark: "#d6d3d1" },
+        red: { DEFAULT: colors.rose[500], dark: colors.rose[800] },
+        blue: { DEFAULT: colors.blue[500], dark: colors.blue[800] },
+        green: { DEFAULT: colors.emerald[500], dark: colors.emerald[800] },
+        yellow: { DEFAULT: colors.yellow[400], dark: colors.yellow[700] },
+        purple: { DEFAULT: colors.purple[500], dark: colors.purple[800] },
+        orange: { DEFAULT: colors.orange[500], dark: colors.orange[800] },
+        cyan: { DEFAULT: colors.cyan[500], dark: colors.cyan[800] },
+        pink: { DEFAULT: colors.pink[400], dark: colors.pink[700] },
+        black: { DEFAULT: colors.stone[600], dark: colors.stone[900] },
+        // #bfbab7 a.k.a. colors.stone[350]
+        white: { DEFAULT: colors.stone[100], dark: "#bfbab7" },
         tile: {
           DEFAULT: colors.orange[100],
           line: colors.orange[900],
