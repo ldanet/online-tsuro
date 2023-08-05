@@ -1,6 +1,5 @@
-import { motion } from "framer-motion";
-import { Variants } from "framer-motion";
-import { memo, useEffect, useRef, useState } from "react";
+import { useAnimate } from "framer-motion";
+import { forwardRef, memo, useEffect, useState } from "react";
 import { notchCoordinates } from "../../constants/tiles";
 import { getColoredPaths, getPlayers } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
@@ -17,12 +16,11 @@ import {
 import { getTranslate, getTranslateValue } from "../../utils/math";
 import { getPath, notchToTransform } from "../../utils/tiles";
 
-const ANIMATION_DURATION = 0.3;
-
-const coloredLineAnimationVariants: Variants = {
-  hidden: { pathLength: 0 },
-  show: { pathLength: 1 },
-};
+const animationArgs = [
+  "path", // we're animating the paths
+  { pathLength: 1 },
+  { duration: 0.3, ease: "linear" },
+] as const;
 
 const strokeColors = {
   red: "stroke-red",
@@ -50,32 +48,29 @@ export const playerStyles = {
   white: "fill-white stroke-white-dark",
 } as const;
 
-const ColoredLine = ({ pair, color, row, col }: ColoredPath) => {
+const ColoredLine = forwardRef<SVGGElement, ColoredPath>(function ColoredLine(
+  { pair, color, row, col },
+  ref
+) {
   return (
-    <>
-      <motion.path
+    <g ref={ref}>
+      <path
         key={`path-${color}-${pair}-${col}-${row}-shadow`}
         className="fill-none stroke-tile-line stroke-3"
         d={getPath(pair)}
         transform={getTranslate(row, col)}
-        variants={coloredLineAnimationVariants}
-        transition={{ duration: ANIMATION_DURATION, ease: "linear" }}
-        initial="hidden"
-        animate="show"
+        pathLength="0"
       />
-      <motion.path
+      <path
         key={`path-${color}-${pair}-${col}-${row}-color`}
         className={`stroke-2 ${strokeColors[color]} fill-none`}
         d={getPath(pair)}
         transform={getTranslate(row, col)}
-        variants={coloredLineAnimationVariants}
-        transition={{ duration: ANIMATION_DURATION }}
-        initial="hidden"
-        animate="show"
+        pathLength="0"
       />
-    </>
+    </g>
   );
-};
+});
 
 const PlayerToken = ({
   coords,
@@ -197,30 +192,35 @@ type PlayersProps = {
 };
 
 const Players = ({ players, coloredPaths }: PlayersProps) => {
-  const isAnimating = useRef(false);
   const [existingPaths, setExistingPaths] = useState(coloredPaths);
   const [movingColor, setMovingColor] = useState<PlayerColor>();
 
+  const [scope, animate] = useAnimate<SVGGElement>();
+
   useEffect(() => {
-    if (coloredPaths.length > existingPaths.length) {
-      const newPaths = coloredPaths.slice(0, existingPaths.length + 1);
-      if (isAnimating.current) {
-        setTimeout(() => {
-          setExistingPaths(newPaths);
-          setMovingColor(newPaths[existingPaths.length].color);
-        }, ANIMATION_DURATION * 1000);
-      } else {
+    const animatePaths = async () => {
+      if (coloredPaths.length > existingPaths.length) {
+        // If there is no moving color it means a path was newly added,
+        // we need to display it before we can animate it
+        if (movingColor) {
+          await animate(...animationArgs);
+        }
+        const newPaths = coloredPaths.slice(0, existingPaths.length + 1);
         setExistingPaths(newPaths);
         setMovingColor(newPaths[existingPaths.length].color);
-        isAnimating.current = true;
-      }
-    } else {
-      isAnimating.current = false;
-      setTimeout(() => {
+      } else if (
+        coloredPaths.length === existingPaths.length &&
+        existingPaths.length > 0
+      ) {
+        // last path to animate
+        await animate(...animationArgs);
         setMovingColor(undefined);
-      }, ANIMATION_DURATION * 1000);
-      setExistingPaths(coloredPaths);
-    }
+      } else {
+        // color paths were removed
+        setExistingPaths(coloredPaths);
+      }
+    };
+    animatePaths();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coloredPaths, existingPaths]);
 
@@ -242,9 +242,10 @@ const Players = ({ players, coloredPaths }: PlayersProps) => {
         </filter>
       </defs>
       <g>
-        {existingPaths.map((p) => (
+        {existingPaths.map((p, index) => (
           <ColoredLine
             key={`path-${p.color}-${p.pair}-${p.col}-${p.row}`}
+            ref={existingPaths.length === index + 1 ? scope : null}
             {...p}
           />
         ))}
