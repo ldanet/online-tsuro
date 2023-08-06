@@ -231,16 +231,6 @@ const Players = ({ players, coloredPaths }: PlayersProps) => {
 
   return (
     <>
-      <defs>
-        <filter id="player-shadow" colorInterpolationFilters="sRGB">
-          <feDropShadow
-            dx="0.5"
-            dy="0.5"
-            stdDeviation=".5"
-            floodOpacity="0.4"
-          />
-        </filter>
-      </defs>
       <g>
         {existingPaths.map((p, index) => (
           <ColoredLine
@@ -250,7 +240,7 @@ const Players = ({ players, coloredPaths }: PlayersProps) => {
           />
         ))}
       </g>
-      <g filter="url(#player-shadow)">
+      <g className="drop-shadow-player">
         {/* Workaround for the group to be the size of the board so the shadow doesn't get clipped */}
         <rect x={0} y={0} height={190} width={190} fill="none" stroke="none" />
         {(

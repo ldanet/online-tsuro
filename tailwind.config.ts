@@ -34,6 +34,12 @@ const config = {
         },
         board: colors.orange[200],
       },
+      dropShadow: {
+        tile: "0.2px 0.2px 0.3px rgba(0,0,0,0.5)",
+        player: "0.5px 0.5px 0.5px rgba(0,0,0,0.4)",
+        mid: "0.2px 0.2px 0.9px rgba(0,0,0,0.375)",
+        far: "0.2px 0.2px 1.5px rgba(0,0,0,0.25)",
+      },
     },
   },
   plugins: [],

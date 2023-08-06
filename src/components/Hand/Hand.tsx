@@ -99,7 +99,7 @@ const Hand = () => {
                   xmlns="http://www.w3.org/2000/svg"
                   version="1.1"
                 >
-                  <g filter="url(#tile-shadow)" transform="translate(5 5)">
+                  <g className="drop-shadow-tile" transform="translate(5 5)">
                     <Tile
                       combination={
                         tile.combinations[
@@ -112,11 +112,10 @@ const Hand = () => {
                   {selectedTile?.id === tile.id && (
                     <>
                       <circle
-                        className="fill-orange-800 stroke-none"
+                        className="fill-orange-800 stroke-none drop-shadow-mid"
                         cx="33"
                         cy="7"
                         r="5.5"
-                        filter="url(#tile-shadow)"
                       />
                       <path
                         className="fill-orange-50 stroke-none"

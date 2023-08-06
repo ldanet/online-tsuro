@@ -112,16 +112,6 @@ const TileShowcase = () => {
       version="1.1"
       style={{ transform: `scale(2.5) rotate(${angle}turn)` }}
     >
-      <defs>
-        <filter id="tile-shadow" colorInterpolationFilters="sRGB">
-          <feDropShadow
-            dx="0.2"
-            dy="0.2"
-            stdDeviation=".3"
-            floodOpacity="0.5"
-          />
-        </filter>
-      </defs>
       {new Array(6).fill(true).map((_, i) => (
         <Edge key={i} type="top" row={-1} col={i} index={23 - i} />
       ))}
@@ -132,7 +122,7 @@ const TileShowcase = () => {
         <Fragment key={ri}>
           <Edge type="left" row={ri} col={-1} index={ri} />
           <Edge type="right" row={ri} col={6} index={17 - ri} />
-          <g filter="url(#tile-shadow)">
+          <g className="drop-shadow-tile">
             {row.map((col, ci) => {
               return (
                 col && (

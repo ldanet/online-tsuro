@@ -31,16 +31,6 @@ const Board = () => {
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
     >
-      <defs>
-        <filter id="tile-shadow" colorInterpolationFilters="sRGB">
-          <feDropShadow
-            dx="0.2"
-            dy="0.2"
-            stdDeviation=".3"
-            floodOpacity="0.5"
-          />
-        </filter>
-      </defs>
       {new Array(6).fill(true).map((_, i) => (
         <GameEdge key={i} type="top" row={-1} col={i} index={23 - i} />
       ))}
@@ -51,7 +41,7 @@ const Board = () => {
         <Fragment key={ri}>
           <GameEdge type="left" row={ri} col={-1} index={ri} />
           <GameEdge type="right" row={ri} col={6} index={17 - ri} />
-          <g filter="url(#tile-shadow)">
+          <g className="drop-shadow-tile">
             {row.map((col, ci) => {
               return (
                 col && (

@@ -58,8 +58,9 @@ const SelectedTile = () => {
             )}
             onClick={isMyTurn ? playTile : undefined}
             className={cn(
-              "opacity-50",
-              isMyTurn && "cursor-pointer hover:opacity-70"
+              "drop-shadow-far opacity-50 transition-all",
+              isMyTurn &&
+                "hover:drop-shadow-mid cursor-pointer hover:opacity-70"
             )}
           />
         </motion.g>
