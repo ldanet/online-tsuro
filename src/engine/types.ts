@@ -95,6 +95,7 @@ export type Actions = {
   setSelectedTile: (tile: BoardTile) => void;
   placePlayer: (player: string, coord: Coordinate) => void;
   playTile: (player: string, tile: BoardTile) => void;
+  playSelectedTile: () => void;
   pickColor: (player: string, color: PlayerColor) => void;
 };
 

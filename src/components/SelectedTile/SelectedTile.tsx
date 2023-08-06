@@ -1,12 +1,18 @@
 import { motion, useAnimation } from "framer-motion";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { getMyPlayerData, getSelectedTile } from "../../engine/selectors";
+import {
+  getIsMyTurn,
+  getMyPlayerData,
+  getPlaySelectedTile,
+  getSelectedTile,
+} from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
 import {
   getNextTileCoordinate,
   getPlayerCoordinates,
 } from "../../engine/utils";
 import { getTranslate } from "../../utils/math";
+import { cn } from "../../utils/styles";
 import Tile from "../Tile/Tile";
 
 const SelectedTile = () => {
@@ -20,6 +26,9 @@ const SelectedTile = () => {
   const isPlaying = useEngine(
     useCallback((state) => getMyPlayerData(state).status === "playing", [])
   );
+  const isMyTurn = useEngine(getIsMyTurn);
+  const playTile = useEngine(getPlaySelectedTile);
+
   const localSelectedTile = useRef(selectedTile);
   const controls = useAnimation();
   useEffect(() => {
@@ -32,6 +41,7 @@ const SelectedTile = () => {
     }
     localSelectedTile.current = selectedTile;
   }, [controls, selectedTile]);
+
   return (
     <>
       {isPlaying && selectedTile && selectedTileCoord && (
@@ -46,7 +56,11 @@ const SelectedTile = () => {
               selectedTileCoord.row,
               selectedTileCoord.col
             )}
-            opacity={0.5}
+            onClick={isMyTurn ? playTile : undefined}
+            className={cn(
+              "opacity-50",
+              isMyTurn && "cursor-pointer hover:opacity-70"
+            )}
           />
         </motion.g>
       )}

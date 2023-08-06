@@ -1,5 +1,9 @@
 import { create } from "zustand";
-import { createJSONStorage, persist, subscribeWithSelector } from "zustand/middleware";
+import {
+  createJSONStorage,
+  persist,
+  subscribeWithSelector,
+} from "zustand/middleware";
 import { EngineState } from "./types";
 import { emptytBoard } from "./constants";
 import {
@@ -8,6 +12,7 @@ import {
   joinGame,
   pickColor,
   placePlayer,
+  playSelectedTile,
   playTile,
   removePlayer,
   resetGame,
@@ -81,6 +86,9 @@ export const useEngine = create<
       },
       playTile: (player, tile) => {
         set((state) => playTile(state, player, tile));
+      },
+      playSelectedTile: () => {
+        set((state) => playSelectedTile(state));
       },
       placePlayer: (player, coord) => {
         set((state) => placePlayer(state, player, coord));

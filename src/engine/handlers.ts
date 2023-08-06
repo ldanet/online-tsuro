@@ -368,6 +368,14 @@ export const playTile: EngineHandler<[string, BoardTile]> = (
   };
 };
 
+export const playSelectedTile: EngineHandler = (state) => {
+  const { myPlayer, selectedTile, playerTurnsOrder } = state;
+  if (myPlayer === playerTurnsOrder[0] && selectedTile) {
+    return playTile(state, myPlayer, selectedTile);
+  }
+  return state;
+};
+
 export const pickColor: EngineHandler<[string, PlayerColor]> = (
   state,
   name,

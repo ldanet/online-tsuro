@@ -6,12 +6,10 @@ import {
   getHostName,
   getIsHost,
   getIsLoading,
-  getIsMyTurn,
   getMyPlayer,
   getPhase,
   getResetGame,
   getStartGame,
-  getTurnOrder,
   getWinners,
 } from "../../engine/selectors";
 import Hand from "../Hand/Hand";

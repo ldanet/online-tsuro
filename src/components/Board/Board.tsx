@@ -5,12 +5,24 @@ import Tile from "../Tile/Tile";
 import { GamePlayers } from "../Players/Players";
 import { getTranslate } from "../../utils/math";
 import ColorPicker from "../ColorPicker/ColorPicker";
-import { getBoard, getPhase } from "../../engine/selectors";
+import { getBoard, getIsMyTurn, getPhase } from "../../engine/selectors";
 import SelectedTile from "../SelectedTile/SelectedTile";
+
+const PickNotchPrompt = () => (
+  <foreignObject x={20} y={20} width={150} height={150}>
+    <div className="flex h-full w-full items-center justify-items-center text-center text-xs">
+      <p>
+        It&apos;s your turn!
+        <br /> Pick a notch on the edge of the board
+      </p>
+    </div>
+  </foreignObject>
+);
 
 const Board = () => {
   const board = useEngine(getBoard);
   const gamePhase = useEngine(getPhase);
+  const isMyTurn = useEngine(getIsMyTurn);
 
   return (
     <svg
@@ -56,6 +68,7 @@ const Board = () => {
       ))}
       <SelectedTile />
       {gamePhase === "joining" && <ColorPicker />}
+      {isMyTurn && gamePhase === "round1" && <PickNotchPrompt />}
       <GamePlayers />
     </svg>
   );

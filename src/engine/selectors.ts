@@ -33,6 +33,8 @@ export const getPickColor = ({ pickColor }: EngineState) => pickColor;
 export const getSetSelectedTile = ({ setSelectedTile }: EngineState) =>
   setSelectedTile;
 export const getPlayTile = ({ playTile }: EngineState) => playTile;
+export const getPlaySelectedTile = ({ playSelectedTile }: EngineState) =>
+  playSelectedTile;
 export const getRemovePlayer = ({ removePlayer }: EngineState) => removePlayer;
 
 // Network state
