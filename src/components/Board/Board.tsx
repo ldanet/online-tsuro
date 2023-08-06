@@ -1,4 +1,4 @@
-import { Fragment, memo } from "react";
+import { Fragment, memo, useRef } from "react";
 import { GameEdge } from "../Edge/Edge";
 import { useEngine } from "../../engine/store";
 import Tile from "../Tile/Tile";
@@ -8,21 +8,35 @@ import ColorPicker from "../ColorPicker/ColorPicker";
 import { getBoard, getIsMyTurn, getPhase } from "../../engine/selectors";
 import SelectedTile from "../SelectedTile/SelectedTile";
 
-const PickNotchPrompt = () => (
-  <foreignObject x={20} y={20} width={150} height={150}>
-    <div className="flex h-full w-full items-center justify-items-center text-center text-xs">
-      <p>
-        It&apos;s your turn!
-        <br /> Pick a notch on the edge of the board
-      </p>
-    </div>
-  </foreignObject>
-);
+const PickNotchPrompt = ({ boardSize }: { boardSize: string | null }) => {
+  const ratio = boardSize ? parseFloat(boardSize) / 190 : 1;
+
+  return (
+    <foreignObject
+      x={20 * ratio}
+      y={20 * ratio}
+      width={150 * ratio}
+      height={150 * ratio}
+      transform={`scale(${1 / ratio})`}
+    >
+      <div className="flex h-full w-full items-center justify-center text-center text-lg">
+        <p>
+          It&apos;s your turn!
+          <br /> Pick a notch on the edge of the board
+        </p>
+      </div>
+    </foreignObject>
+  );
+};
 
 const Board = () => {
+  const boardElement = useRef<SVGSVGElement>(null);
   const board = useEngine(getBoard);
   const gamePhase = useEngine(getPhase);
   const isMyTurn = useEngine(getIsMyTurn);
+
+  const boardSize =
+    boardElement.current && getComputedStyle(boardElement.current).width;
 
   return (
     <svg
@@ -30,6 +44,7 @@ const Board = () => {
       className="m-4 h-[--board-size] w-[--board-size] rounded-xl border-2 border-orange-800 bg-board"
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
+      ref={boardElement}
     >
       {new Array(6).fill(true).map((_, i) => (
         <GameEdge key={i} type="top" row={-1} col={i} index={23 - i} />
@@ -58,7 +73,9 @@ const Board = () => {
       ))}
       <SelectedTile />
       {gamePhase === "joining" && <ColorPicker />}
-      {isMyTurn && gamePhase === "round1" && <PickNotchPrompt />}
+      {isMyTurn && gamePhase === "round1" && (
+        <PickNotchPrompt boardSize={boardSize} />
+      )}
       <GamePlayers />
     </svg>
   );
