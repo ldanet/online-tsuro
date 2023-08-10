@@ -46,14 +46,8 @@ export const getHostName = ({ hostName }: EngineState) => {
 };
 export const getIsHost = ({ isHost }: EngineState) => isHost;
 export const getIsLoading = ({ isLoading }: EngineState) => isLoading;
-export const getIsConnected = ({ isConnected }: EngineState) => isConnected;
-export const getIsOffline = ({ isOffline }: EngineState) => isOffline;
 
 // Network actions
 export const getSetIsHost = ({ setIsHost }: EngineState) => setIsHost;
-export const getSetPeer = ({ setPeer }: EngineState) => setPeer;
-export const getSetIsConnected = ({ setIsConnected }: EngineState) =>
-  setIsConnected;
-export const getSetIsOffline = ({ setIsOffline }: EngineState) => setIsOffline;
 export const getSetIsLoading = ({ setIsLoading }: EngineState) => setIsLoading;
 export const getSetHostId = ({ setHostId }: EngineState) => setHostId;

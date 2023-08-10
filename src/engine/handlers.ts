@@ -155,6 +155,8 @@ export const placePlayer: EngineHandler<[string, Coordinate]> = (
 ) => {
   const { players, playerTurnsOrder, gamePhase, isHost, hostConn } = state;
 
+  if (!players[player]) return state;
+
   if (!isHost && hostConn) {
     hostConn.send({ type: "placePlayer", coord });
   }
@@ -316,6 +318,8 @@ export const playTile: EngineHandler<[string, BoardTile]> = (
     coloredPaths,
   } = state;
 
+  if (!players[player]) return state;
+
   if (!isHost && hostConn) {
     hostConn.send({ type: "playTile", tile });
   }
@@ -383,6 +387,8 @@ export const pickColor: EngineHandler<[string, PlayerColor]> = (
 ) => {
   const { players, availableColors, isHost, hostConn, clientConns } = state;
 
+  if (!players[name]) return state;
+
   if (!isHost && hostConn) {
     hostConn.send({ type: "pickColor", color });
   }
@@ -445,7 +451,7 @@ export const removePlayer: EngineHandler<[string]> = (state, playerName) => {
 
   const newClientConns = { ...clientConns };
   delete newClientConns[playerName];
-  clientConns[playerName]?.close();
+  clientConns[playerName]?.send({ type: "kick" });
 
   return {
     ...dealtState,

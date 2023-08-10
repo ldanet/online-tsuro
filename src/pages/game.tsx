@@ -3,59 +3,60 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { useRouter } from "next/router";
 import { useEngine } from "../engine/store";
-import { useCallback, useEffect } from "react";
-import { useIsMounted } from "../utils/hooks";
+import { FormEvent, useCallback, useEffect } from "react";
 import {
   getHostId,
-  getIsConnected,
   getIsHost,
   getJoinGame,
   getMyPlayer,
-  getSetHostId,
   getSetIsHost,
 } from "../engine/selectors";
-import Game from "../components/Game/Game";
 import NameInput, { useNameInput } from "../components/NameInput/NameInput";
 import Button from "../components/Button";
 import { cn } from "../utils/styles";
+import dynamic from "next/dynamic";
+import Game from "../components/Game/Game";
 
-const Home: NextPage = () => {
+const GamePage: NextPage = () => {
   const router = useRouter();
   const myPlayer = useEngine(getMyPlayer);
   const joinGame = useEngine(getJoinGame);
   const hostId = useEngine(getHostId);
   const isHost = useEngine(getIsHost);
-  const setHostId = useEngine(getSetHostId);
   const setIsHost = useEngine(getSetIsHost);
-  const isConnected = useEngine(getIsConnected);
-  const isMounted = useIsMounted();
 
   const gameId = router.query.gameId;
   const gameName = router.query.name;
   const isRouterReady = router.isReady;
 
-  useEffect(() => {
-    if (gameId && typeof gameId === "string" && gameName !== myPlayer) {
-      setHostId(gameId);
-      setIsHost(false);
-    }
-  }, [gameId, setHostId, gameName, myPlayer, setIsHost]);
+  const hasGame = isHost || hostId;
+  const hasGameId = isRouterReady && gameId;
 
   useEffect(() => {
-    if (isRouterReady && isMounted && !isHost && !gameId && !hostId) {
+    if (gameId && typeof gameId === "string" && gameName !== myPlayer) {
+      setIsHost(false);
+    }
+  }, [gameId, gameName, myPlayer, setIsHost]);
+
+  useEffect(() => {
+    if (!hasGame && !hasGameId && isRouterReady) {
       router.replace("/");
     }
-  }, [isRouterReady, isMounted, hostId, router, isHost, gameId, isConnected]);
+  }, [hasGame, router, hasGameId, isRouterReady]);
 
   const { nameInput, nameError, validateName, clearNameError } = useNameInput();
 
-  const handleJoin = useCallback(() => {
-    const hasNameError = !validateName();
+  const handleJoin = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const hasNameError = !validateName();
 
-    if (!hasNameError) {
-      joinGame(nameInput.current!.value, hostId!);
-    }
-  }, [joinGame, validateName, hostId, nameInput]);
+      if (!hasNameError && typeof gameId === "string") {
+        joinGame(nameInput.current!.value, gameId);
+      }
+    },
+    [joinGame, validateName, gameId, nameInput]
+  );
 
   return (
     <div
@@ -74,11 +75,10 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        {(isHost || hostId) && myPlayer && isRouterReady ? (
+        {hasGame ? (
           <Game />
         ) : (
-          hostId &&
-          isMounted && (
+          hasGameId && (
             <>
               <h1 className={styles.title}>Tsuro</h1>
               <form className={styles.home_container} onSubmit={handleJoin}>
@@ -87,11 +87,13 @@ const Home: NextPage = () => {
                   nameError={nameError}
                   clearNameError={clearNameError}
                 />
-                {hostId && isMounted && (
-                  <Button type="submit" className="mt-4">
-                    Join{gameName ? ` ${gameName}'s game` : ""}
-                  </Button>
-                )}
+                <Button
+                  type="submit"
+                  className="mt-4"
+                  disabled={!isRouterReady}
+                >
+                  Join{gameName ? ` ${gameName}'s game` : ""}
+                </Button>
               </form>
             </>
           )
@@ -101,4 +103,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default dynamic(() => Promise.resolve(GamePage), { ssr: false });

@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { hasProperty } from "../utils/types";
 import { colors } from "./constants";
@@ -6,16 +6,15 @@ import {
   getHostId,
   getIsHost,
   getSetHostId,
-  getSetIsConnected,
   getSetIsLoading,
-  getSetIsOffline,
-  getSetPeer,
 } from "./selectors";
 import { useEngine } from "./store";
 import { GameUpdateMessage, PlayerColor, SharedGameState } from "./types";
 import { isBoardTile, isCoordinate, isGameUpdateMessage } from "./utils";
 
 let peer: TPeer | null = null;
+
+let appRouter: NextRouter | null = null;
 
 const broadcastGameUpdate = () => {
   const {
@@ -50,11 +49,13 @@ const broadcastGameUpdate = () => {
 let unsubGameUpdate: (() => void) | null = null;
 
 const host = () => {
-  const { peer } = useEngine.getState();
   peer?.on("open", (hostId) => {
     if (typeof hostId === "string") useEngine.setState({ hostId });
 
-    useEngine.setState({ isConnected: true, isLoading: false });
+    useEngine.setState({
+      isLoading: false,
+      hostName: useEngine.getState().myPlayer,
+    });
   });
 
   unsubGameUpdate = useEngine.subscribe(
@@ -148,20 +149,24 @@ const host = () => {
     });
 
     conn.on("close", () => {
-      useEngine.setState((state) => ({
-        players: {
-          ...state.players,
-          [name]: { ...state.players[name], disconnected: true },
-        },
-      }));
+      useEngine.setState((state) => {
+        if (!state.players[name]) return state;
+        return {
+          players: {
+            ...state.players,
+            [name]: { ...state.players[name], disconnected: true },
+          },
+        };
+      });
     });
   });
 };
 
 const join = (hostId: string) => {
-  const { peer, myPlayer } = useEngine.getState();
+  const { myPlayer } = useEngine.getState();
   if (peer) {
-    peer?.on("open", () => {
+    peer.on("open", () => {
+      if (!peer) return;
       const conn = peer.connect(hostId, { reliable: true });
 
       useEngine.setState({ hostConn: conn });
@@ -202,7 +207,6 @@ const join = (hostId: string) => {
               typeof message.hostName === "string"
             ) {
               useEngine.setState({
-                isConnected: true,
                 isLoading: false,
                 hostName: message.hostName,
               });
@@ -233,32 +237,49 @@ const join = (hostId: string) => {
                 conn.send({ type: "handShake", name: newName });
               } else {
                 // Kicks the player out
+                disconnect();
                 conn.close();
               }
+            }
+            if (message.type === "kick") {
+              appRouter?.replace("/");
             }
           }
         });
 
         conn.on("close", () => {
           alert("You have been disconnected.");
-          useEngine.setState({ isConnected: false });
+          disconnect();
         });
       });
     });
   }
 };
 
+const disconnect = () => {
+  const { setIsLoading, setHostId } = useEngine.getState();
+  setHostId(undefined);
+  setIsLoading(false);
+  useEngine.setState({
+    hostName: undefined,
+    hostConn: undefined,
+  });
+};
+
 export const useNetwork = () => {
   const importingPeer = useRef(false);
-  const setPeer = useEngine(getSetPeer);
   const isHost = useEngine(getIsHost);
   const hostId = useEngine(getHostId);
-  const setIsConnected = useEngine(getSetIsConnected);
-  const setIsOffline = useEngine(getSetIsOffline);
   const setIsLoading = useEngine(getSetIsLoading);
   const setHostId = useEngine(getSetHostId);
 
   const router = useRouter();
+  useEffect(() => {
+    appRouter = router;
+    return () => {
+      appRouter = null;
+    };
+  }, [router]);
 
   useEffect(() => {
     if ((!peer || peer.destroyed) && !importingPeer.current) {
@@ -271,8 +292,6 @@ export const useNetwork = () => {
           debug: process.env.NODE_ENV === "production" ? 0 : 3,
         });
 
-        setPeer(peer);
-
         if (isHost) {
           host();
         } else if (hostId) {
@@ -282,38 +301,22 @@ export const useNetwork = () => {
         }
 
         peer.on("error", (error) => {
+          disconnect();
+          console.error(error);
+
           if ((error as any).type === "peer-unavailable") {
             alert("This game does not exist.");
+            router.replace("/");
           }
-          console.error(error);
-          if (
-            isHost &&
-            confirm(
-              "Unable to connect. Do you wish to continue playing offline?"
-            )
-          ) {
-            setIsOffline(true);
-          }
-          setIsConnected(false);
-          setIsLoading(false);
         });
 
         peer.on("disconnected", () => {
-          setIsConnected(false);
+          disconnect();
         });
       };
       fn();
     }
-  }, [
-    setPeer,
-    isHost,
-    hostId,
-    setIsConnected,
-    setIsLoading,
-    setHostId,
-    setIsOffline,
-    router,
-  ]);
+  }, [isHost, hostId, setIsLoading, setHostId, router]);
 
   useEffect(() => {
     return () => {
@@ -322,8 +325,6 @@ export const useNetwork = () => {
         peer.destroy();
         // unsubscribe host
         unsubGameUpdate && unsubGameUpdate();
-
-        setIsConnected(false);
       }
       if (isHost) {
         setHostId(undefined);

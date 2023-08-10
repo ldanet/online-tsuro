@@ -40,25 +40,13 @@ export const useEngine = create<
       myPlayer: "",
 
       isLoading: false,
-      isConnected: false,
-      isOffline: false,
-      peer: null,
       isHost: false,
       hostConn: null,
       clientConns: {},
 
       // Actions
-      setPeer: (peer) => {
-        set({ peer });
-      },
       setIsLoading: (isLoading) => {
         set({ isLoading });
-      },
-      setIsConnected: (isConnected) => {
-        set({ isConnected });
-      },
-      setIsOffline: (isOffline) => {
-        set({ isOffline });
       },
       setIsHost: (isHost) => {
         set({ isHost });
@@ -116,15 +104,7 @@ export const useEngine = create<
         savedState = Object.fromEntries(
           Object.entries(savedState).filter(
             ([key]) =>
-              ![
-                "peer",
-                "hostConn",
-                "clientConns",
-                "hostId",
-                "isConnected",
-                "isLoading",
-                "isOffline",
-              ].includes(key)
+              !["hostConn", "clientConns", "hostId", "isLoading"].includes(key)
           )
         ) satisfies Partial<EngineState>;
         return savedState;

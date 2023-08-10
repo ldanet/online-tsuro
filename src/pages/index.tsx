@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useEngine } from "../engine/store";
-import { useCallback } from "react";
+import { FormEvent, useCallback } from "react";
 import { useRouter } from "next/router";
 import { getCreateGame } from "../engine/selectors";
 import NameInput, { useNameInput } from "../components/NameInput/NameInput";
@@ -21,12 +21,16 @@ const Home: NextPage = () => {
 
   const { nameInput, nameError, validateName, clearNameError } = useNameInput();
 
-  const handleHost = useCallback(() => {
-    if (validateName()) {
-      createGame(nameInput.current!.value);
-      router.push("/game");
-    }
-  }, [router, createGame, validateName, nameInput]);
+  const handleHost = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (validateName()) {
+        createGame(nameInput.current!.value);
+        router.push("/game");
+      }
+    },
+    [router, createGame, validateName, nameInput]
+  );
 
   return (
     <div className="flex">

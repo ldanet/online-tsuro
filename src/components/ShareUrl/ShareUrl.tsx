@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useState } from "react";
-import { getHostId, getHostName, getIsOffline } from "../../engine/selectors";
+import { getHostId, getHostName } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
 import Button from "../Button";
 
@@ -8,7 +8,6 @@ const getGameURL = (gameID: string, name: string) =>
 
 const ShareUrl = () => {
   const gameID = useEngine(getHostId);
-  const isOffline = useEngine(getIsOffline);
   const name = useEngine(getHostName);
   const [copyLinkSuccess, setCopyLinkSuccess] = useState<boolean | null>(null);
 
@@ -37,7 +36,7 @@ const ShareUrl = () => {
     }
   }, [gameID, name]);
 
-  if (isOffline && !gameID) {
+  if (!gameID) {
     return (
       <div className="flex-grow-0 basis-[3] border-2 border-solid border-gray-500 p-2 text-xs">
         <p className="m-0 max-w-sm">

@@ -62,12 +62,9 @@ export type LocalState = {
 
   // Network
   isLoading: boolean;
-  isConnected: boolean;
-  isOffline: boolean;
   hostId?: string;
   hostName?: string;
   isHost: boolean;
-  peer: TPeer | null;
   hostConn: TDataConnection | null;
   clientConns: { [name: string]: TDataConnection };
 };
@@ -84,10 +81,7 @@ export type Actions = {
   removePlayer: (name: string) => void;
 
   // Network
-  setPeer: (peer: TPeer) => void;
   setIsLoading: (isLoading: boolean) => void;
-  setIsConnected: (isConnected: boolean) => void;
-  setIsOffline: (isOffline: boolean) => void;
   setHostId: (hostId: string | undefined) => void;
   setIsHost: (isHost: boolean) => void;
 
