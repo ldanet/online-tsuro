@@ -72,11 +72,10 @@ const Board = () => {
         </Fragment>
       ))}
       <SelectedTile />
-      {gamePhase === "joining" && <ColorPicker />}
+      {gamePhase === "joining" ? <ColorPicker /> : <GamePlayers />}
       {isMyTurn && gamePhase === "round1" && (
         <PickNotchPrompt boardSize={boardSize} />
       )}
-      <GamePlayers />
     </svg>
   );
 };
