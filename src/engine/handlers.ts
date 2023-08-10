@@ -258,8 +258,11 @@ export const movePlayers = (state: SharedGameState) => {
       }
     }
   });
+  const playingPlayers = Object.values(players).filter(
+    (player) => player.status !== "watching"
+  ).length;
   const isGameOver =
-    newOrder.length < Math.min(Object.keys(players).length, 2) ||
+    newOrder.length < Math.min(playingPlayers, 2) ||
     (newDeck.filter(Boolean).length <= 0 &&
       Object.values(newPlayers).every(
         (p) => !p.hand || p.hand.filter(Boolean).length <= 0
