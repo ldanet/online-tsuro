@@ -43,7 +43,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.png" />
       </Head>
 
-      <main className="flex min-h-[100dvh] w-full flex-col items-center justify-center space-y-4 bg-orange-200 p-4 text-orange-800">
+      <main className="flex min-h-[100dvh] w-full flex-col items-center justify-center space-y-4 p-4">
         <h1 className="text-5xl font-extrabold">Tsuro</h1>
         <form
           className="w-[380px] max-w-full space-y-4 rounded-xl border-2 border-orange-800 p-4"

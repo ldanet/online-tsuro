@@ -59,12 +59,7 @@ const GamePage: NextPage = () => {
   );
 
   return (
-    <div
-      className={cn(
-        styles.container,
-        "min-h-[100dvh] bg-orange-200 text-orange-800"
-      )}
-    >
+    <div className={cn(styles.container, "min-h-[100dvh]")}>
       <Head>
         <title>Tsuro</title>
         <meta
