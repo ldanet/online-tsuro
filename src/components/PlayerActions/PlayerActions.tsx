@@ -23,8 +23,7 @@ const PlayerActions = () => {
   const isHost = useEngine(getIsHost);
   const startGame = useEngine(getStartGame);
   const resetGame = useEngine(getResetGame);
-  const availableColos = useEngine(getAvailableColors);
-  const winners = useEngine(getWinners);
+  const availableColors = useEngine(getAvailableColors);
   const myPlayer = useEngine(getMyPlayer);
   const hostName = useEngine(getHostName);
 
@@ -34,50 +33,36 @@ const PlayerActions = () => {
 
   if (gamePhase === "joining") {
     if (hasPickedColor) {
-      return isHost ? (
-        <Button type="button" onClick={startGame}>
-          Start game
-        </Button>
-      ) : (
-        <p>Waiting for {hostName} to start the game</p>
+      return (
+        <div className="text-center">
+          {isHost ? (
+            <Button type="button" onClick={startGame}>
+              Start game
+            </Button>
+          ) : (
+            <p>Waiting for {hostName} to start the game</p>
+          )}
+        </div>
       );
     } else {
-      return availableColos.length ? (
-        <p>Please choose a color</p>
-      ) : (
-        <p>Sorry, the game is full. You can still watch!</p>
+      return (
+        <div className="text-center">
+          {availableColors.length ? (
+            <p>Please choose a color</p>
+          ) : (
+            <p>Sorry, the game is full. You can still watch!</p>
+          )}
+        </div>
       );
     }
   }
-
-  if (gamePhase === "finished") {
-    let message: ReactNode;
-    if (winners.length > 1) {
-      if (winners.includes(myPlayer)) {
-        const otherWinners = winners.filter((name) => name !== myPlayer);
-        message = (
-          <p>🏆 You tie with {formatListHumanReadable(otherWinners)}!</p>
-        );
-      } else {
-        message = <p>{formatListHumanReadable(winners)} tie!</p>;
-      }
-    } else {
-      message =
-        winners[0] === myPlayer ? (
-          <p>🏆 You win!</p>
-        ) : (
-          <p>{winners[0]} wins!</p>
-        );
-    }
+  if (gamePhase === "finished" && isHost) {
     return (
-      <>
-        {message}
-        {isHost && (
-          <Button type="button" onClick={resetGame}>
-            New game
-          </Button>
-        )}
-      </>
+      <div className="text-center">
+        <Button type="button" onClick={resetGame}>
+          New game
+        </Button>
+      </div>
     );
   }
   return null;

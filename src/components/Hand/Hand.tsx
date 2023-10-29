@@ -67,7 +67,7 @@ const Hand = () => {
         </p>
       )}
 
-      <div className="flex w-[calc(var(--tile-size)*5*1.33)] self-start pl-[calc(var(--tile-size)*1.33)]">
+      <div className="flex w-[calc(var(--tile-size)*5*1.33)] pl-[calc(var(--tile-size)*1.33)]">
         <AnimatePresence initial={false}>
           {hand?.map((tile, i) =>
             tile ? (

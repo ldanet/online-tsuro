@@ -23,7 +23,7 @@ const ShareUrl = () => {
 
   useEffect(() => {
     if (copyLinkSuccess !== null) {
-      const timeoutID = setTimeout(() => setCopyLinkSuccess(null), 3000);
+      const timeoutID = setTimeout(() => setCopyLinkSuccess(null), 6000);
       return () => {
         clearTimeout(timeoutID);
       };
@@ -38,7 +38,7 @@ const ShareUrl = () => {
 
   if (!gameID) {
     return (
-      <div className="flex-grow-0 basis-[3] border-2 border-solid border-gray-500 p-2 text-xs">
+      <div className="flex-grow-0 text-xs">
         <p className="m-0 max-w-sm">
           Playing offline.
           <br />
@@ -49,21 +49,19 @@ const ShareUrl = () => {
   }
 
   return gameID && name ? (
-    <div className="flex-grow-0 basis-[3] border-l-2 border-solid border-gray-500 p-2 text-xs">
-      <p className="m-0 max-w-sm">
-        <label htmlFor="shareable-link">Share the URL to invite players</label>
-      </p>
-      <p className="m-0 max-w-sm">
-        <Button type="button" onClick={handleCopyLink}>
-          {copyLinkSuccess ? (
-            <>✔️ Copied to clipboard</>
-          ) : copyLinkSuccess === false ? (
-            <>Failed to copy URL</>
-          ) : (
-            <>Copy to clipboard</>
-          )}
-        </Button>
-      </p>
+    <div>
+      <button
+        type="button"
+        onClick={handleCopyLink}
+        className="-ml-2 w-full rounded-lg p-2 underline underline-offset-4 hover:bg-orange-800 hover:text-orange-50 hover:no-underline"
+      >
+        + Invite players
+      </button>
+      {copyLinkSuccess && (
+        <p role="log" aria-live="polite" className="text-center">
+          📋 Link copied to clipboard!
+        </p>
+      )}
     </div>
   ) : null;
 };

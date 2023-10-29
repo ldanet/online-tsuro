@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import styles from "../styles/Home.module.css";
 import { useRouter } from "next/router";
 import { useEngine } from "../engine/store";
 import { FormEvent, useCallback, useEffect } from "react";
@@ -16,6 +15,7 @@ import Button from "../components/Button";
 import { cn } from "../utils/styles";
 import dynamic from "next/dynamic";
 import Game from "../components/Game/Game";
+import TileShowcase from "../components/TileShowcase/TileShowcase";
 
 const GamePage: NextPage = () => {
   const router = useRouter();
@@ -59,7 +59,7 @@ const GamePage: NextPage = () => {
   );
 
   return (
-    <div className={cn(styles.container, "min-h-[100dvh]")}>
+    <div className="h-full">
       <Head>
         <title>Tsuro</title>
         <meta
@@ -69,27 +69,37 @@ const GamePage: NextPage = () => {
         <link rel="icon" href="/favicon.png" />
       </Head>
 
-      <main className={styles.main}>
+      <main className="flex h-full">
         {hasGame ? (
           <Game />
         ) : (
           hasGameId && (
             <>
-              <h1 className={styles.title}>Tsuro</h1>
-              <form className={styles.home_container} onSubmit={handleJoin}>
-                <NameInput
-                  nameInput={nameInput}
-                  nameError={nameError}
-                  clearNameError={clearNameError}
-                />
-                <Button
-                  type="submit"
-                  className="mt-4"
-                  disabled={!isRouterReady}
+              <div
+                role="presentation"
+                className="hidden w-full place-items-center overflow-clip bg-orange-800 lg:grid"
+              >
+                <TileShowcase />
+              </div>
+              <div className="flex min-h-[100dvh] w-full flex-col items-center justify-center space-y-4 p-4">
+                <h1 className="text-5xl font-extrabold">Tsuro</h1>
+                <form
+                  onSubmit={handleJoin}
+                  className="w-[380px] max-w-full space-y-4 rounded-xl border-2 border-orange-800 p-4"
                 >
-                  Join{gameName ? ` ${gameName}'s game` : ""}
-                </Button>
-              </form>
+                  <h2 className="text-center text-2xl">
+                    Join {gameName ? `${gameName}'s` : "a"} game
+                  </h2>
+                  <NameInput
+                    nameInput={nameInput}
+                    nameError={nameError}
+                    clearNameError={clearNameError}
+                  />
+                  <Button type="submit" fullSize disabled={!isRouterReady}>
+                    Enter game room
+                  </Button>
+                </form>
+              </div>
             </>
           )
         )}

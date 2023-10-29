@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo, ReactNode, useCallback } from "react";
 import {
   getIsHost,
   getPhase,
@@ -7,8 +7,11 @@ import {
   getWinners,
   getRemovePlayer,
   getMyPlayer,
+  getPlayers,
 } from "../../engine/selectors";
 import { useEngine } from "../../engine/store";
+import { Player } from "../../engine/types";
+import { formatListHumanReadable } from "../../utils/strings";
 import { cn } from "../../utils/styles";
 
 const playerBg = {
@@ -37,74 +40,139 @@ const playerBorder = {
   white: "border-white-dark",
 } as const;
 
-const GameStatus = () => {
-  const players = useEngine(getPlayersArray);
+const playerDecoration = {
+  red: "decoration-red-dark",
+  blue: "decoration-blue-dark",
+  green: "decoration-green-dark",
+  yellow: "decoration-yellow-dark",
+  orange: "decoration-orange-dark",
+  purple: "decoration-purple-dark",
+  cyan: "decoration-cyan-dark",
+  pink: "decoration-pink-dark",
+  black: "decoration-black-dark",
+  white: "decoration-white-dark",
+} as const;
+
+type GameStatusPlayerProps = {
+  player: Player;
+  displayNameOverride?: string;
+  handleRemovePlayer?: (name: string) => void;
+};
+
+export const GameStatusPlayer = ({
+  player: { name, status, color, disconnected },
+  displayNameOverride,
+  handleRemovePlayer,
+}: GameStatusPlayerProps) => {
   const winners = useEngine(getWinners);
   const turnOrder = useEngine(getTurnOrder);
-  const isHost = useEngine(getIsHost);
-  const removePlayer = useEngine(getRemovePlayer);
   const gamePhase = useEngine(getPhase);
-  const myPlayer = useEngine(getMyPlayer);
-
-  const handleRemovePlayer = useCallback(
-    (name: string) => {
-      if (confirm(`Remove ${name} from the game and disconnect them?`))
-        removePlayer(name);
-    },
-    [removePlayer]
-  );
+  const tokenProps =
+    gamePhase !== "joining" && status === "watching"
+      ? {
+          children: <span>👀 </span>,
+          className: "border-none bg-none p-0 text-base leading-4 w-5",
+        }
+      : {
+          className: cn(
+            "h-5 w-5 rounded-full border-2 flex-shrink-0",
+            color
+              ? "border-solid drop-shadow-[0.05rem_0.05rem_0.05rem_rgba(0,0,0,0.2)]"
+              : "border-dashed bg-none",
+            color && playerBg[color],
+            color ? playerBorder[color] : "border-orange-800"
+          ),
+        };
 
   return (
-    <>
-      <div className="flex gap-4 lg:flex-col">
-        {players.map(({ name, status, color, disconnected }) => {
-          const tokenProps =
-            gamePhase !== "joining" && status === "watching"
-              ? {
-                  children: <span>👀 </span>,
-                  className: "border-none bg-none p-0 text-base leading-4 w-5",
-                }
-              : {
-                  className: cn(
-                    "h-5 w-5 rounded-full border-2",
-                    color
-                      ? "border-solid drop-shadow-[0.05rem_0.05rem_0.05rem_rgba(0,0,0,0.2)]"
-                      : "border-dashed bg-none",
-                    color && playerBg[color],
-                    color && playerBorder[color]
-                  ),
-                };
+    <div
+      className={cn(
+        "inline-flex items-center gap-2 text-xl",
+        color && playerDecoration[color],
+        turnOrder[0] === name && "underline decoration-4 underline-offset-4",
+        disconnected && "opacity-50"
+      )}
+    >
+      {handleRemovePlayer ? (
+        <button
+          {...tokenProps}
+          className={cn(
+            "relative cursor-pointer rounded-full hover:border-2 hover:border-solid hover:border-red-dark hover:bg-none hover:after:absolute hover:after:left-0 hover:after:top-0 hover:after:h-full hover:after:w-full hover:after:text-sm hover:after:leading-4 hover:after:content-['❌']",
+            tokenProps.className
+          )}
+          onClick={handleRemovePlayer.bind(null, name)}
+          title="Remove player"
+          aria-label="Remove player"
+        />
+      ) : (
+        <div {...tokenProps} />
+      )}
+      <span>
+        {winners.includes(name) && <>🏆</>}
+        {status === "dead" && <>💩</>} {displayNameOverride || name}
+      </span>
+    </div>
+  );
+};
 
-          return (
-            <div
-              className={cn(
-                "flex items-center justify-center gap-2 rounded-2xl border-2 border-solid p-2",
-                color && playerBorder[color],
-                turnOrder[0] === name && "border-4",
-                disconnected && "opacity-50"
-              )}
-              key={name}
-            >
-              {isHost && name !== myPlayer ? (
-                <button
-                  {...tokenProps}
-                  className={cn(
-                    "relative cursor-pointer rounded-full hover:border-2 hover:border-solid hover:border-red-dark hover:bg-none hover:after:absolute hover:after:left-0 hover:after:top-0 hover:after:h-full hover:after:w-full hover:after:text-sm hover:after:leading-4 hover:after:content-['❌']",
-                    tokenProps.className
-                  )}
-                  onClick={handleRemovePlayer.bind(null, name)}
-                  title="Remove player"
-                  aria-label="Remove player"
-                />
-              ) : (
-                <div {...tokenProps} />
-              )}
-              {name} {winners.includes(name) && <>🏆</>}{" "}
-              {status === "dead" && <>💩</>}
-            </div>
-          );
-        })}
-      </div>
+const GameStatus = () => {
+  const players = useEngine(getPlayers);
+  const myPlayer = useEngine(getMyPlayer);
+  const turnOrder = useEngine(getTurnOrder);
+  const winners = useEngine(getWinners);
+  const gamePhase = useEngine(getPhase);
+
+  let message: ReactNode = "";
+  if (gamePhase === "finished") {
+    if (winners.length > 1) {
+      if (winners.includes(myPlayer)) {
+        const otherWinners = winners.filter((name) => name !== myPlayer);
+        message = <>🏆 You tie with {formatListHumanReadable(otherWinners)}!</>;
+      } else {
+        message = <>{formatListHumanReadable(winners)} tie!</>;
+      }
+    } else {
+      message =
+        winners[0] === myPlayer ? (
+          <>
+            <GameStatusPlayer
+              player={players[myPlayer]}
+              displayNameOverride="You"
+            />
+            <span className="ml-2"> win!</span>
+          </>
+        ) : (
+          <>
+            <GameStatusPlayer player={players[winners[0]]} />
+            <span className="ml-2"> wins!</span>
+          </>
+        );
+    }
+  } else {
+    const currentPlayer = players[turnOrder[0]];
+
+    message =
+      currentPlayer &&
+      (myPlayer === currentPlayer.name ? (
+        <>
+          <GameStatusPlayer
+            player={currentPlayer}
+            displayNameOverride="Your "
+          />
+          <span>&nbsp;turn</span>
+        </>
+      ) : (
+        <>
+          <GameStatusPlayer player={currentPlayer} />
+          <span>&apos;s turn</span>
+        </>
+      ));
+  }
+  return (
+    <>
+      <p className="flex flex-1 items-center justify-center align-baseline text-xl">
+        {message}
+      </p>
     </>
   );
 };
