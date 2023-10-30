@@ -189,9 +189,16 @@ export const getColorCoordinatesData = (
 type PlayersProps = {
   players: Players;
   coloredPaths: ColoredPath[];
+  onAnimationStart?: () => void;
+  onAnimationEnd?: () => void;
 };
 
-const Players = ({ players, coloredPaths }: PlayersProps) => {
+const Players = ({
+  players,
+  coloredPaths,
+  onAnimationStart,
+  onAnimationEnd,
+}: PlayersProps) => {
   const [existingPaths, setExistingPaths] = useState(coloredPaths);
   const [movingColor, setMovingColor] = useState<PlayerColor>();
 
@@ -204,6 +211,8 @@ const Players = ({ players, coloredPaths }: PlayersProps) => {
         // we need to display it before we can animate it
         if (movingColor) {
           await animate(...animationArgs);
+        } else {
+          onAnimationStart?.();
         }
         const newPaths = coloredPaths.slice(0, existingPaths.length + 1);
         setExistingPaths(newPaths);
@@ -215,6 +224,7 @@ const Players = ({ players, coloredPaths }: PlayersProps) => {
         // last path to animate
         await animate(...animationArgs);
         setMovingColor(undefined);
+        onAnimationEnd?.();
       } else {
         // color paths were removed
         setExistingPaths(coloredPaths);

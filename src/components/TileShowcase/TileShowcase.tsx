@@ -1,5 +1,4 @@
-import { transform } from "framer-motion";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { ComponentProps, Fragment, useEffect, useMemo, useState } from "react";
 import { TileID, tiles } from "../../constants/tiles";
 import { colors } from "../../engine/constants";
 import { movePlayers } from "../../engine/handlers";
@@ -9,7 +8,6 @@ import {
   SharedGameState,
 } from "../../engine/types";
 import { shuffle } from "../../engine/utils";
-import { useIsMounted } from "../../utils/hooks";
 import { getTranslate } from "../../utils/math";
 import Edge, { typeToNotches } from "../Edge/Edge";
 import Players from "../Players/Players";
@@ -45,7 +43,12 @@ const edgeNotchCoordinates = [
   ...leftRightNotchCoordinates,
 ];
 
-const TileShowcase = () => {
+type TileShowcaseProps = Omit<
+  ComponentProps<typeof Players>,
+  "players" | "coloredPaths"
+>;
+
+const TileShowcase = ({ ...playersProps }: TileShowcaseProps) => {
   const board = useMemo(() => {
     const shuffledTiles = shuffle([
       ...Object.keys(tiles),
@@ -138,6 +141,7 @@ const TileShowcase = () => {
         </Fragment>
       ))}
       <Players
+        {...playersProps}
         players={gameState.players}
         coloredPaths={gameState.coloredPaths}
       />
