@@ -57,12 +57,14 @@ type GameStatusPlayerProps = {
   player: Player;
   displayNameOverride?: string;
   handleRemovePlayer?: (name: string) => void;
+  shrink?: boolean;
 };
 
 export const GameStatusPlayer = ({
   player: { name, status, color, disconnected },
   displayNameOverride,
   handleRemovePlayer,
+  shrink = false,
 }: GameStatusPlayerProps) => {
   const winners = useEngine(getWinners);
   const turnOrder = useEngine(getTurnOrder);
@@ -87,7 +89,7 @@ export const GameStatusPlayer = ({
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-2 text-xl",
+        "inline-flex max-w-full items-center gap-2 text-xl",
         color && playerDecoration[color],
         turnOrder[0] === name && "underline decoration-4 underline-offset-4",
         disconnected && "opacity-50"
@@ -107,7 +109,11 @@ export const GameStatusPlayer = ({
       ) : (
         <div {...tokenProps} />
       )}
-      <span>
+      <span
+        className={cn(
+          shrink && "max-w-full flex-shrink overflow-hidden overflow-ellipsis"
+        )}
+      >
         {winners.includes(name) && <>🏆</>}
         {status === "dead" && <>💩</>} {displayNameOverride || name}
       </span>
@@ -155,22 +161,22 @@ const GameStatus = () => {
       currentPlayer &&
       (myPlayer === currentPlayer.name ? (
         <>
-          <GameStatusPlayer
-            player={currentPlayer}
-            displayNameOverride="Your "
-          />
-          <span>&nbsp;turn</span>
+          <GameStatusPlayer player={currentPlayer} displayNameOverride="Your" />
+          <span className="ml-2">turn</span>
         </>
       ) : (
         <>
-          <GameStatusPlayer player={currentPlayer} />
-          <span>&apos;s turn</span>
+          <GameStatusPlayer
+            player={currentPlayer}
+            displayNameOverride={`${currentPlayer.name}'s`}
+          />
+          <span className="ml-2">turn</span>
         </>
       ));
   }
   return (
     <>
-      <p className="flex flex-1 items-center justify-center align-baseline text-xl">
+      <p className="flex flex-shrink flex-grow flex-wrap items-center justify-center overflow-hidden align-baseline text-xl">
         {message}
       </p>
     </>
