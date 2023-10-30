@@ -221,8 +221,9 @@ const Players = ({ players, coloredPaths }: PlayersProps) => {
       }
     };
     animatePaths();
+    // Colored paths gets a new reference through the network
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [coloredPaths, existingPaths]);
+  }, [coloredPaths.length, existingPaths]);
 
   const { colorCoordinates, collisions, outs } = getColorCoordinatesData(
     players,
